@@ -46,21 +46,17 @@ export const romanizeCyrillic = (
 
         let newLetter;
 
-        // Handle contextual forms
-        if (preset === "kk" && strLowerCase === "ғ") {
-            // Example rule: ғ > ɣ between vowels, gh elsewhere
-            if (vowels.includes(prevChar) && vowels.includes(nextChar)) {
-                newLetter = "ɣ";
+        if (preset === "be" && strLowerCase === "е") {
+            if (i === 0 || isWordBoundary) {
+                newLetter = "ye";
+            } else if (!vowels.includes(prevChar)) {
+                newLetter = "ie";
+            } else {
+                newLetter = "e";
             }
         }
 
-        if (preset === "sr" && (strLowerCase === "ђ" || strLowerCase === "ћ")) {
-            // Example rule: use dj/tj before certain vowels or softeners?
-            const nextVowels = "еєиії";
-            if (nextVowels.includes(nextChar)) {
-                newLetter = strLowerCase === "ђ" ? "dj" : "tj";
-            }
-        }
+        // Handle contextual forms
 
         if (
             preset === "uk" &&
@@ -169,9 +165,10 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
         case "be":
             Object.assign(firstLetters, {
                 і: "i",
-                ў: "ŭ",
+                ў: "u",
                 э: "e",
                 и: "i",
+                ы: "y",
             });
             initialDigraphs = { е: "ye" };
             break;
@@ -180,6 +177,7 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
                 ъ: "a",
                 ь: "",
                 и: "i",
+                г: "g",
             });
             break;
         case "ky":
@@ -196,16 +194,17 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
             break;
         case "kk":
             Object.assign(firstLetters, {
-                ә: "ä",
+                ә: "a",
                 ғ: "gh",
                 қ: "q",
                 ң: "ng",
-                ө: "ö",
+                ө: "o",
                 ұ: "ū",
-                ү: "ü",
+                ү: "u",
                 h: "h",
                 і: "i",
                 и: "i",
+                ы: "y",
             });
             break;
         case "mk":
@@ -242,15 +241,16 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
             break;
         case "tg":
             Object.assign(firstLetters, {
-                ъ: "ʾ",
+                ъ: "",
                 ҳ: "h",
-                ӣ: "ī",
+                ӣ: "i",
                 ҷ: "j",
-                ӯ: "ū",
+                ӯ: "u",
                 и: "i",
                 г: "g",
                 ы: "y",
                 э: "e",
+                қ: "q",
             });
             initialDigraphs = { ҷ: "j" };
             break;
@@ -281,7 +281,7 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
 
     const firstDigraphs = Object.assign({}, regularDigraphs, initialDigraphs);
 
-    const firstAssociations = Object.assign(firstLetters, firstDigraphs);
+    const firstAssociations = Object.assign({}, firstLetters, firstDigraphs);
 
     /*
     ASSOCIATIONS FOR NON-INITIAL POSITION
@@ -309,6 +309,13 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
             Object.assign(nonFirstLetters, { е: "e" });
             break;
         case "be":
+            Object.assign(nonFirstLetters, { ы: "y", ў: "u" });
+            nonInitialDigraphs = {
+                ю: "iu",
+                я: "ia",
+            };
+            break;
+        case "bg":
             nonInitialDigraphs = {
                 е: "ie",
                 ю: "iu",
@@ -332,14 +339,35 @@ const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
             nonInitialDigraphs = {
                 ҷ: "j",
             };
+            Object.assign(nonFirstLetters, {
+                қ: "q",
+                ъ: "",
+                ӣ: "i",
+                ӯ: "u",
+            });
+            break;
+        case "kk":
+            Object.assign(nonFirstLetters, {
+                ғ: "gh",
+                қ: "q",
+                ұ: "ū",
+                ә: "a",
+                ө: "o",
+                ү: "u",
+            });
             break;
         default:
             break;
     }
 
-    const nonFirstDigraphs = Object.assign(regularDigraphs, nonInitialDigraphs);
+    const nonFirstDigraphs = Object.assign(
+        {},
+        regularDigraphs,
+        nonInitialDigraphs
+    );
 
     const nonFirstAssociations = Object.assign(
+        {},
         nonFirstLetters,
         nonFirstDigraphs
     );

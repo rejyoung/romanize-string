@@ -66,4 +66,4 @@ export const romanizeString = async (
 
 ///////////////
 
-romanizeString("ไปกินข้าวกันไหม", "th");
+romanizeString("Қазақ тілі — мемлекеттік тіл.", "kk");
