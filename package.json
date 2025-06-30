@@ -1,12 +1,13 @@
 {
     "name": "romanize-string",
     "version": "0.1.0",
-    "description": "",
+    "description": "A fully typed, general-purpose utility for unidirectional string transliteration (non-Latin script => Latin script).",
     "main": "dist/index.js",
     "types": "dist/types/index.d.ts",
     "files": [
         "dist",
         "README.md",
+        "CONTRIBUTING.md",
         "LICENSE"
     ],
     "exports": {
@@ -34,25 +35,46 @@
         "start": "npm run build && node dist/index.js",
         "prepublishOnly": "npm run build"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "keywords": [
+        "transliteration",
+        "romanization",
+        "latin",
+        "non-latin",
+        "multilingual",
+        "chinese",
+        "pinyin",
+        "arabic",
+        "persian",
+        "urdu",
+        "cyrillic",
+        "indic",
+        "japanese",
+        "korean",
+        "thai",
+        "text-processing"
+    ],
+    "author": "Ryan Young",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rejyoung/romanize-string.git"
+    },
+    "license": "MIT",
     "type": "module",
     "dependencies": {
-        "@indic-transliteration/sanscript": "^1.3.1",
-        "@romanize/korean": "^0.1.3",
-        "arabic-transliterate": "^1.0.1",
-        "cantonese-romanisation": "^1.0.7",
-        "kuroshiro": "^1.2.0",
-        "kuroshiro-analyzer-kuromoji": "^1.1.0",
-        "oktjs": "^0.1.3",
-        "pinyin-pro": "^3.26.0",
-        "tnthai": "^1.0.4",
-        "typescript": "^5.8.3"
+        "@indic-transliteration/sanscript": "~1.3.1",
+        "@romanize/korean": "~0.1.3",
+        "arabic-transliterate": "~1.0.1",
+        "cantonese-romanisation": "~1.0.7",
+        "kuroshiro": "~1.2.0",
+        "kuroshiro-analyzer-kuromoji": "~1.1.0",
+        "oktjs": "~0.1.3",
+        "pinyin-pro": "~3.26.0",
+        "tnthai": "~1.0.4"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "@types/node": "^22.15.33",
+        "typescript": "^5.8.3",
         "jest": "^30.0.3",
         "jest-environment-node": "^30.0.2",
         "ts-jest": "^29.4.0"
