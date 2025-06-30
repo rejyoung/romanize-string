@@ -36,6 +36,7 @@ export const romanizeIndic = (
         transliterationScheme
     );
 
+    // Remove the Bengali nukta, which is often present as an artifact of the transliteration
     const normalizedOutput = transliteration.replace(/\u09BC/g, "");
 
     if (omitDiacritics) {

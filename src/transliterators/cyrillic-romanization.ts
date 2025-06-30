@@ -391,7 +391,7 @@ const replaceCyrillicHomoglyphs = (input: string): string => {
         т: "t",
         в: "b",
         н: "h",
-        ј: "j", // optional if you're transliterating this anyway
+        ј: "j",
     };
 
     const output = input.replace(

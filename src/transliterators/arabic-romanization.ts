@@ -16,8 +16,6 @@ export const romanizeArabic = (input: string): string => {
     return transliterated.replace(/-\s*/g, "-").replace(/\bal-lāh\b/, "Allāh");
 };
 
-///////////////
-
 // Because Persian (Farsi) and Urdu omit short vowels, there is no existing library capable of transliterating them,
 // only those that transliterate Arabic. This function compensates for that.
 
@@ -86,7 +84,7 @@ const fallbackCharMap: Record<string, string> = {
 const naiveVowelize = (word: string): string => {
     const ARABIC_DIACRITICS = /[\u064B-\u0652\u0670]/;
     // Skip edge cases (including the unvowelized words from the phonetic maps)
-    if (/^(وی|فی|تْهے،|ٱللّٰه)$/.test(word)) return word;
+    if (/^(وی|فی|تْهے|ٱللّٰه)$/.test(word)) return word;
 
     // Word is already fully vowelized — skip
     if (/[َُِّٰ]/.test(word)) return word;
