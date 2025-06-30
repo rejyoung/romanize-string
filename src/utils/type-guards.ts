@@ -1,31 +1,45 @@
 import {
-    arabicLanguages,
-    cyrillicLanguages,
-    indicLanguages,
+    arabicLanguageCodes,
+    cyrillicLanguageCodes,
+    indicLanguageCodes,
+    mandarinLanguageCodes,
 } from "../constants/supported-languages.js";
 import {
-    ArabicLanguage,
+    ArabicLanguageCode,
     ConvertibleLanguage,
-    CyrillicLanguage,
-    IndicLanguage,
-} from "../types/language-types.js";
+    CyrillicLanguageCode,
+    IndicLanguageCode,
+    MandarinLanguageCode,
+} from "../public-types/language-types.js";
 
-export function isIndicLanguage(
+export function isIndicLanguageCode(
     lang: ConvertibleLanguage
-): lang is IndicLanguage {
-    return (indicLanguages as unknown as ConvertibleLanguage[]).includes(lang);
-}
-
-export function isCyrillicLanguage(
-    lang: ConvertibleLanguage
-): lang is CyrillicLanguage {
-    return (cyrillicLanguages as unknown as ConvertibleLanguage[]).includes(
+): lang is IndicLanguageCode {
+    return (indicLanguageCodes as unknown as ConvertibleLanguage[]).includes(
         lang
     );
 }
 
-export function isArabicLanguage(
+export function isCyrillicLanguageCode(
     lang: ConvertibleLanguage
-): lang is ArabicLanguage {
-    return (arabicLanguages as unknown as ConvertibleLanguage[]).includes(lang);
+): lang is CyrillicLanguageCode {
+    return (cyrillicLanguageCodes as unknown as ConvertibleLanguage[]).includes(
+        lang
+    );
+}
+
+export function isArabicLanguageCode(
+    lang: ConvertibleLanguage
+): lang is ArabicLanguageCode {
+    return (arabicLanguageCodes as unknown as ConvertibleLanguage[]).includes(
+        lang
+    );
+}
+
+export function isMandarinLanguageCode(
+    lang: ConvertibleLanguage
+): lang is MandarinLanguageCode {
+    return (mandarinLanguageCodes as unknown as ConvertibleLanguage[]).includes(
+        lang
+    );
 }

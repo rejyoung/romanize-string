@@ -1,4 +1,4 @@
-import { ConvertibleLanguage } from "../types/language-types";
+import { ConvertibleLanguage } from "../public-types/language-types";
 
 // List of languages that require transliteration and that the current function can transliterate.
 export const convertibleLanguages = [
@@ -13,7 +13,7 @@ export const convertibleLanguages = [
     "kk", // Kazakh
     "kn", // Kannada
     "ko", // Korean
-    "ky", // Kyrgz
+    "ky", // Kyrgyz
     "mk", // Macedonian
     "mn", // Mongolian
     "mr", // Marathi
@@ -33,7 +33,7 @@ export const convertibleLanguages = [
     "zh-Hant", // Chinese Traditional
 ] as const;
 
-export const indicLanguages = [
+export const indicLanguageCodes = [
     "hi",
     "bn",
     "te",
@@ -44,7 +44,7 @@ export const indicLanguages = [
     "kn",
 ] as const;
 
-export const cyrillicLanguages = [
+export const cyrillicLanguageCodes = [
     "be",
     "bg",
     "kk",
@@ -57,4 +57,6 @@ export const cyrillicLanguages = [
     "uk",
 ] as const;
 
-export const arabicLanguages = ["ar", "ur", "fa"] as const;
+export const arabicLanguageCodes = ["ar", "ur", "fa"] as const;
+
+export const mandarinLanguageCodes = ["zh-CN", "zh-Hant"] as const;
