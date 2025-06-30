@@ -9,4 +9,6 @@ export default {
     transform: {
         "^.+\\.ts$": ["ts-jest", { useESM: true }],
     },
+    transformIgnorePatterns: ["node_modules/(?!(oktjs|@romanize/korean)/)"],
+    extensionsToTreatAsEsm: [".ts"],
 };

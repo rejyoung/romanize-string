@@ -1,6 +1,7 @@
 import { spawnSync } from "child_process";
 import ThaiAnalyzer from "tnthai";
 import { ensurePythonWithThaiLib } from "../utils/ensure-python-with-thai-lib.js";
+
 const analyzer = new ThaiAnalyzer();
 
 export const romanizeThai = (input: string) => {
@@ -21,6 +22,7 @@ export const romanizeThai = (input: string) => {
             ],
             {
                 encoding: "utf-8",
+                input: "",
             }
         );
 

@@ -5,7 +5,9 @@
     "main": "dist/index.js",
     "types": "dist/types/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "README.md",
+        "LICENSE"
     ],
     "exports": {
         ".": {
@@ -28,8 +30,9 @@
     "sideEffects": false,
     "scripts": {
         "build": "tsc",
-        "test": "jest",
-        "start": "npm run build && node dist/index.js"
+        "test": "node --experimental-vm-modules node_modules/.bin/jest",
+        "start": "npm run build && node dist/index.js",
+        "prepublishOnly": "npm run build"
     },
     "keywords": [],
     "author": "",
