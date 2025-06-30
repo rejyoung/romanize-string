@@ -1,7 +1,7 @@
 import Sanscript from "@indic-transliteration/sanscript";
-import { IndicLanguage } from "../types/language-types";
+import { IndicLanguageCode } from "../public-types/language-types";
 
-const languageSchemeMap: Record<IndicLanguage, string> = {
+const languageSchemeMap: Record<IndicLanguageCode, string> = {
     hi: "devanagari",
     bn: "bengali",
     te: "telugu",
@@ -14,7 +14,7 @@ const languageSchemeMap: Record<IndicLanguage, string> = {
 
 export const romanizeIndic = (
     input: string,
-    language: IndicLanguage,
+    language: IndicLanguageCode,
     needsAsciiOnly: boolean
 ) => {
     // Replace ।, ॥, ૰, and the Gurmukhi abbreviation sign with full-stop.
@@ -37,5 +37,22 @@ export const romanizeIndic = (
     );
 
     const normalizedOutput = transliteration.replace(/\u09BC/g, "");
-    return normalizedOutput;
+
+    if (needsAsciiOnly) {
+        const asciiNormalized = normalizedOutput
+            .replace(/A/g, "aa")
+            .replace(/I/g, "ii")
+            .replace(/U/g, "uu")
+            .replace(/R/g, "ri")
+            .replace(/E/g, "ee")
+            .replace(/O/g, "oo")
+            .replace(/M/g, "m") // anusvara
+            .replace(/H/g, "h") // visarga
+            .replace(/N/g, "n") // retroflex nasal
+            .replace(/~n/g, "n") // palatal nasal
+            .replace(/chh/g, "ch"); // optional simplification
+        return asciiNormalized;
+    } else {
+        return normalizedOutput;
+    }
 };

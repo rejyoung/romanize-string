@@ -1,4 +1,4 @@
-import { CyrillicLanguage } from "../types/language-types";
+import { CyrillicLanguageCode } from "../public-types/language-types";
 
 /**
  * Adapted from cyrillic-to-translit-js
@@ -9,7 +9,7 @@ import { CyrillicLanguage } from "../types/language-types";
 
 export const romanizeCyrillic = (
     input: string,
-    preset: CyrillicLanguage
+    preset: CyrillicLanguageCode
 ): string => {
     if (!input) {
         return "";
@@ -99,7 +99,9 @@ type Associations = {
     nonFirstAssociations: Record<string, string>;
 };
 
-const getAssociationsForPreset = (preset: CyrillicLanguage): Associations => {
+const getAssociationsForPreset = (
+    preset: CyrillicLanguageCode
+): Associations => {
     /*
     ASSOCIATIONS FOR INITIAL POSITION
     */

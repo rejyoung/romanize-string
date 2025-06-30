@@ -3,12 +3,17 @@ import { farsiArabicPhoneticMap } from "../phonetic-maps/farsiArabicPhoneticMap.
 import { urduArabicPhoneticMap } from "../phonetic-maps/urduArabicPhoneticMap.js";
 
 export const romanizeArabic = (input: string): string => {
-    const transliteratedTitle = arabictransliterate(
-        standardizeArabicScript(input),
+    // Step 1: Standardize Arabic script for Persian/Urdu (phonetic map, fallback chars, naive vowels)
+    const standardized = standardizeArabicScript(input);
+
+    // Step 2: Use arabic-transliterate to Romanize
+    const transliterated = arabictransliterate(
+        standardized,
         "arabic2latin",
         "Arabic"
-    ).replace(/-\s*/g, " ");
-    return transliteratedTitle;
+    );
+
+    return transliterated.replace(/-\s*/g, "-").replace(/\bal-lāh\b/, "Allāh");
 };
 
 ///////////////
@@ -22,14 +27,13 @@ const standardizeArabicScript = (input: string): string => {
     // Step 1. Perform whole-word substitutions for the most frequently used Farsi and Urdu words
     // that require the addition of short vowels or contain non-Arabic characters.
 
-    const farsiKeys = Object.keys(farsiArabicPhoneticMap).sort(
-        (a, b) => b.length - a.length
-    );
-    const urduKeys = Object.keys(urduArabicPhoneticMap).sort(
-        (a, b) => b.length - a.length
-    );
+    const allKeys = [
+        ...Object.keys(farsiArabicPhoneticMap),
+        ...Object.keys(urduArabicPhoneticMap),
+    ];
+    allKeys.sort((a, b) => b.length - a.length);
 
-    const wordPattern = farsiKeys.join("|") + "|" + urduKeys.join("|");
+    const wordPattern = allKeys.join("|");
     const wordRegex = new RegExp(wordPattern, "g");
 
     output = input.replace(
@@ -58,6 +62,8 @@ const standardizeArabicScript = (input: string): string => {
 };
 
 const fallbackCharMap: Record<string, string> = {
+    ٱ: "ا", // wasla-alef => standard alef (missing from arabic-transliterate)
+    "ٰ": "ا", // dagger alef => standard alef (missing from arabic-transliterate)
     پ: "ب",
     چ: "ج",
     ژ: "ش",
@@ -78,16 +84,24 @@ const fallbackCharMap: Record<string, string> = {
 };
 
 const naiveVowelize = (word: string): string => {
+    const ARABIC_DIACRITICS = /[\u064B-\u0652\u0670]/;
     // Skip edge cases (including the unvowelized words from the phonetic maps)
     if (/^(وی|فی|تْهے،|ٱللّٰه)$/.test(word)) return word;
 
-    // Already contains a short vowel — skip
-    if (/[َُِ]/.test(word)) return word;
+    // Word is already fully vowelized — skip
+    if (/[َُِّٰ]/.test(word)) return word;
 
-    // Rule 1: Add 'َ' after first consonant
-    // Rule 2: If ends with ی or و, add 'ِ' before ی or 'ُ' before و
-    return word
-        .replace(/^([^َُِ])/, "$1َ") // Add fatha after first character
-        .replace(/([^َُِ])ی$/, "$1ِی") // Add kasra before ی
-        .replace(/([^َُِ])و$/, "$1ُو"); // Add damma before و
+    let result = "";
+    for (let i = 0; i < word.length; i++) {
+        const char = word[i];
+        const next = word[i + 1];
+        // If the next character is a diacritic, skip adding a vowel
+        if (ARABIC_DIACRITICS.test(next ?? "")) {
+            result += char;
+        } else {
+            // Default to fatha for now (or adapt as needed)
+            result += char + "َ";
+        }
+    }
+    return result;
 };

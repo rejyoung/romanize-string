@@ -1,11 +1,12 @@
 import { romanizeArabic } from "./transliterators/arabic-romanization.js";
 import { romanizeKorean } from "./transliterators/korean-romanization.js";
 import { romanizeJapanese } from "./transliterators/japanese-romanization.js";
-import { ConvertibleLanguage } from "./types/language-types.js";
+import { ConvertibleLanguage } from "./public-types/language-types.js";
 import {
-    isArabicLanguage,
-    isCyrillicLanguage,
-    isIndicLanguage,
+    isArabicLanguageCode,
+    isCyrillicLanguageCode,
+    isIndicLanguageCode,
+    isMandarinLanguageCode,
 } from "./utils/type-guards.js";
 import { romanizeIndic } from "./transliterators/inidic-romanization.js";
 import { romanizeThai } from "./transliterators/thai-romanization.js";
@@ -16,7 +17,7 @@ import { romanizeCyrillic } from "./transliterators/cyrillic-romanization.js";
 export const romanizeString = async (
     string: string,
     language: ConvertibleLanguage,
-    needsAsciiOnly?: false
+    needsAsciiOnly?: boolean
 ): Promise<string> => {
     if (!string.trim()) return "";
     let transliteratedString: string;
@@ -30,40 +31,36 @@ export const romanizeString = async (
         transliteratedString = romanizeKorean(string);
 
         // Hanzi - Mandarin
-    } else if (
-        (["zh-CN", "zh-Hant"] as readonly ConvertibleLanguage[]).includes(
-            language
-        )
-    ) {
-        transliteratedString = romanizeMandarin(string);
+    } else if (isMandarinLanguageCode(language)) {
+        transliteratedString = romanizeMandarin(string, needsAsciiOnly);
 
         // Hanzi - Cantonese
     } else if (language === "yue") {
         transliteratedString = romanizeCantonese(string);
 
         // Devanagari
-    } else if (isIndicLanguage(language)) {
+    } else if (isIndicLanguageCode(language)) {
         transliteratedString = romanizeIndic(string, language, needsAsciiOnly);
 
         // Cyrillic
     } else if (language === ("th" as ConvertibleLanguage)) {
         transliteratedString = romanizeThai(string);
-    } else if (isCyrillicLanguage(language)) {
+    } else if (isCyrillicLanguageCode(language)) {
         transliteratedString = romanizeCyrillic(string, language);
 
         // Arabic
-    } else if (isArabicLanguage(language)) {
+    } else if (isArabicLanguageCode(language)) {
         transliteratedString = romanizeArabic(string);
     } else {
         transliteratedString = string;
     }
     console.log("TRANSLITERATED TITLE:", transliteratedString);
-    return (
-        transliteratedString.slice(0, 1).toUpperCase() +
-        transliteratedString.slice(1)
-    ).trim();
+
+    return transliteratedString.trim();
 };
 
 ///////////////
 
-romanizeString("Қазақ тілі — мемлекеттік тіл.", "kk");
+romanizeString("สวัสดี ครับ", "th");
+romanizeString("", "th");
+romanizeString("Hello", "th");

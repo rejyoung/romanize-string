@@ -18,4 +18,6 @@ export const ensurePythonWithThaiLib = (): void => {
             "The 'pythainlp' library is not installed. Please run 'pip3 install pythainlp' to enable Thai transliteration."
         );
     }
+
+    return;
 };

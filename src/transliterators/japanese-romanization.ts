@@ -1,6 +1,10 @@
-import { kuroshiro } from "../utils/kuroshiro.js";
+import { initKuroshiro, kuroshiro } from "../utils/kuroshiro.js";
 
 export const romanizeJapanese = async (input: string) => {
+    if (!kuroshiro._analyzer) {
+        await initKuroshiro();
+    }
+
     const transliteration = await kuroshiro.convert(input, {
         to: "romaji",
         mode: "spaced",
