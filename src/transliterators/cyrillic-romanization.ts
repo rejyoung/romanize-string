@@ -9,14 +9,14 @@ import { CyrillicLanguageCode } from "../public-types/language-types";
 
 export const romanizeCyrillic = (
     input: string,
-    preset: CyrillicLanguageCode
+    language: CyrillicLanguageCode
 ): string => {
     if (!input) {
         return "";
     }
 
     const { firstAssociations, nonFirstAssociations } =
-        getAssociationsForPreset(preset);
+        getAssociationsForLanguage(language);
 
     // We must normalize string for transform all unicode chars to uniform form
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
@@ -46,7 +46,7 @@ export const romanizeCyrillic = (
 
         let newLetter;
 
-        if (preset === "be" && strLowerCase === "е") {
+        if (language === "be" && strLowerCase === "е") {
             if (i === 0 || isWordBoundary) {
                 newLetter = "ye";
             } else if (!vowels.includes(prevChar)) {
@@ -59,7 +59,7 @@ export const romanizeCyrillic = (
         // Handle contextual forms
 
         if (
-            preset === "uk" &&
+            language === "uk" &&
             normalizedInput.slice(i - 1, i + 1).toLowerCase() === "зг"
         ) {
             // handle ukrainian special case зг > zgh
@@ -99,8 +99,8 @@ type Associations = {
     nonFirstAssociations: Record<string, string>;
 };
 
-const getAssociationsForPreset = (
-    preset: CyrillicLanguageCode
+const getAssociationsForLanguage = (
+    language: CyrillicLanguageCode
 ): Associations => {
     /*
     ASSOCIATIONS FOR INITIAL POSITION
@@ -132,7 +132,7 @@ const getAssociationsForPreset = (
     let initialDigraphs: Record<string, string> = {};
 
     // language-specific mappings
-    switch (preset) {
+    switch (language) {
         case "ru":
             Object.assign(firstLetters, {
                 г: "g",
@@ -260,7 +260,7 @@ const getAssociationsForPreset = (
             break;
     }
 
-    if (["uk", "be", "kk", "tg"].includes(preset)) {
+    if (["uk", "be", "kk", "tg"].includes(language)) {
         Object.assign(firstLetters, {
             "'": "",
             "’": "",
@@ -295,7 +295,7 @@ const getAssociationsForPreset = (
     let nonInitialDigraphs: Record<string, string> = {};
 
     // language-specific mappings
-    switch (preset) {
+    switch (language) {
         case "ru":
             Object.assign(nonFirstLetters, { е: "e" });
             break;

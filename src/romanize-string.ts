@@ -17,7 +17,7 @@ import { romanizeCyrillic } from "./transliterators/cyrillic-romanization.js";
 export const romanizeString = async (
     string: string,
     language: ConvertibleLanguage,
-    needsAsciiOnly?: boolean
+    omitDiacritics?: boolean
 ): Promise<string> => {
     if (!string.trim()) return "";
     let transliteratedString: string;
@@ -32,7 +32,7 @@ export const romanizeString = async (
 
         // Hanzi - Mandarin
     } else if (isMandarinLanguageCode(language)) {
-        transliteratedString = romanizeMandarin(string, needsAsciiOnly);
+        transliteratedString = romanizeMandarin(string, omitDiacritics);
 
         // Hanzi - Cantonese
     } else if (language === "yue") {
@@ -40,7 +40,7 @@ export const romanizeString = async (
 
         // Devanagari
     } else if (isIndicLanguageCode(language)) {
-        transliteratedString = romanizeIndic(string, language, needsAsciiOnly);
+        transliteratedString = romanizeIndic(string, language, omitDiacritics);
 
         // Cyrillic
     } else if (language === ("th" as ConvertibleLanguage)) {

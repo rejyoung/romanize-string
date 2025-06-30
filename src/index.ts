@@ -10,6 +10,5 @@ export { romanizeCyrillic } from "./transliterators/cyrillic-romanization.js";
 export {
     ConvertibleLanguage,
     IndicLanguageCode,
-    ArabicLanguageCode,
     CyrillicLanguageCode,
 } from "./public-types/language-types.js";

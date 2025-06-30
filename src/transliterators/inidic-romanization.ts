@@ -15,14 +15,14 @@ const languageSchemeMap: Record<IndicLanguageCode, string> = {
 export const romanizeIndic = (
     input: string,
     language: IndicLanguageCode,
-    needsAsciiOnly: boolean
+    omitDiacritics: boolean
 ) => {
     // Replace ।, ॥, ૰, and the Gurmukhi abbreviation sign with full-stop.
     const normalizedInput = input.replace(/[\u0964\u0965\u0A76\u0AF0]/g, ".");
 
     // Determine appropriate transliteration scheme
     let transliterationScheme = "iast";
-    if (needsAsciiOnly) {
+    if (omitDiacritics) {
         if (["te", "ta", "kn"].includes(language)) {
             transliterationScheme = "itrans_dravidian";
         } else {
@@ -38,7 +38,7 @@ export const romanizeIndic = (
 
     const normalizedOutput = transliteration.replace(/\u09BC/g, "");
 
-    if (needsAsciiOnly) {
+    if (omitDiacritics) {
         const asciiNormalized = normalizedOutput
             .replace(/A/g, "aa")
             .replace(/I/g, "ii")
