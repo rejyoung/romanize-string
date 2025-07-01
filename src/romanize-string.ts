@@ -54,13 +54,6 @@ export const romanizeString = async (
     } else {
         transliteratedString = string;
     }
-    console.log("TRANSLITERATED TITLE:", transliteratedString);
 
     return transliteratedString.trim();
 };
-
-///////////////
-
-romanizeString("สวัสดี ครับ", "th");
-romanizeString("", "th");
-romanizeString("Hello", "th");

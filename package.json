@@ -13,13 +13,14 @@
     "exports": {
         ".": {
             "import": "./dist/index.js",
+            "require": "./dist/index.js",
             "types": "./dist/types/index.d.ts"
         }
     },
     "sideEffects": false,
     "scripts": {
         "build": "tsc",
-        "test": "node --experimental-vm-modules node_modules/.bin/jest",
+        "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
         "start": "npm run build && node dist/index.js",
         "prepublishOnly": "npm run build"
     },
