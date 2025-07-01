@@ -14,18 +14,6 @@
         ".": {
             "import": "./dist/index.js",
             "types": "./dist/index.d.ts"
-        },
-        "./romanize-string": {
-            "import": "./dist/romanize-string.js",
-            "types": "./dist/romanize-string.d.ts"
-        },
-        "./romanize-korean": {
-            "import": "./dist/korean-romanization.js",
-            "types": "./dist/korean-romanization.d.ts"
-        },
-        "./romanize-arabic": {
-            "import": "./dist/arabic-romanization.js",
-            "types": "./dist/arabic-romanization.d.ts"
         }
     },
     "sideEffects": false,
