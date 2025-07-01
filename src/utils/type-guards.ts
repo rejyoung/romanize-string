@@ -1,5 +1,6 @@
 import {
     arabicLanguageCodes,
+    convertibleLanguages,
     cyrillicLanguageCodes,
     indicLanguageCodes,
     mandarinLanguageCodes,
@@ -11,6 +12,14 @@ import {
     IndicLanguageCode,
     MandarinLanguageCode,
 } from "../public-types/language-types.js";
+
+export function isConvertibleLanguage(
+    lang: string
+): lang is ConvertibleLanguage {
+    return (convertibleLanguages as readonly string[]).includes(
+        lang as ConvertibleLanguage
+    );
+}
 
 export function isIndicLanguageCode(
     lang: ConvertibleLanguage

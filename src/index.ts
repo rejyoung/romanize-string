@@ -12,3 +12,8 @@ export {
     IndicLanguageCode,
     CyrillicLanguageCode,
 } from "./public-types/language-types.js";
+export {
+    isConvertibleLanguage,
+    isCyrillicLanguageCode,
+    isIndicLanguageCode,
+} from "./utils/type-guards.js";
