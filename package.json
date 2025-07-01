@@ -1,6 +1,6 @@
 {
     "name": "romanize-string",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A fully typed, general-purpose utility for unidirectional string transliteration (non-Latin script => Latin script).",
     "main": "dist/index.js",
     "types": "dist/types/index.d.ts",
