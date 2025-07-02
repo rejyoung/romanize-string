@@ -114,7 +114,11 @@ import {
 
 ## Modular Imports
 
-Transliteration functions may be imported individually to reduce package size.
+In addition to the default romanizeString function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported directly to reduce bundle size or to access specialized functionality.
+
+### Script-Based Transliteration Functions
+
+These functions handle transliteration for specific script families.
 
 ```ts
 import {
@@ -130,8 +134,9 @@ import {
 ```
 
 
-### romanizeArabic
+#### romanizeArabic
 
+Transliterates from Arabic script.
 Supported Languages: ar, fa, ur
 
 ```ts
@@ -139,21 +144,27 @@ romanizeArabic(input: string): string
 ```
 <br>
 
-### romanizeCantonese
+#### romanizeCantonese
+
+Transliterates from Hanzi using Cantonese pronunciation.
 Supported Language: yue
 ```ts
 romanizeCantonese(input: string): string
 ```
 <br>
 
-### romanizeCyrillic
+#### romanizeCyrillic
+
+Transliterates from Cyrillic.
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 ```ts
 romanizeCyrillic(input: string, language: CyrillicLanguageCode): string
 ```
 <br>
 
-### romanizeIndic
+#### romanizeIndic
+
+Transliterates from Devanagari and other indic scripts.
 Supported Languages: bn, gu, hi, kn, mr, ne, pa, sa, ta, te
 ```ts
 romanizeIndic(input: string, language: IndicLanguageCode, omitDiacritics?: boolean): string
@@ -162,7 +173,9 @@ romanizeIndic(input: string, language: IndicLanguageCode, omitDiacritics?: boole
 <br>
 <br>
 
-### romanizeJapanese
+#### romanizeJapanese
+
+Transliterates from Kanji or Hiragana.
 Supported Language: ja
 ```ts
 await romanizeJapanese(input: string): Promise<string>
@@ -171,14 +184,18 @@ await romanizeJapanese(input: string): Promise<string>
 <br>
 <br>
 
-### romanizeKorean
+#### romanizeKorean
+
+Transliterates from Hangul script.
 Supported Language: ko
 ```ts
 romanizeKorean(input: string): string
 ```
 <br>
 
-### romanizeMandarin
+#### romanizeMandarin
+
+Transliterates from both Traditional and Simplified Hanzi using Mandarin pronunciation.
 Supported Languages: zh-CN, zh-Hant
 ```ts
 romanizeMandarin(input: string, omitTones?: boolean): string
@@ -188,7 +205,9 @@ romanizeMandarin(input: string, omitTones?: boolean): string
  <br>
 ---
  
-### romanizeThai
+#### romanizeThai
+
+Transliterates from Thai script.
 Supported Language: th
 ```ts
 romanizeThai(input: string):string
@@ -197,6 +216,42 @@ romanizeThai(input: string):string
 **NOTE**: romanizeThai uses a wrapped Python library (**pythainlp**) for the transliteration, since no suitable Javascript library currently exists. As such, the function will only work if the environment in which it is run has both Python3 and pythainlp installed. Attempts to use this function without one or both of them installed will return an untransliterated string and generate console errors explaining the problem.
 <br>
 <br>
+
+### Type Guards
+
+These utilities help with validating language codes at runtime — useful for functions that require language code input.
+
+```ts
+import {
+    isConvertibleLanguage,
+    isCyrillicLanguageCode,
+    isIndicLanguageCode
+} from "romanize-string"
+```
+
+#### isConvertibleLanguage
+
+Returns true if the given string is a supported language code from type ConvertibleLanguage.
+
+```ts
+isConvertibleLanguage("ja") // true
+```
+
+#### isCyrillicLanguageCode
+
+Returns true if the given string is a supported language code from type CyrillicLanguageCode (a subset of ConvertibleLanguage).
+
+```ts
+isCyrillicLanguageCode("ru") // true
+```
+
+#### isIndicLanguageCode
+
+Returns true if the given string is a supported language code from type IndicLanguageCode (a subset of ConvertibleLanguage).
+
+```ts
+isConvertibleLanguage("hi") // true
+```
 
 ## Technical Notes
 
