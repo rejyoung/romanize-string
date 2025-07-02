@@ -8,7 +8,7 @@ Romanize-string is a library for transliterating strings unidirectionally from n
 
 Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukranian, and Urdu*.
 
-> \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as my own expansions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the Technical Notes section below.
+> \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the Technical Notes section below.
 
 ## About
 I created this library in the process of working on a closed-source project. I was in need of a utility that could handle transliterating media titles from multiple languages into Latin script so that their romanized forms could be used for display and for creating searchable slugs. Unfortunately, not only did no such library exist (at least not that covered all the languages I had to work with), but some of the languages had no direct transliteration libraries at all. I found that transliterating some languages required me to construct multi-step processes drawing on multiple libraries, while others (Farsi and Urdu, in particular) required a significant amount of custom code in order to produce something usable. Here I've condensed all of that into a single, unidirectional transliteration engine.
@@ -252,6 +252,23 @@ Returns true if the given string is a supported language code from type IndicLan
 ```ts
 isConvertibleLanguage("hi") // true
 ```
+
+## Dependencies and Attribution
+
+This library draws on the capabilities of several existing libraries, many of which have been extended or combined to support broader functionality:
+
+- [**arabic-transliterate**](https://www.npmjs.com/package/arabic-transliterate) – used as the foundation for Arabic, Persian, and Urdu transliteration, with significant customizations, details of which are provided in the Technical Notes section.
+- [**@indic-transliteration/sanscript**](https://www.npmjs.com/package/@indic-transliteration/sanscript) – provides base functionality for Devanagari and other Indic scripts.
+- [**kuroshiro**](https://www.npmjs.com/package/kuroshiro) – used for Japanese transliteration; includes async processing.
+- [**kuroshiro-analyzer-kuromoji**](https://www.npmjs.com/package/kuroshiro-analyzer-kuromoji) – Japanese morphological analyzer required by Kuroshiro.
+- [**pinyin-pro**](https://www.npmjs.com/package/pinyin-pro) – used for Mandarin transliteration from Simplified and Traditional Hanzi.
+- [**cantonese-romanisation**](https://www.npmjs.com/package/cantonese-romanisation) – provides base mappings for Cantonese transliteration.
+- [**oktjs**](https://www.npmjs.com/package/oktjs) – used to tokenize and normalize Korean input before transliteration.
+- [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) – used for Hangul transliteration.
+- [**tnthai**](https://www.npmjs.com/package/tnthai) – used to segment Thai script into individual words before submitting them to the transliteration pipeline.
+- [**pythainlp**](https://github.com/PyThaiNLP/pythainlp) – external Python library used for Thai transliteration. **Note:** This is not a direct JavaScript dependency. It must be installed manually (alongside Python 3) in the runtime environment for `romanizeThai` to function.
+
+> Note: While this package was originally inspired by [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js), that codebase was not included as a dependency. Instead, its logic was replicated and extensively modified within this library to support additional Cyrillic-based languages.
 
 ## Technical Notes
 
