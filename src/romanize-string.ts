@@ -22,7 +22,7 @@ export const romanizeString = async (
     if (!string.trim()) return "";
     let transliteratedString: string;
 
-    // Kanji or Hiragana
+    // Kanji, Hiragana, or Katakana
     if (language === ("ja" as ConvertibleLanguage)) {
         transliteratedString = await romanizeJapanese(string);
 

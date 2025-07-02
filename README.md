@@ -6,7 +6,7 @@
 
 Romanize-string is a library for transliterating strings unidirectionally from non-Latin to Latin script. It unifies 10 different transliteration and parsing libraries—expanding upon some of them significantly in order to expand coverage—to create a single utility capable of generating basic transliterations of 29 written languages.
 
-Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukranian, and Urdu*.
+Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
 
 > \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the Technical Notes section below.
 
@@ -28,11 +28,11 @@ import romanizeString from "romanize-string"
 const output = await romanizeString(string, languageCode, omitDiacritics[optional])
 ```
 
-The romanizeString utility is capable of transliterating a string written in any of the supported languages. (Supported language codes are listed below.) It cannot transliterate from multiple languages at once. 
+The `romanizeString` utility is capable of transliterating a string written in any of the supported languages. (Supported language codes are listed below.) It cannot transliterate from multiple languages at once. 
 
-Because one of the underlying libraries is asynchronous, calls to romanizeString must be awaited.
+Because one of the underlying libraries is asynchronous, calls to `romanizeString` must be awaited.
 
-The function accepts an optional boolean argument (omitDiacritics) which controls the transliteration scheme used for Mandarin and Indic languages (for Mandarin, that means controlling whether or not to include tones). When omitted, the value defaults to "false". When transliterating from a language that is not Mandarin or Indic, including a value for omitDiacritics in your function call has no effect.
+The function accepts an optional boolean argument `omitDiacritics` which controls the transliteration scheme used for Mandarin and Indic languages (for Mandarin, that means controlling whether or not to include tones). When omitted, the value defaults to "false". When transliterating from a language that is not Mandarin or Indic, including a value for `omitDiacritics` in your function call has no effect.
 
 
 
@@ -83,15 +83,15 @@ The function accepts an optional boolean argument (omitDiacritics) which control
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-\* Thai transliteration requires the presence of Python and the python library *pythainlp* in the environment where the code is run. See the romanizeThai entry in the Modular Imports section below for more details.
+\* Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in the Modular Imports section below for more details.
 
 ### Examples
 
 ```ts
 const translitFromJapanese = await romanizeString("ありがとう", "ja"); // "arigatō"
 const translitFromRussian = await romanizeString("Привет", "ru");     // "privet"
-const tranlitFromBengali = await romanizeString("বাংলা", "bn");       // "vāṃlā"
-const tranlitFromBengaliAscii = await romanizeString("বাংলা", "bn", true);       // "vaamlaa"
+const translitFromBengali = await romanizeString("বাংলা", "bn");       // "vāṃlā"
+const translitFromBengaliAscii = await romanizeString("বাংলা", "bn", true);       // "vaamlaa"
 ```
 
 
@@ -99,9 +99,9 @@ This library also supports modular imports. For usage of each individual functio
 
 
 
-## Typescript Support
+## TypeScript Support
 
-The romanize-string library is fully typed and includes type exports for user-supplied arguments.abs
+The romanize-string library is fully typed and includes type exports for user-supplied arguments.
 
 ```ts
 import {
@@ -114,7 +114,7 @@ import {
 
 ## Modular Imports
 
-In addition to the default romanizeString function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported directly to reduce bundle size or to access specialized functionality.
+In addition to the default `romanizeString` function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported directly to reduce bundle size or to access specialized functionality.
 
 ### Script-Based Transliteration Functions
 
@@ -137,6 +137,7 @@ import {
 #### romanizeArabic
 
 Transliterates from Arabic script.
+
 Supported Languages: ar, fa, ur
 
 ```ts
@@ -147,6 +148,7 @@ romanizeArabic(input: string): string
 #### romanizeCantonese
 
 Transliterates from Hanzi using Cantonese pronunciation.
+
 Supported Language: yue
 ```ts
 romanizeCantonese(input: string): string
@@ -156,6 +158,7 @@ romanizeCantonese(input: string): string
 #### romanizeCyrillic
 
 Transliterates from Cyrillic.
+
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 ```ts
 romanizeCyrillic(input: string, language: CyrillicLanguageCode): string
@@ -164,29 +167,32 @@ romanizeCyrillic(input: string, language: CyrillicLanguageCode): string
 
 #### romanizeIndic
 
-Transliterates from Devanagari and other indic scripts.
+Transliterates from Devanagari and other Indic scripts.
+
 Supported Languages: bn, gu, hi, kn, mr, ne, pa, sa, ta, te
 ```ts
 romanizeIndic(input: string, language: IndicLanguageCode, omitDiacritics?: boolean): string
 ```
-> If not specified, omitDiacritics defaults to "false".
+> If not specified, `omitDiacritics` defaults to "false".
 <br>
 <br>
 
 #### romanizeJapanese
 
-Transliterates from Kanji or Hiragana.
+Transliterates from Kanji, Hiragana, or Katakana.
+
 Supported Language: ja
 ```ts
 await romanizeJapanese(input: string): Promise<string>
 ```
-> The supporting library responsible for Japanese transliteration (Kuroshiro) operates asynchronously. All calls to romanizeJapanese must therefore be awaited.
+> The supporting library responsible for Japanese transliteration ( [Kuroshiro](https://github.com/hexenq/kuroshiro) ) operates asynchronously. All calls to romanizeJapanese must therefore be awaited.
 <br>
 <br>
 
 #### romanizeKorean
 
 Transliterates from Hangul script.
+
 Supported Language: ko
 ```ts
 romanizeKorean(input: string): string
@@ -196,6 +202,7 @@ romanizeKorean(input: string): string
 #### romanizeMandarin
 
 Transliterates from both Traditional and Simplified Hanzi using Mandarin pronunciation.
+
 Supported Languages: zh-CN, zh-Hant
 ```ts
 romanizeMandarin(input: string, omitTones?: boolean): string
@@ -203,18 +210,37 @@ romanizeMandarin(input: string, omitTones?: boolean): string
 > If not specified, omitTones defaults to "false".
  <br>
  <br>
----
+
  
 #### romanizeThai
 
 Transliterates from Thai script.
+
 Supported Language: th
 ```ts
 romanizeThai(input: string):string
 ```
 
-**NOTE**: romanizeThai uses a wrapped Python library (**pythainlp**) for the transliteration, since no suitable Javascript library currently exists. As such, the function will only work if the environment in which it is run has both Python3 and pythainlp installed. Attempts to use this function without one or both of them installed will return an untransliterated string and generate console errors explaining the problem.
+**NOTE**: `romanizeThai` uses an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) for the transliteration, since no suitable JavaScript library currently exists. As such, the function will only work if the environment in which it is run has both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) installed. Attempts to use this function without one or both of them installed will return an untransliterated string and generate console errors explaining the problem. 
+
+
+To use `romanizeThai`, Python 3 and the pythainlp library must be available in your environment.
+
+1. Make sure Python 3 is installed:
+   - [Download Python](https://www.python.org/downloads/) if needed
+
+2. Install the required library:
+   ```bash
+   pip install pythainlp
+   ```
+
+If you're unsure which Python installation you're using:
+```bash
+python3 -m pip install pythainlp
+```
 <br>
+
+---
 <br>
 
 ### Type Guards
@@ -231,7 +257,7 @@ import {
 
 #### isConvertibleLanguage
 
-Returns true if the given string is a supported language code from type ConvertibleLanguage.
+Returns true if the given string is a supported language code from type `ConvertibleLanguage`.
 
 ```ts
 isConvertibleLanguage("ja") // true
@@ -239,7 +265,7 @@ isConvertibleLanguage("ja") // true
 
 #### isCyrillicLanguageCode
 
-Returns true if the given string is a supported language code from type CyrillicLanguageCode (a subset of ConvertibleLanguage).
+Returns true if the given string is a supported language code from type `CyrillicLanguageCode` (a subset of `ConvertibleLanguage`).
 
 ```ts
 isCyrillicLanguageCode("ru") // true
@@ -247,10 +273,10 @@ isCyrillicLanguageCode("ru") // true
 
 #### isIndicLanguageCode
 
-Returns true if the given string is a supported language code from type IndicLanguageCode (a subset of ConvertibleLanguage).
+Returns true if the given string is a supported language code from type `IndicLanguageCode` (a subset of `ConvertibleLanguage`).
 
 ```ts
-isConvertibleLanguage("hi") // true
+isIndicLanguageCode("hi") // true
 ```
 
 ## Dependencies and Attribution
