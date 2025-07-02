@@ -253,6 +253,23 @@ Returns true if the given string is a supported language code from type IndicLan
 isConvertibleLanguage("hi") // true
 ```
 
+## Dependencies and Attribution
+
+This library draws on the capabilities of several existing libraries, many of which have been extended or combined to support broader functionality:
+
+- [**arabic-transliterate**](https://www.npmjs.com/package/arabic-transliterate) – used as the foundation for Arabic, Persian, and Urdu transliteration, with significant customizations, details of which are provided in the Technical Notes section.
+- [**@indic-transliteration/sanscript**](https://www.npmjs.com/package/@indic-transliteration/sanscript) – provides base functionality for Devanagari and other Indic scripts.
+- [**kuroshiro**](https://www.npmjs.com/package/kuroshiro) – used for Japanese transliteration; includes async processing.
+- [**kuroshiro-analyzer-kuromoji**](https://www.npmjs.com/package/kuroshiro-analyzer-kuromoji) – Japanese morphological analyzer required by Kuroshiro.
+- [**pinyin-pro**](https://www.npmjs.com/package/pinyin-pro) – used for Mandarin transliteration from Simplified and Traditional Hanzi.
+- [**cantonese-romanisation**](https://www.npmjs.com/package/cantonese-romanisation) – provides base mappings for Cantonese transliteration.
+- [**oktjs**](https://www.npmjs.com/package/oktjs) – used to tokenize and normalize Korean input before transliteration.
+- [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) – used for Hangul transliteration.
+- [**tnthai**](https://www.npmjs.com/package/tnthai) – used to segment Thai script into individual words before submitting them to the transliteration pipeline.
+- [**pythainlp**](https://github.com/PyThaiNLP/pythainlp) – external Python library used for Thai transliteration. **Note:** This is not a direct JavaScript dependency. It must be installed manually (alongside Python 3) in the runtime environment for `romanizeThai` to function.
+
+> Note: While this package was originally inspired by [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js), that codebase was not included as a dependency. Instead, its logic was replicated and extensively modified within this library to support additional Cyrillic-based languages.
+
 ## Technical Notes
 
 As of the time of this writing, the [cyrillic-to-translit-js](https://github.com/greybax/cyrillic-to-translit-js) library only has presets for Russian, Mongolian, and Ukrainian. In order to expand upon the coverage it offered, its original code was integrated into this project with significant modifications. The support for reverse transliteration (Latin -> Cyrillic) was dropped, and new LLM-generated character maps were added for Belarusian, Bulgarian, Kazakh, Kyrgyz, Macedonian, Serbian, and Tajik.
