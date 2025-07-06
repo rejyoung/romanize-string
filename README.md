@@ -294,7 +294,10 @@ This library draws on the capabilities of several existing libraries, many of wh
 - [**tnthai**](https://www.npmjs.com/package/tnthai) – used to segment Thai script into individual words before submitting them to the transliteration pipeline.
 - [**pythainlp**](https://github.com/PyThaiNLP/pythainlp) – external Python library used for Thai transliteration. **Note:** This is not a direct JavaScript dependency. It must be installed manually (alongside Python 3) in the runtime environment for `romanizeThai` to function.
 
-> Note: While this package was originally inspired by [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js), that codebase was not included as a dependency. Instead, its logic was replicated and extensively modified within this library to support additional Cyrillic-based languages.
+This project includes modified and vendored code from the following libraries:
+
+- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov = MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see Technical Notes.
+- [`@romanize/korean`](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
 
 ## Technical Notes
 
