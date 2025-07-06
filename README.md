@@ -207,7 +207,7 @@ Supported Languages: zh-CN, zh-Hant
 ```ts
 romanizeMandarin(input: string, omitTones?: boolean): string
 ```
-> If not specified, omitTones defaults to "false".
+> If not specified, `omitTones` defaults to "false".
  <br>
  <br>
 
