@@ -13,6 +13,7 @@ import { romanizeThai } from "./transliterators/thai-romanization.js";
 import { romanizeCantonese } from "./transliterators/cantonese-romanization.js";
 import { romanizeMandarin } from "./transliterators/mandarin-romanization.js";
 import { romanizeCyrillic } from "./transliterators/cyrillic-romanization.js";
+import { romanizeGreek } from "./transliterators/greek-romanization.js";
 
 export const romanizeString = async (
     string: string,
@@ -51,6 +52,8 @@ export const romanizeString = async (
         // Arabic
     } else if (isArabicLanguageCode(language)) {
         transliteratedString = romanizeArabic(string);
+    } else if (language === "el") {
+        transliteratedString = romanizeGreek(string, omitDiacritics);
     } else {
         transliteratedString = string;
     }
