@@ -1,7 +1,7 @@
-import { REVISED_ROMANIZATION_OF_KOREAN } from "./constants/revised";
-import { HangulSyllable } from "./lib/decompose-hangul";
-import { HangulTree } from "./lib/is-hangul";
-import type { HangulJamo } from "./types/hangul";
+import { REVISED_ROMANIZATION_OF_KOREAN } from "./constants/revised.js";
+import { HangulSyllable } from "./lib/decompose-hangul.js";
+import { HangulTree } from "./lib/is-hangul.js";
+import type { HangulJamo } from "./types/hangul.js";
 
 const tree = new HangulTree();
 

@@ -1,6 +1,6 @@
-import { romanizeKorean } from "../../src/transliterators/korean-romanization";
-import { HangulSyllable } from "../../src/vendor/romanize/korean/src/lib/decompose-hangul";
-import { romanize } from "../../src/vendor/romanize/korean/src";
+import { romanizeKorean } from "../../src/transliterators/korean-romanization.js";
+import { HangulSyllable } from "../../src/vendor/romanize/korean/src/lib/decompose-hangul.js";
+import { romanize } from "../../src/vendor/romanize/korean/src/index.js";
 
 describe("romanizeKorean", () => {
     it("should correctly romanize basic Hangul syllables", () => {

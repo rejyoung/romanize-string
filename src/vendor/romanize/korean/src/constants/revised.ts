@@ -1,4 +1,4 @@
-import { HangulJamo } from "../types/hangul";
+import { HangulJamo } from "../types/hangul.js";
 
 // https://www.korean.go.kr/front_eng/roman/roman_01.do
 // https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean
