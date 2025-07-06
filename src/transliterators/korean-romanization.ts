@@ -3,7 +3,7 @@ import {
     tokenize as koreanTokenize,
 } from "oktjs";
 
-import { romanize } from "@romanize/korean";
+import { romanize } from "../vendor/romanize/korean/src";
 
 export const romanizeKorean = (string: string): string => {
     // Normalize and tokenize string, omitting any extra white spaces
