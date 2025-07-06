@@ -6,6 +6,7 @@ export const convertibleLanguages = [
     "be", // Belarusian
     "bg", // Bulgarian
     "bn", // Bengali
+    "el", // Greek
     "fa", // Persian (Farsi)
     "gu", // Gujarati
     "hi", // Hindi

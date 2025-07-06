@@ -7,6 +7,7 @@ export { romanizeThai } from "./transliterators/thai-romanization.js";
 export { romanizeCantonese } from "./transliterators/cantonese-romanization.js";
 export { romanizeMandarin } from "./transliterators/mandarin-romanization.js";
 export { romanizeCyrillic } from "./transliterators/cyrillic-romanization.js";
+export { romanizeGreek } from "./transliterators/greek-romanization.js";
 export {
     ConvertibleLanguage,
     IndicLanguageCode,
