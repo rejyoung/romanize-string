@@ -4,9 +4,9 @@
 
 ## Introduction
 
-Romanize-string is a library for transliterating strings unidirectionally from non-Latin to Latin script. It unifies 10 different transliteration and parsing libraries—expanding upon some of them significantly in order to expand coverage—to create a single utility capable of generating basic transliterations of 29 written languages.
+Romanize-string is a library for transliterating strings unidirectionally from non-Latin to Latin script. It unifies 10 different transliteration and parsing libraries—expanding upon some of them significantly in order to increase coverage—to create a single utility that can generate basic transliterations for 30 written languages.
 
-Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
+Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Greek, Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
 
 > \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the Technical Notes section below.
 
@@ -30,9 +30,9 @@ const output = await romanizeString(string, languageCode, omitDiacritics[optiona
 
 The `romanizeString` utility is capable of transliterating a string written in any of the supported languages. (Supported language codes are listed below.) It cannot transliterate from multiple languages at once. 
 
-Because one of the underlying libraries is asynchronous, calls to `romanizeString` must be awaited.
+Because one of the underlying libraries is asynchronous, you must await calls to `romanizeString`.
 
-The function accepts an optional boolean argument `omitDiacritics` which controls the transliteration scheme used for Mandarin and Indic languages (for Mandarin, that means controlling whether or not to include tones). When omitted, the value defaults to "false". When transliterating from a language that is not Mandarin or Indic, including a value for `omitDiacritics` in your function call has no effect.
+The function accepts an optional boolean argument `omitDiacritics` which controls the transliteration scheme used for Mandarin, Greek, and Indic languages (for Mandarin, that means controlling whether or not to include tones). When omitted, the value defaults to "false". When transliterating from a language that is not Mandarin, Greek, or Indic, passing a value for `omitDiacritics` in your function call has no effect.
 
 
 
@@ -73,17 +73,23 @@ The function accepts an optional boolean argument `omitDiacritics` which control
 | ta   | Tamil    |
 | te   | Telugu   |
 
+#### Greek Script
+| Code | Language   |
+|------|------------|
+| el   | Greek      |
+
+
 #### East and Southeast Asian Scripts
 | Code    | Language              |
 |---------|-----------------------|
 | ja      | Japanese              |
 | ko      | Korean                |
-| th*      | Thai                  |
+| th     | Thai ¹                  |
 | yue     | Cantonese             |
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-\* Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in the Modular Imports section below for more details.
+¹ Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in the Modular Imports section below for more details.
 
 ### Examples
 
@@ -163,6 +169,18 @@ Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 ```ts
 romanizeCyrillic(input: string, language: CyrillicLanguageCode): string
 ```
+<br>
+
+#### romanizeGreek
+
+Transliterates from Greek script.
+
+Supported Languages: el
+```ts
+romanizeGreek(input: string, omitDiacritics?: boolean): string
+```
+> If not specified, `omitDiacritics` defaults to "false".
+<br>
 <br>
 
 #### romanizeIndic
@@ -290,20 +308,19 @@ This library draws on the capabilities of several existing libraries, many of wh
 - [**pinyin-pro**](https://www.npmjs.com/package/pinyin-pro) – used for Mandarin transliteration from Simplified and Traditional Hanzi.
 - [**cantonese-romanisation**](https://www.npmjs.com/package/cantonese-romanisation) – provides base mappings for Cantonese transliteration.
 - [**oktjs**](https://www.npmjs.com/package/oktjs) – used to tokenize and normalize Korean input before transliteration.
-- [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) – used for Hangul transliteration.
 - [**tnthai**](https://www.npmjs.com/package/tnthai) – used to segment Thai script into individual words before submitting them to the transliteration pipeline.
 - [**pythainlp**](https://github.com/PyThaiNLP/pythainlp) – external Python library used for Thai transliteration. **Note:** This is not a direct JavaScript dependency. It must be installed manually (alongside Python 3) in the runtime environment for `romanizeThai` to function.
 
 This project includes modified and vendored code from the following libraries:
 
 - [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov = MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see Technical Notes.
-- [`@romanize/korean`](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
+- [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Used for Hangul transliteration. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
 
 ## Technical Notes
 
 As of the time of this writing, the [cyrillic-to-translit-js](https://github.com/greybax/cyrillic-to-translit-js) library only has presets for Russian, Mongolian, and Ukrainian. In order to expand upon the coverage it offered, its original code was integrated into this project with significant modifications. The support for reverse transliteration (Latin -> Cyrillic) was dropped, and new LLM-generated character maps were added for Belarusian, Bulgarian, Kazakh, Kyrgyz, Macedonian, Serbian, and Tajik.
 
-Persian and Urdu posed a particular challenge, as the omission of short vowels in their written scripts makes straightforward character-mapping approaches insufficient for producing usable transliterations. This is likely why there are currently no transliteration libraries that support these languages. The admittedly imperfect approach taken in this library involves standardizing the Arabic script and then running it through the arabic-transliterate library. This standardization is done in three steps:
+Persian and Urdu posed a particular challenge, as the omission of short vowels in their written scripts makes straightforward character-mapping approaches insufficient for producing usable transliterations. This likely explains why no transliteration libraries that support these languages. The imperfect approach taken in this library involves standardizing the Arabic script and then running it through the arabic-transliterate library. This standardization is done in three steps:
 
 1. Common Persian and Urdu words are replaced with approximate LLM-generated phonetic forms (still in Arabic script), using lookup maps built from the Center for Language Engineering’s word frequency data for Persian and Urdu.
 
