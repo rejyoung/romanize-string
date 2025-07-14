@@ -8,7 +8,7 @@ Romanize-string is a library for transliterating strings unidirectionally from n
 
 Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Greek, Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
 
-> \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the Technical Notes section below.
+> \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the [Technical Notes](#technical-notes) section.
 
 ## About
 I created this library in the process of working on a closed-source project. I was in need of a utility that could handle transliterating media titles from multiple languages into Latin script so that their romanized forms could be used for display and for creating searchable slugs. Unfortunately, not only did no such library exist (at least not that covered all the languages I had to work with), but some of the languages had no direct transliteration libraries at all. I found that transliterating some languages required me to construct multi-step processes drawing on multiple libraries, while others (Farsi and Urdu, in particular) required a significant amount of custom code in order to produce something usable. Here I've condensed all of that into a single, unidirectional transliteration engine.
@@ -19,20 +19,33 @@ I created this library in the process of working on a closed-source project. I w
 $ npm install romanize-string
 ```
 
+> Requires Node.js 16+
+> Supports both ESM and CommonJS
+
 ## Usage
 
-
-```ts
-import romanizeString from "romanize-string"
-
-const output = await romanizeString(string, languageCode, omitDiacritics[optional])
-```
-
-The `romanizeString` utility is capable of transliterating a string written in any of the supported languages. (Supported language codes are listed below.) It cannot transliterate from multiple languages at once. 
+The `romanizeString` utility is capable of transliterating a string written in any of the [supported languages](#language-codes). It cannot transliterate from multiple languages at once. For scripts without native capitalization (all except Cyrillic and Greek), the out romanized strings will be lowercase.
 
 Because one of the underlying libraries is asynchronous, you must await calls to `romanizeString`.
 
-The function accepts an optional boolean argument `omitDiacritics` which controls the transliteration scheme used for Mandarin, Greek, and Indic languages (for Mandarin, that means controlling whether or not to include tones). When omitted, the value defaults to "false". When transliterating from a language that is not Mandarin, Greek, or Indic, passing a value for `omitDiacritics` in your function call has no effect.
+**Example:**
+```ts
+import romanizeString from "romanize-string"
+
+const output = await romanizeString("নমস্তে, আপনি কেমন আছেন?", "bn", false) // namaste, āpani kemana āchena?
+```
+
+**Arguments:**
+
+`input` - A string in a supported script/language.
+`languageCode` - A supported language code of type `ConvertibleLanguage`
+`omitDiacritics` *(optional)* - A boolean indicating whether to omit diacritics from the output by controlling the transliteration scheme (defaults to `false`)
+
+**Returns:**
+
+A string in Latin script
+
+> **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
 
 
 
@@ -84,12 +97,12 @@ The function accepts an optional boolean argument `omitDiacritics` which control
 |---------|-----------------------|
 | ja      | Japanese              |
 | ko      | Korean                |
-| th     | Thai ¹                  |
+| th      | Thai ¹                |
 | yue     | Cantonese             |
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-¹ Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in the Modular Imports section below for more details.
+¹ Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in [Modular Imports](#modular-imports) for more details.
 
 ### Examples
 
@@ -101,7 +114,7 @@ const translitFromBengaliAscii = await romanizeString("বাংলা", "bn", t
 ```
 
 
-This library also supports modular imports. For usage of each individual function, see the Modular Imports section below.
+This library also supports modular imports. For usage of each individual function, see [Modular Imports](#modular-imports).
 
 
 
@@ -121,6 +134,21 @@ import {
 ## Modular Imports
 
 In addition to the default `romanizeString` function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported directly to reduce bundle size or to access specialized functionality.
+
+| Method                      | Description                                                              | Args                                   | Returns          |
+| --------------------------- | ------------------------------------------------------------------------ | -------------------------------------- | ---------------- |
+| `romanizeArabic()`          | Transliterate Arabic script to Latin script                              | `input`                                | string           |
+| `romanizeCantonese()`       | Transliterate Hanzi script to Latin script with Cantonese pronunciation  | `input`                                | string           |
+| `romanizeCyrillic()`        | Transliterate Cyrillic script to Latin script                            | `input`, `language`                    | string           |
+| `romanizeIndic()`           | Transliterate an Indic script to Latin script                            | `input`, `language`, `omitDiacritics?` | string           |
+| `romanizeJapanese()`        | Transliterate Kanji, Hiragana, or Katakana script to Latin script        | `input`                                | Promise\<String> |
+| `romanizeKorean()`          | Transliterate Hangul script to Latin script                              | `input`                                | string           |
+| `romanizeMandarin()`        | Transliterate Hanzi script to Latin script using Mandarin pronunciation  | `input`, `omitTones?`                  | string           |
+| `romanizeThai()`            | Transliterate Thai script to Latin script                                | `input`                                | string           |
+| `isConvertibleLanguage()`   | Check whether language code is included in the `ConvertibleLanguage` type  | `languageCode`                         | boolean          |
+| `isCyrillicLanguageCode()`  | Check whether language code is included in the `CyrillicLanguageCode` type | `languageCode`                         | boolean          |
+| `isIndicLanguageCode()`     | Check whether language code is included in the `IndicLanguageCode` type    | `languageCode`                         | boolean          |
+
 
 ### Script-Based Transliteration Functions
 
@@ -147,9 +175,15 @@ Transliterates from Arabic script.
 Supported Languages: ar, fa, ur
 
 ```ts
-romanizeArabic(input: string): string
+const translit = romanizeArabic("مرحبا، كيف حالك؟") // maraḥabā,a kayafa ḥāl-k?
 ```
-<br>
+**Arguments:**
+
+`input` - A string in Arabic script
+
+**Returns:**
+
+A string in Latin script
 
 #### romanizeCantonese
 
@@ -157,9 +191,16 @@ Transliterates from Hanzi using Cantonese pronunciation.
 
 Supported Language: yue
 ```ts
-romanizeCantonese(input: string): string
+const translit = romanizeCantonese(你好，今日點呀) // lee ho, gam yat dim ah?
 ```
-<br>
+
+**Arguments:**
+
+`input` - A string in Hanzi script
+
+**Returns:**
+
+A string in Latin script
 
 #### romanizeCyrillic
 
@@ -167,9 +208,19 @@ Transliterates from Cyrillic.
 
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 ```ts
-romanizeCyrillic(input: string, language: CyrillicLanguageCode): string
+const translit = romanizeCyrillic("Салам, кандайсың?" language: "ky") // Salam, kandaisyñ?
 ```
-<br>
+
+**Arguments:**
+
+`input` - A string in Cyrillic script
+`language` - A language code of type CyrillicLanguageCode
+
+**Returns:**
+
+A string in Latin script
+
+---
 
 #### romanizeGreek
 
@@ -177,11 +228,20 @@ Transliterates from Greek script.
 
 Supported Languages: el
 ```ts
-romanizeGreek(input: string, omitDiacritics?: boolean): string
+const translit = romanizeGreek("Γειά σου, τι κάνεις", false) // Yeiá sou, ti káneis
+const translitNoDia = romanizeGreek("Γειά σου, τι κάνεις", true) // Yeia sou, ti kaneis
 ```
-> If not specified, `omitDiacritics` defaults to "false".
-<br>
-<br>
+
+**Arguments:**
+
+`input` - string
+`omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
+
+**Returns:**
+
+A string in Latin script
+
+---
 
 #### romanizeIndic
 
@@ -189,11 +249,20 @@ Transliterates from Devanagari and other Indic scripts.
 
 Supported Languages: bn, gu, hi, kn, mr, ne, pa, sa, ta, te
 ```ts
-romanizeIndic(input: string, language: IndicLanguageCode, omitDiacritics?: boolean): string
+const translit = romanizeIndic("नमस्ते, आप कैसे हैं?", "hi", false) // namaste, āpa kaise haiṃ?
+const translitNoDia = romanizeIndic("नमस्ते, आप कैसे हैं?", "hi", true) // namaste, aapa kaise haim?
 ```
-> If not specified, `omitDiacritics` defaults to "false".
-<br>
-<br>
+
+**Arguments:**
+
+`input` - string
+`omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
+
+**Returns:**
+
+A string in Latin script
+
+---
 
 #### romanizeJapanese
 
@@ -201,11 +270,20 @@ Transliterates from Kanji, Hiragana, or Katakana.
 
 Supported Language: ja
 ```ts
-await romanizeJapanese(input: string): Promise<string>
+const translit = await romanizeJapanese("こんにちは、お元気ですか？") // konnichiwa, o genkidesu ka?
+const translitMixed = await romanizeJapanese("今日のディナーはカレーです。") // kyō no dinā wa karē desu.
 ```
-> The supporting library responsible for Japanese transliteration ( [Kuroshiro](https://github.com/hexenq/kuroshiro) ) operates asynchronously. All calls to romanizeJapanese must therefore be awaited.
-<br>
-<br>
+**Arguments:**
+
+`input` - string
+
+**Returns:**
+
+A promise resolving to a string in Latin script
+
+> **NOTE:** The supporting library responsible for Japanese transliteration ( [Kuroshiro](https://github.com/hexenq/kuroshiro) ) operates asynchronously. All calls to romanizeJapanese must therefore be awaited.
+
+---
 
 #### romanizeKorean
 
@@ -213,9 +291,17 @@ Transliterates from Hangul script.
 
 Supported Language: ko
 ```ts
-romanizeKorean(input: string): string
+const translit = romanizeKorean("안녕하세요, 잘 지내세요?") // annyeonghaseyo, jal jinaeseyo?
 ```
-<br>
+**Arguments:**
+
+`input` - string
+
+**Returns:**
+
+A string in Latin script
+
+---
 
 #### romanizeMandarin
 
@@ -223,21 +309,37 @@ Transliterates from both Traditional and Simplified Hanzi using Mandarin pronunc
 
 Supported Languages: zh-CN, zh-Hant
 ```ts
-romanizeMandarin(input: string, omitTones?: boolean): string
+const translitTrad = romanizeMandarin("你好，最近好嗎？", false) // nǐ hǎo, zuì jìn hǎo má ？
+const translitTradNoDia = romanizeMandarin("你好，最近好嗎？", true) // ni hao, zui jin hao ma ？
+const translitSimplified = romanizeMandarin("你好，最近好吗？", false) // nǐ hǎo, zuì jìn hǎo ma?
 ```
 > If not specified, `omitTones` defaults to "false".
- <br>
- <br>
+**Arguments:**
 
- 
+`input` - string
+`omitTones` *(optional)* - A boolean indicating whether to exclude diacritics that indicate tones from the output (defaults to `false`)
+
+**Returns:**
+
+A string in Latin script
+
+---
+
 #### romanizeThai
 
 Transliterates from Thai script.
 
 Supported Language: th
 ```ts
-romanizeThai(input: string):string
+const translit = romanizeThai("สวัสดีครับ/ค่ะ สบายดีไหม?") // satti khnap/kha spaiti mai?
 ```
+**Arguments:**
+
+`input` - string
+
+**Returns:**
+
+A string in Latin script
 
 **NOTE**: `romanizeThai` uses an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) for the transliteration, since no suitable JavaScript library currently exists. As such, the function will only work if the environment in which it is run has both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) installed. Attempts to use this function without one or both of them installed will return an untransliterated string and generate console errors explaining the problem. 
 
@@ -256,10 +358,9 @@ If you're unsure which Python installation you're using:
 ```bash
 python3 -m pip install pythainlp
 ```
-<br>
 
 ---
-<br>
+
 
 ### Type Guards
 
@@ -281,21 +382,48 @@ Returns true if the given string is a supported language code from type `Convert
 isConvertibleLanguage("ja") // true
 ```
 
-#### isCyrillicLanguageCode
+**Arguments:**
 
-Returns true if the given string is a supported language code from type `CyrillicLanguageCode` (a subset of `ConvertibleLanguage`).
+`input` - a language code
+
+
+**Returns:**
+
+A boolean indicating whether the given language code is of type `ConvertibleLanguage`
+
+---
+
+#### isCyrillicLanguageCode
 
 ```ts
 isCyrillicLanguageCode("ru") // true
 ```
 
-#### isIndicLanguageCode
+**Arguments:**
 
-Returns true if the given string is a supported language code from type `IndicLanguageCode` (a subset of `ConvertibleLanguage`).
+`input` - a language code
+
+
+**Returns:**
+
+A boolean indicating whether the given language code is of type `CyrillicLanguageCode` (a subset of `ConvertibleLanguageCode`)
+
+---
+
+#### isIndicLanguageCode
 
 ```ts
 isIndicLanguageCode("hi") // true
 ```
+
+**Arguments:**
+
+`input` - a language code
+
+
+**Returns:**
+
+A boolean indicating whether the given language code is of type `IndicLanguageCode` (a subset of `ConvertibleLanguageCode`)
 
 ## Dependencies and Attribution
 
@@ -313,7 +441,7 @@ This library draws on the capabilities of several existing libraries, many of wh
 
 This project includes modified and vendored code from the following libraries:
 
-- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov = MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see Technical Notes.
+- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov = MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see [Technical Notes](#technical-notes).
 - [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Used for Hangul transliteration. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
 
 ## Technical Notes
