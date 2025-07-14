@@ -2,6 +2,19 @@
 # romanize-string 
 [![NPM version](https://img.shields.io/npm/v/romanize-string.svg?style=flat)](https://www.npmjs.com/package/romanize-string) [![NPM monthly downloads](https://img.shields.io/npm/dm/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string) [![NPM total downloads](https://img.shields.io/npm/dt/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string)
 
+## Table of Contents
+- [Introduction](#introduction)
+- [About](#about)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Language Codes](#language-codes)
+- [TypeScript Support](#typescript-support)
+- [Modular Imports](#modular-imports)
+    - [Script-Based Transliteration Functions](#script-based-transliteration-functions)
+    - [Type Guards](#type-guards)
+- [Dependencies and Attribution](#dependencies-and-attribution)
+- [Technical Notes](#technical-notes)
+
 ## Introduction
 
 Romanize-string is a library for transliterating strings unidirectionally from non-Latin to Latin script. It unifies 10 different transliteration and parsing libraries—expanding upon some of them significantly in order to increase coverage—to create a single utility that can generate basic transliterations for 30 written languages.
@@ -13,18 +26,37 @@ Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese,
 ## About
 I created this library in the process of working on a closed-source project. I was in need of a utility that could handle transliterating media titles from multiple languages into Latin script so that their romanized forms could be used for display and for creating searchable slugs. Unfortunately, not only did no such library exist (at least not that covered all the languages I had to work with), but some of the languages had no direct transliteration libraries at all. I found that transliterating some languages required me to construct multi-step processes drawing on multiple libraries, while others (Farsi and Urdu, in particular) required a significant amount of custom code in order to produce something usable. Here I've condensed all of that into a single, unidirectional transliteration engine.
 
-## Install
+## Installation
 
 ```sh
 $ npm install romanize-string
 ```
 
 > Requires Node.js 16+
-> Supports both ESM and CommonJS
+
+>Supports both ESM and CommonJS
+
+
+### Additional Installation for Thai Transliteration
+
+Because no suitable JavaScript library exists for Thai transliteration, this library relies on an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) to handle Thai script. As a result, any attempt to romanize Thai—whether via the [`romanizeThai`](#romanizethai) function or by passing `"th"` to `romanizeString`—requires both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the runtime environment. If either is missing, the function will return an untransliterated string and emit a descriptive console error. 
+
+1. Make sure Python 3 is installed:
+   - [Download Python](https://www.python.org/downloads/) if needed
+
+2. Install the required library:
+   ```bash
+   pip install pythainlp
+   ```
+
+If you're unsure which Python installation you're using:
+```bash
+python3 -m pip install pythainlp
+```
 
 ## Usage
 
-The `romanizeString` utility is capable of transliterating a string written in any of the [supported languages](#language-codes). It cannot transliterate from multiple languages at once. For scripts without native capitalization (all except Cyrillic and Greek), the out romanized strings will be lowercase.
+The `romanizeString` utility is capable of transliterating a string written in any of the [supported languages](#language-codes). It cannot transliterate from multiple languages at once. For scripts without native capitalization (all except Cyrillic and Greek), the output romanized strings will be lowercase.
 
 Because one of the underlying libraries is asynchronous, you must await calls to `romanizeString`.
 
@@ -102,7 +134,7 @@ A string in Latin script
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-¹ Thai transliteration requires the presence of Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) in the environment where the code is run. See the `romanizeThai` entry in [Modular Imports](#modular-imports) for more details.
+¹ Thai transliteration requires Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the environment where the code is run. See the [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more details.
 
 ### Examples
 
@@ -133,7 +165,7 @@ import {
 
 ## Modular Imports
 
-In addition to the default `romanizeString` function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported directly to reduce bundle size or to access specialized functionality.
+In addition to the default `romanizeString` function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported individually to reduce bundle size or to access specialized functionality.
 
 | Method                      | Description                                                              | Args                                   | Returns          |
 | --------------------------- | ------------------------------------------------------------------------ | -------------------------------------- | ---------------- |
@@ -208,7 +240,7 @@ Transliterates from Cyrillic.
 
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 ```ts
-const translit = romanizeCyrillic("Салам, кандайсың?" language: "ky") // Salam, kandaisyñ?
+const translit = romanizeCyrillic("Салам, кандайсың?", "ky") // Salam, kandaisyñ?
 ```
 
 **Arguments:**
@@ -341,23 +373,7 @@ const translit = romanizeThai("สวัสดีครับ/ค่ะ สบ�
 
 A string in Latin script
 
-**NOTE**: `romanizeThai` uses an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) for the transliteration, since no suitable JavaScript library currently exists. As such, the function will only work if the environment in which it is run has both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) installed. Attempts to use this function without one or both of them installed will return an untransliterated string and generate console errors explaining the problem. 
-
-
-To use `romanizeThai`, Python 3 and the pythainlp library must be available in your environment.
-
-1. Make sure Python 3 is installed:
-   - [Download Python](https://www.python.org/downloads/) if needed
-
-2. Install the required library:
-   ```bash
-   pip install pythainlp
-   ```
-
-If you're unsure which Python installation you're using:
-```bash
-python3 -m pip install pythainlp
-```
+> **NOTE:** To use `romanizeThai`, Python 3 and the pythainlp library must be available in your environment. See [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more information.
 
 ---
 
