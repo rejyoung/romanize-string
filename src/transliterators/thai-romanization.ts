@@ -36,7 +36,9 @@ export const romanizeThai = (input: string) => {
             );
         }
 
-        return result.stdout.trim();
+        return result.stdout
+            .replace(/\b(\w{1,10})\s*\/\s*(\w{1,10})\b/g, "$1/$2") // Remove spaces around polite suffix separators
+            .trim();
     } catch (err) {
         console.error("Thai transliteration failed.");
         console.error(err);
