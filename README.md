@@ -53,7 +53,7 @@ If you're unsure which Python installation you're using:
 ```bash
 python3 -m pip install pythainlp
 ```
-
+> **NOTE:** This issue **only** affects Thai transliteration. The absence or presence of Python 3 and pythainlp has no effect on the romanization of other scripts.
 ## Usage
 
 The `romanizeString` utility is capable of transliterating a string written in any of the [supported languages](#language-codes). It cannot transliterate from multiple languages at once. For scripts without native capitalization (all except Cyrillic and Greek), the output romanized strings will be lowercase.
@@ -70,12 +70,14 @@ const output = await romanizeString("নমস্তে, আপনি কেম�
 **Arguments:**
 
 `input` - A string in a supported script/language.
+
 `languageCode` - A supported language code of type `ConvertibleLanguage`
+
 `omitDiacritics` *(optional)* - A boolean indicating whether to omit diacritics from the output by controlling the transliteration scheme (defaults to `false`)
 
 **Returns:**
 
-A string in Latin script
+A promise resolving to a string in Latin script
 
 > **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
 
@@ -246,6 +248,7 @@ const translit = romanizeCyrillic("Салам, кандайсың?", "ky") // Sa
 **Arguments:**
 
 `input` - A string in Cyrillic script
+
 `language` - A language code of type CyrillicLanguageCode
 
 **Returns:**
@@ -267,6 +270,7 @@ const translitNoDia = romanizeGreek("Γειά σου, τι κάνεις", true) 
 **Arguments:**
 
 `input` - string
+
 `omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
 
 **Returns:**
@@ -288,6 +292,7 @@ const translitNoDia = romanizeIndic("नमस्ते, आप कैसे ह
 **Arguments:**
 
 `input` - string
+
 `omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
 
 **Returns:**
@@ -345,10 +350,11 @@ const translitTrad = romanizeMandarin("你好，最近好嗎？", false) // nǐ 
 const translitTradNoDia = romanizeMandarin("你好，最近好嗎？", true) // ni hao, zui jin hao ma ？
 const translitSimplified = romanizeMandarin("你好，最近好吗？", false) // nǐ hǎo, zuì jìn hǎo ma?
 ```
-> If not specified, `omitTones` defaults to "false".
+
 **Arguments:**
 
 `input` - string
+
 `omitTones` *(optional)* - A boolean indicating whether to exclude diacritics that indicate tones from the output (defaults to `false`)
 
 **Returns:**
