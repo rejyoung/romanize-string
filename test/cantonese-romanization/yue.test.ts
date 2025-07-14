@@ -13,7 +13,7 @@ describe("romanizeCantonese", () => {
         expect(romanizeCantonese("")).toBe("");
     });
 
-    it("should ignore non-Chinese characters", () => {
-        expect(romanizeCantonese("123 abc")).toBe(" ");
+    it("should leave non-Chinese characters untransliterated", () => {
+        expect(romanizeCantonese("123 abc")).toBe("123 abc");
     });
 });
