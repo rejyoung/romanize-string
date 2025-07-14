@@ -11,6 +11,14 @@ export const romanizeMandarin = (input: string, omitTones?: boolean) => {
     }
     const transliteration = pinyin(input, {
         toneType: omitTones ? "none" : undefined,
-    }).replace(/\s+/g, " ");
+    })
+        .replace(/(\S)\s+([，。！？、])/gu, "$1$2") // Remove extra spaces before punctuation
+        .replace(/\s+/g, " ")
+        // Replace full-width punctuation with standard ASCII punctuation.
+        .replace(/[，]/g, ",")
+        .replace(/[。]/g, ".")
+        .replace(/[？]/g, "?")
+        .replace(/[！]/g, "!")
+        .trim();
     return transliteration;
 };
