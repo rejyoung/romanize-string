@@ -1,10 +1,38 @@
 import { getRoman } from "cantonese-romanisation";
+const hanziRegex = /[\p{Script=Han}]/u;
 
 export const romanizeCantonese = (input: string) => {
-    const transliteration = getRoman(input)
-        .map((options) => options[0])
-        .join(" ")
-        .replace(/\s+/g, " ");
+    let transliteration = "";
+    let buffer = "";
+    let lastWasHanzi = null;
 
-    return transliteration;
+    for (const char of input) {
+        const isHanzi = hanziRegex.test(char);
+
+        if (lastWasHanzi === null) {
+            lastWasHanzi = isHanzi;
+            buffer = char;
+        } else if (isHanzi === lastWasHanzi) {
+            buffer += char;
+        } else {
+            transliteration += lastWasHanzi
+                ? getRoman(buffer)
+                      .map((options) => options[0])
+                      .join(" ")
+                : buffer;
+            buffer = char;
+            lastWasHanzi = isHanzi;
+        }
+    }
+
+    // Handle final buffer
+    if (buffer) {
+        transliteration += lastWasHanzi
+            ? getRoman(buffer)
+                  .map((options) => options[0])
+                  .join(" ")
+            : buffer;
+    }
+
+    return transliteration.replace(/\s+/g, " ").trim();
 };
