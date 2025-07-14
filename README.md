@@ -39,7 +39,7 @@ $ npm install romanize-string
 
 ### Additional Installation for Thai Transliteration
 
-Because no suitable JavaScript library exists for Thai transliteration, this library relies on an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) to handle Thai script. As a result, any attempt to romanize Thai—whether via the [`romanizeThai`](#romanizethai) function or by passing `"th"` to `romanizeString`—requires both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the runtime environment. If either is missing, the function will return an untransliterated string and emit a descriptive console error. 
+Because no suitable JavaScript library exists for Thai transliteration, this library relies on an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) to handle Thai script. As a result, any attempt to romanize Thai—whether via the [`romanizeThai`](#romanizethai) function or by passing `"th"` to `romanizeString`—requires both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the runtime environment. If either is missing, the function will return an untransliterated string and emit a descriptive console error.
 
 1. Make sure Python 3 is installed:
    - [Download Python](https://www.python.org/downloads/) if needed
@@ -53,7 +53,9 @@ If you're unsure which Python installation you're using:
 ```bash
 python3 -m pip install pythainlp
 ```
+
 > **NOTE:** This issue **only** affects Thai transliteration. The absence or presence of Python 3 and pythainlp has no effect on the romanization of other scripts.
+
 ## Usage
 
 The `romanizeString` utility is capable of transliterating a string written in any of the [supported languages](#language-codes). It cannot transliterate from multiple languages at once. For scripts without native capitalization (all except Cyrillic and Greek), the output romanized strings will be lowercase.
