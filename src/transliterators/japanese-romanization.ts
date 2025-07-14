@@ -11,7 +11,8 @@ export const romanizeJapanese = async (input: string) => {
     });
     const standardizedTransliteration = transliteration
         .replace(/\b(\w+)\s+(ta|te|nai|masu|desu|da)\b/g, "$1$2") // Join common verb splits like "megumare ta" -> "megumareta".
-        .replace(/\s+/g, " ");
+        .replace(/\s+/g, " ")
+        .replace(/\s+([.,!?！？。、])/g, "$1");
 
     return standardizedTransliteration;
 };

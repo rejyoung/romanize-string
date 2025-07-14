@@ -27,6 +27,10 @@ export const romanizeKorean = (string: string): string => {
         []
     );
 
-    // Join the processed array of tokens into a single string, omitting any additional extra white spaces that may have crept in during the process.
-    return josaJoined.join(" ").replace(/\s+/g, " ");
+    // Join the processed array of tokens into a single string, omitting any additional extra white spaces
+    // that may have crept in during the process and removing white spaces before punctuation.
+    return josaJoined
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .replace(/\s+([.,!?！？。、])/g, "$1");
 };
