@@ -71,7 +71,7 @@ Because one of the underlying libraries is asynchronous, you must await calls to
 ```ts
 import romanizeString from "romanize-string"
 
-const output = await romanizeString("নমস্তে, আপনি কেমন আছেন?", "bn", false) // namaste, āpani kemana āchena?
+const translit = await romanizeString("নমস্তে, আপনি কেমন আছেন?", "bn", false) // namaste, āpani kemana āchena?
 ```
 
 **Arguments:**
@@ -145,7 +145,7 @@ A promise resolving to a string in Latin script
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-¹ Thai transliteration requires Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the environment where the code is run. See the [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more details.
+> ¹ Thai transliteration requires Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the environment where the code is run. See the [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more details.
 
 ### Examples
 
@@ -207,12 +207,12 @@ import {
 
 #### `romanizeArabic()`
 
-Transliterates from Arabic script.
+Transliterates Arabic script.
 
 Supported Languages: ar, fa, ur
 
 ```ts
-const translit = romanizeArabic("مرحبا، كيف حالك؟") // maraḥabā,a kayafa ḥāl-k?
+const translit = romanizeArabic("مرحبا، كيف حالك؟") // maraḥabā, a kayafa ḥāl-k?
 ```
 
 **Arguments:**
@@ -225,7 +225,7 @@ A string in Latin script
 
 #### `romanizeCantonese()`
 
-Transliterates from Hanzi using Cantonese pronunciation.
+Transliterates Hanzi using Cantonese pronunciation.
 
 Supported Language: yue
 
@@ -243,7 +243,7 @@ A string in Latin script
 
 #### `romanizeCyrillic()`
 
-Transliterates from Cyrillic.
+Transliterates Cyrillic.
 
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
 
@@ -265,7 +265,7 @@ A string in Latin script
 
 #### `romanizeGreek()`
 
-Transliterates from Greek script.
+Transliterates Greek script.
 
 Supported Languages: el
 
@@ -276,7 +276,7 @@ const translitNoDia = romanizeGreek("Γειά σου, τι κάνεις", true) 
 
 **Arguments:**
 
-`input` - string
+`input` - A string in Greek script
 
 `omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
 
@@ -288,7 +288,7 @@ A string in Latin script
 
 #### `romanizeIndic()`
 
-Transliterates from Devanagari and other Indic scripts.
+Transliterates Devanagari and other Indic scripts.
 
 Supported Languages: bn, gu, hi, kn, mr, ne, pa, sa, ta, te
 
@@ -299,7 +299,7 @@ const translitNoDia = romanizeIndic("नमस्ते, आप कैसे ह
 
 **Arguments:**
 
-`input` - string
+`input` - A string in an Indic script
 
 `omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
 
@@ -311,7 +311,7 @@ A string in Latin script
 
 #### `romanizeJapanese()`
 
-Transliterates from Kanji, Hiragana, or Katakana.
+Transliterates Kanji, Hiragana, or Katakana. Tolerates a mix of these scripts within a single input.
 
 Supported Language: ja
 
@@ -322,7 +322,7 @@ const translitMixed = await romanizeJapanese("今日のディナーはカレー�
 
 **Arguments:**
 
-`input` - string
+`input` - A string in any of the Japanese scripts
 
 **Returns:**
 
@@ -334,7 +334,7 @@ A promise resolving to a string in Latin script
 
 #### `romanizeKorean()`
 
-Transliterates from Hangul script.
+Transliterates Hangul script.
 
 Supported Language: ko
 
@@ -344,7 +344,7 @@ const translit = romanizeKorean("안녕하세요, 잘 지내세요?") // annyeon
 
 **Arguments:**
 
-`input` - string
+`input` - A string in Hangul script
 
 **Returns:**
 
@@ -354,7 +354,7 @@ A string in Latin script
 
 #### `romanizeMandarin()`
 
-Transliterates from both Traditional and Simplified Hanzi using Mandarin pronunciation.
+Transliterates both Traditional and Simplified Hanzi using Mandarin pronunciation.
 
 Supported Languages: zh-CN, zh-Hant
 
@@ -366,7 +366,7 @@ const translitSimplified = romanizeMandarin("你好，最近好吗？", false) /
 
 **Arguments:**
 
-`input` - string
+`input` - A string in Hanzi script, simplified or traditional
 
 `omitTones` *(optional)* - A boolean indicating whether to exclude diacritics that indicate tones from the output (defaults to `false`)
 
@@ -378,7 +378,7 @@ A string in Latin script
 
 #### `romanizeThai()`
 
-Transliterates from Thai script.
+Transliterates Thai script.
 
 Supported Language: th
 
@@ -388,7 +388,7 @@ const translit = romanizeThai("สวัสดีครับ/ค่ะ สบ�
 
 **Arguments:**
 
-`input` - string
+`input` - A string in Thai script
 
 **Returns:**
 
