@@ -1,8 +1,10 @@
 
-# romanize-string 
+# romanize-string
+
 [![NPM version](https://img.shields.io/npm/v/romanize-string.svg?style=flat)](https://www.npmjs.com/package/romanize-string) [![NPM monthly downloads](https://img.shields.io/npm/dm/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string) [![NPM total downloads](https://img.shields.io/npm/dt/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string)
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [About](#about)
 - [Installation](#installation)
@@ -10,8 +12,8 @@
 - [Language Codes](#language-codes)
 - [TypeScript Support](#typescript-support)
 - [Modular Imports](#modular-imports)
-    - [Script-Based Transliteration Functions](#script-based-transliteration-functions)
-    - [Type Guards](#type-guards)
+  - [Script-Based Transliteration Functions](#script-based-transliteration-functions)
+  - [Type Guards](#type-guards)
 - [Dependencies and Attribution](#dependencies-and-attribution)
 - [Technical Notes](#technical-notes)
 
@@ -19,23 +21,23 @@
 
 Romanize-string is a library for transliterating strings unidirectionally from non-Latin to Latin script. It unifies 10 different transliteration and parsing libraries—expanding upon some of them significantly in order to increase coverage—to create a single utility that can generate basic transliterations for 30 written languages.
 
-Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian* (Farsi), Greek, Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
+Supported languages include Arabic, Belarusian*, Bulgarian*, Bengali, Cantonese, Chinese (Traditional and Simplified), Persian*(Farsi), Greek, Gujarati, Hindi, Japanese, Kazakh*, Kannada, Korean, Kyrgyz*, Macedonian*, Mongolian*, Marathi, Nepali, Punjabi, Russian, Sanskrit, Serbian*, Tamil, Telugu, Tajik*, Thai, Ukrainian, and Urdu*.
 
 > \* Support for these languages is limited, as it was implemented without native fluency in those languages. They exist as custom extensions of the capabilities of the libraries arabic-transliterate and cyrillic-to-translit-js. [Contributions](https://github.com/rejyoung/romanize-string/issues) from community members with deeper knowledge of these languages are welcome. For information on the implementation of these expansions, see the [Technical Notes](#technical-notes) section.
 
 ## About
+
 I created this library in the process of working on a closed-source project. I was in need of a utility that could handle transliterating media titles from multiple languages into Latin script so that their romanized forms could be used for display and for creating searchable slugs. Unfortunately, not only did no such library exist (at least not that covered all the languages I had to work with), but some of the languages had no direct transliteration libraries at all. I found that transliterating some languages required me to construct multi-step processes drawing on multiple libraries, while others (Farsi and Urdu, in particular) required a significant amount of custom code in order to produce something usable. Here I've condensed all of that into a single, unidirectional transliteration engine.
 
 ## Installation
 
 ```sh
-$ npm install romanize-string
+npm install romanize-string
 ```
 
 > Requires Node.js 16+
 
 >Supports both ESM and CommonJS
-
 
 ### Additional Installation for Thai Transliteration
 
@@ -45,11 +47,13 @@ Because no suitable JavaScript library exists for Thai transliteration, this lib
    - [Download Python](https://www.python.org/downloads/) if needed
 
 2. Install the required library:
+
    ```bash
    pip install pythainlp
    ```
 
 If you're unsure which Python installation you're using:
+
 ```bash
 python3 -m pip install pythainlp
 ```
@@ -63,6 +67,7 @@ The `romanizeString` utility is capable of transliterating a string written in a
 Because one of the underlying libraries is asynchronous, you must await calls to `romanizeString`.
 
 **Example:**
+
 ```ts
 import romanizeString from "romanize-string"
 
@@ -83,11 +88,10 @@ A promise resolving to a string in Latin script
 
 > **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
 
-
-
-
 ### Language Codes
+
 #### Arabic Script
+
 | Code | Language        |
 |------|-----------------|
 | ar   | Arabic          |
@@ -95,6 +99,7 @@ A promise resolving to a string in Latin script
 | ur   | Urdu            |
 
 #### Cyrillic Script
+
 | Code | Language   |
 |------|------------|
 | be   | Belarusian |
@@ -109,6 +114,7 @@ A promise resolving to a string in Latin script
 | uk   | Ukrainian  |
 
 #### Devanagari / Other Indic Scripts
+
 | Code | Language |
 |------|----------|
 | bn   | Bengali  |
@@ -123,12 +129,13 @@ A promise resolving to a string in Latin script
 | te   | Telugu   |
 
 #### Greek Script
+
 | Code | Language   |
 |------|------------|
 | el   | Greek      |
 
-
 #### East and Southeast Asian Scripts
+
 | Code    | Language              |
 |---------|-----------------------|
 | ja      | Japanese              |
@@ -149,10 +156,7 @@ const translitFromBengali = await romanizeString("বাংলা", "bn");      
 const translitFromBengaliAscii = await romanizeString("বাংলা", "bn", true);       // "vaamlaa"
 ```
 
-
 This library also supports modular imports. For usage of each individual function, see [Modular Imports](#modular-imports).
-
-
 
 ## TypeScript Support
 
@@ -165,7 +169,6 @@ import {
     IndicLanguageCode
 } from "romanize-string"
 ```
-
 
 ## Modular Imports
 
@@ -185,7 +188,6 @@ In addition to the default `romanizeString` function, this library also supports
 | `isCyrillicLanguageCode()`  | Check whether language code is included in the `CyrillicLanguageCode` type | `languageCode`                         | boolean          |
 | `isIndicLanguageCode()`     | Check whether language code is included in the `IndicLanguageCode` type    | `languageCode`                         | boolean          |
 
-
 ### Script-Based Transliteration Functions
 
 These functions handle transliteration for specific script families.
@@ -203,8 +205,7 @@ import {
 } from "romanize-string"
 ```
 
-
-#### romanizeArabic
+#### `romanizeArabic()`
 
 Transliterates from Arabic script.
 
@@ -213,6 +214,7 @@ Supported Languages: ar, fa, ur
 ```ts
 const translit = romanizeArabic("مرحبا، كيف حالك؟") // maraḥabā,a kayafa ḥāl-k?
 ```
+
 **Arguments:**
 
 `input` - A string in Arabic script
@@ -221,11 +223,12 @@ const translit = romanizeArabic("مرحبا، كيف حالك؟") // maraḥabā
 
 A string in Latin script
 
-#### romanizeCantonese
+#### `romanizeCantonese()`
 
 Transliterates from Hanzi using Cantonese pronunciation.
 
 Supported Language: yue
+
 ```ts
 const translit = romanizeCantonese(你好，今日點呀) // lee ho, gam yat dim ah?
 ```
@@ -238,11 +241,12 @@ const translit = romanizeCantonese(你好，今日點呀) // lee ho, gam yat dim
 
 A string in Latin script
 
-#### romanizeCyrillic
+#### `romanizeCyrillic()`
 
 Transliterates from Cyrillic.
 
 Supported Languages: be, bg, kk, ky, mk, mn, ru, sr, tg, uk
+
 ```ts
 const translit = romanizeCyrillic("Салам, кандайсың?", "ky") // Salam, kandaisyñ?
 ```
@@ -259,11 +263,12 @@ A string in Latin script
 
 ---
 
-#### romanizeGreek
+#### `romanizeGreek()`
 
 Transliterates from Greek script.
 
 Supported Languages: el
+
 ```ts
 const translit = romanizeGreek("Γειά σου, τι κάνεις", false) // Yeiá sou, ti káneis
 const translitNoDia = romanizeGreek("Γειά σου, τι κάνεις", true) // Yeia sou, ti kaneis
@@ -281,11 +286,12 @@ A string in Latin script
 
 ---
 
-#### romanizeIndic
+#### `romanizeIndic()`
 
 Transliterates from Devanagari and other Indic scripts.
 
 Supported Languages: bn, gu, hi, kn, mr, ne, pa, sa, ta, te
+
 ```ts
 const translit = romanizeIndic("नमस्ते, आप कैसे हैं?", "hi", false) // namaste, āpa kaise haiṃ?
 const translitNoDia = romanizeIndic("नमस्ते, आप कैसे हैं?", "hi", true) // namaste, aapa kaise haim?
@@ -303,15 +309,17 @@ A string in Latin script
 
 ---
 
-#### romanizeJapanese
+#### `romanizeJapanese()`
 
 Transliterates from Kanji, Hiragana, or Katakana.
 
 Supported Language: ja
+
 ```ts
 const translit = await romanizeJapanese("こんにちは、お元気ですか？") // konnichiwa, o genkidesu ka?
 const translitMixed = await romanizeJapanese("今日のディナーはカレーです。") // kyō no dinā wa karē desu.
 ```
+
 **Arguments:**
 
 `input` - string
@@ -324,14 +332,16 @@ A promise resolving to a string in Latin script
 
 ---
 
-#### romanizeKorean
+#### `romanizeKorean()`
 
 Transliterates from Hangul script.
 
 Supported Language: ko
+
 ```ts
 const translit = romanizeKorean("안녕하세요, 잘 지내세요?") // annyeonghaseyo, jal jinaeseyo?
 ```
+
 **Arguments:**
 
 `input` - string
@@ -342,14 +352,15 @@ A string in Latin script
 
 ---
 
-#### romanizeMandarin
+#### `romanizeMandarin()`
 
 Transliterates from both Traditional and Simplified Hanzi using Mandarin pronunciation.
 
 Supported Languages: zh-CN, zh-Hant
+
 ```ts
-const translitTrad = romanizeMandarin("你好，最近好嗎？", false) // nǐ hǎo, zuì jìn hǎo má ？
-const translitTradNoDia = romanizeMandarin("你好，最近好嗎？", true) // ni hao, zui jin hao ma ？
+const translitTrad = romanizeMandarin("你好，最近好嗎？", false) // nǐ hǎo, zuì jìn hǎo má？
+const translitTradNoDia = romanizeMandarin("你好，最近好嗎？", true) // ni hao, zui jin hao ma？
 const translitSimplified = romanizeMandarin("你好，最近好吗？", false) // nǐ hǎo, zuì jìn hǎo ma?
 ```
 
@@ -365,14 +376,16 @@ A string in Latin script
 
 ---
 
-#### romanizeThai
+#### `romanizeThai()`
 
 Transliterates from Thai script.
 
 Supported Language: th
+
 ```ts
 const translit = romanizeThai("สวัสดีครับ/ค่ะ สบายดีไหม?") // satti khnap/kha spaiti mai?
 ```
+
 **Arguments:**
 
 `input` - string
@@ -384,7 +397,6 @@ A string in Latin script
 > **NOTE:** To use `romanizeThai`, Python 3 and the pythainlp library must be available in your environment. See [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more information.
 
 ---
-
 
 ### Type Guards
 
@@ -398,7 +410,7 @@ import {
 } from "romanize-string"
 ```
 
-#### isConvertibleLanguage
+#### `isConvertibleLanguage()`
 
 Returns true if the given string is a supported language code from type `ConvertibleLanguage`.
 
@@ -410,14 +422,13 @@ isConvertibleLanguage("ja") // true
 
 `input` - a language code
 
-
 **Returns:**
 
 A boolean indicating whether the given language code is of type `ConvertibleLanguage`
 
 ---
 
-#### isCyrillicLanguageCode
+#### `isCyrillicLanguageCode()`
 
 ```ts
 isCyrillicLanguageCode("ru") // true
@@ -427,14 +438,13 @@ isCyrillicLanguageCode("ru") // true
 
 `input` - a language code
 
-
 **Returns:**
 
 A boolean indicating whether the given language code is of type `CyrillicLanguageCode` (a subset of `ConvertibleLanguageCode`)
 
 ---
 
-#### isIndicLanguageCode
+#### `isIndicLanguageCode()`
 
 ```ts
 isIndicLanguageCode("hi") // true
@@ -443,7 +453,6 @@ isIndicLanguageCode("hi") // true
 **Arguments:**
 
 `input` - a language code
-
 
 **Returns:**
 
@@ -465,14 +474,14 @@ This library draws on the capabilities of several existing libraries, many of wh
 
 This project includes modified and vendored code from the following libraries:
 
-- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov = MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see [Technical Notes](#technical-notes).
+- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov - MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see [Technical Notes](#technical-notes).
 - [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Used for Hangul transliteration. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
 
 ## Technical Notes
 
 As of the time of this writing, the [cyrillic-to-translit-js](https://github.com/greybax/cyrillic-to-translit-js) library only has presets for Russian, Mongolian, and Ukrainian. In order to expand upon the coverage it offered, its original code was integrated into this project with significant modifications. The support for reverse transliteration (Latin -> Cyrillic) was dropped, and new LLM-generated character maps were added for Belarusian, Bulgarian, Kazakh, Kyrgyz, Macedonian, Serbian, and Tajik.
 
-Persian and Urdu posed a particular challenge, as the omission of short vowels in their written scripts makes straightforward character-mapping approaches insufficient for producing usable transliterations. This likely explains why no transliteration libraries currently support these languages. The imperfect approach taken in this library involves standardizing the Arabic script and then running it through the arabic-transliterate library. This standardization is done in three steps:
+Persian and Urdu posed a particular challenge, as the omission of short vowels in their written scripts makes straightforward character-mapping approaches insufficient for producing usable transliterations. This likely explains why no transliteration libraries currently support these languages. The imperfect approach taken in this library involves standardizing the Arabic script and then running it through the [**arabic-transliterate**](https://www.npmjs.com/package/arabic-transliterate) library. This standardization is done in three steps:
 
 1. Common Persian and Urdu words are replaced with approximate LLM-generated phonetic forms (still in Arabic script), using lookup maps built from the Center for Language Engineering’s word frequency data for Persian and Urdu.
 
