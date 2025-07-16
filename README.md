@@ -474,7 +474,7 @@ This library draws on the capabilities of several existing libraries, many of wh
 
 This project includes modified and vendored code from the following libraries:
 
-- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov - MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see [Technical Notes](#technical-notes).
+- [**cyrillic-to-translit-js**](https://www.npmjs.com/package/cyrillic-to-translit-js) by Aleksandr Filatov – MIT Licensed.  Logic adapted and restructured to support additional Cyrillic languages. Not used as a dependency; see [Technical Notes](#technical-notes).
 - [**@romanize/korean**](https://www.npmjs.com/package/@romanize/korean) by Kenneth Tang – MIT Licensed. Used for Hangul transliteration. Vendored and modified for structural compatibility. See `src/vendor/romanize/korean/LICENSE`.
 
 ## Technical Notes
