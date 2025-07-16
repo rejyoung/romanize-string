@@ -13,7 +13,10 @@ export const romanizeArabic = (input: string): string => {
         "Arabic"
     );
 
-    return transliterated.replace(/-\s*/g, "-").replace(/\bal-lāh\b/, "Allāh");
+    return transliterated
+        .replace(/-\s*/g, "-") // remove spaces after hyphens
+        .replace(/\bal-lāh\b/, "Allāh") // replace al-lāh with Allāh
+        .replace(/([,؛:])([^\s]|$)/g, "$1 $2"); // add a space after commas, semicolons, and colons
 };
 
 // Because Persian (Farsi) and Urdu omit short vowels, there is no existing library capable of transliterating them,
