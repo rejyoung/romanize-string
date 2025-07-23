@@ -1,19 +1,19 @@
 {
-  "name": "thai-romanizer",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "tnthai": "^1.0.4"
-  },
-  "devDependencies": {
-    "@types/node": "^22.16.5"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+    "name": "thai-romanizer",
+    "version": "0.1.1",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "tnthai": "^1.0.4"
+    },
+    "devDependencies": {
+        "@types/node": "^22.16.5"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "type": "module"
 }
