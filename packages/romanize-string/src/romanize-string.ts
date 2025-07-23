@@ -64,3 +64,7 @@ export const romanizeString = async (
 
     return transliteratedString.trim();
 };
+
+romanizeString.register = async (pluginSetup: () => Promise<void>) => {
+    await romanizeThai.register(pluginSetup);
+};
