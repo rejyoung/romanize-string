@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] # add macos-latest if needed
+        os: [ubuntu-latest, windows-latest, macos-latest] # add macos-latest if needed
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -31,10 +31,13 @@ jobs:
       - name: Build binary
         run: |
           pyinstaller --onefile python-thai-romanization.py
+          mv dist/python-thai-romanization thai-${{ matrix.os == 'windows-latest' && 'win.exe' || (matrix.os == 'macos-latest' && 'mac' || 'linux') }}
         working-directory: packages/thai-romanizer/python
 
-      - name: Upload binary artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload binary to GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: binary-${{ matrix.os }}
-          path: packages/thai-romanizer/python/dist/**
+          tag_name: ${{ github.ref_name }}
+          files: packages/thai-romanizer/python/thai-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
