@@ -3,7 +3,7 @@ name: Build Cross-Platform Binaries
 on:
   push:
     tags:
-      - 'v*' # only run when you push a version tag like v1.0.0
+      - '@romanize-string/thai-romanizer@*' # only run when you push a version tag like v1.0.0
   workflow_dispatch:
 
 jobs:
