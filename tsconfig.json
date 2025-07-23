@@ -1,4 +1,7 @@
 {
     "files": [],
-    "references": [{ "path": "packages/romanize-string" }]
+    "references": [
+        { "path": "packages/romanize-string" },
+        { "path": "packages/thai-romanizer" }
+    ]
 }

@@ -58,6 +58,16 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  packages/thai-romanizer:
+    dependencies:
+      tnthai:
+        specifier: ^1.0.4
+        version: 1.0.4
+    devDependencies:
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.16.5
+
 packages:
 
   '@ampproject/remapping@2.3.0':
