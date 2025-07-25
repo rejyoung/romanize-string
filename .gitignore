@@ -1,3 +1,5 @@
 dist/
 node_modules/
 .DS_Store
+training_data/
+ld_*
