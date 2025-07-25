@@ -62,5 +62,5 @@ export const romanizeString = async (
 };
 
 romanizeString.register = async (pluginSetup: () => Promise<void>) => {
-    await romanizeThai.register(pluginSetup);
+    await pluginSetup();
 };

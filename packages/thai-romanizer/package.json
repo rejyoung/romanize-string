@@ -1,8 +1,11 @@
 {
-    "name": "thai-romanizer",
+    "name": "@romanize-string/thai-romanizer",
     "version": "0.1.0",
     "description": "",
-    "main": "index.js",
+    "files": [
+        "dist",
+        "README.md"
+    ],
     "devDependencies": {
         "@types/node": "^22.16.5",
         "npm-run-all": "^4.1.5",
@@ -10,7 +13,7 @@
         "romanize-string": "workspace/*"
     },
     "peerDependencies": {
-        "romanize-string": "^1.2.5"
+        "romanize-string": ">=1.3.0 <2.0.0"
     },
     "exports": {
         ".": {
@@ -24,7 +27,6 @@
         "clean": "rm -rf dist",
         "build:esm": "tsc --outDir dist/esm",
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution node",
-        "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
         "start": "run-s build start:run ",
         "start:run": "node dist/esm/index.js",
         "prepublishOnly": "run-s build"
@@ -32,5 +34,14 @@
     "keywords": [],
     "author": "",
     "license": "MIT",
-    "type": "module"
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rejyoung/romanize-string.git",
+        "directory": "packages/thai-romanizer"
+    },
+    "homepage": "https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer",
+    "bugs": {
+        "url": "https://gihub.com/rejyoung/romanize-string/issues"
+    }
 }
