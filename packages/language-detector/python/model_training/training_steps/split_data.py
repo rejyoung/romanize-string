@@ -1,6 +1,6 @@
-
-import joblib
+import joblib, sys
 from sklearn.model_selection import train_test_split
+from pathlib import Path
 
 
 """
@@ -11,13 +11,36 @@ Source: https://wortschatz.uni-leipzig.de/en/download
 License: https://creativecommons.org/licenses/by/4.0/
 """
 
-print("Loading data")
-X, y = joblib.load("ld_vectorized_data.joblib")
 
-print("Spliting data")
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=42)
+def main(data_group: str):
+    print(f"Loading {data_group} data")
+    X, y = joblib.load(
+        Path("data/processed/vectorized") / f"ld_vectorized_{data_group}_data.joblib"
+    )
 
-print("Writing split data to disk")
-joblib.dump((X_train, y_train), "ld_train_data.joblib")
-joblib.dump((X_test, y_test), "ld_test_data.joblib")
-print("Write complete")
+    print(f"Spliting {data_group} data")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.05, random_state=42
+    )
+
+    print(f"Writing {data_group} split data to disk")
+    joblib.dump(
+        (X_train, y_train),
+        Path("data/processed/split") / f"ld_{data_group}_train_data.joblib",
+    )
+    joblib.dump(
+        (X_test, y_test),
+        Path("data/processed/split") / f"ld_{data_group}_test_data.joblib",
+    )
+    print("Write complete")
+
+
+if __name__ == "__main__":
+    # Get arg
+    if len(sys.argv) != 2:
+        print("Usage: python split_data.py <data_group>")
+        sys.exit(1)
+
+    data_group = sys.argv[1]
+
+    main(data_group)

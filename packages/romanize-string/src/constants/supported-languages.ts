@@ -35,14 +35,15 @@ export const convertibleLanguages = [
 ] as const;
 
 export const indicLanguageCodes = [
-    "hi",
     "bn",
-    "te",
-    "ta",
     "gu",
-    "mr",
-    "pa",
+    "hi",
     "kn",
+    "mr",
+    "ne",
+    "pa",
+    "ta",
+    "te",
 ] as const;
 
 export const cyrillicLanguageCodes = [
