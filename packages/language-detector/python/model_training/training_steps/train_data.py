@@ -15,7 +15,9 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str, model_dir: Path):
+def main(data_group: str, model_dir: str):
+    model_assets = Path(model_dir)
+
     print(f"Reading prepared {data_group} training data")
     X_train, y_train = joblib.load(
         Path("data/processed/split") / f"ld_{data_group}_train_data.joblib"
@@ -41,7 +43,7 @@ def main(data_group: str, model_dir: Path):
     ensemble_model.fit(X_train, y_train)
 
     print(f"Writing {data_group} ensemble model to disk")
-    joblib.dump(ensemble_model, model_dir / f"ld_{data_group}_ensemble_model.joblib")
+    joblib.dump(ensemble_model, model_assets / f"ld_{data_group}_ensemble_model.joblib")
     print("Write complete")
 
     print(f"Testing {data_group} accuracy with train data")

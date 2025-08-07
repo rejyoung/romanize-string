@@ -17,6 +17,7 @@ def create_data_dirs(base_dir: Path):
     parent_dir = base_dir.parent
     model_assets = parent_dir / "model_assets"
     model_assets.mkdir(exist_ok=True)
+    print(f"Ensured folder exists: {model_assets}")
 
     return model_assets
 
@@ -49,7 +50,7 @@ def train_model(model_dir: Path):
                         d,
                         *(
                             [model_dir]
-                            if d
+                            if script
                             in [
                                 "train_data.py",
                                 "vectorize_data.py",

@@ -14,14 +14,18 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str, model_dir: Path):
+def main(data_group: str, model_dir: str):
+    model_assets = Path(model_dir)
+
     print(f"Loading {data_group} test data")
     X_test, y_test = joblib.load(
         Path("data/processed/split") / f"ld_{data_group}_test_data.joblib"
     )
 
     print(f"Loading {data_group} ensemble model")
-    ensemble_model = joblib.load(model_dir / f"ld_{data_group}_ensemble_model.joblib")
+    ensemble_model = joblib.load(
+        model_assets / f"ld_{data_group}_ensemble_model.joblib"
+    )
 
     print(f"Performing {data_group} data confusion estimation")
     ConfusionMatrixDisplay.from_estimator(ensemble_model, X_test, y_test)

@@ -17,7 +17,9 @@ def strip_ascii(text: str) -> str:
     return regex.sub(r"[A-Za-z0-9]+", "", text)
 
 
-def main(data_group: str, model_dir: Path):
+def main(data_group: str, model_dir: str):
+    model_assets = Path(model_dir)
+
     print(f"Reading {data_group} data")
     df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
     cv = TfidfVectorizer(
@@ -40,7 +42,7 @@ def main(data_group: str, model_dir: Path):
     )
 
     print(f"Writing {data_group} vectorizer to disk")
-    joblib.dump(cv, model_dir / f"ld_{data_group}_vectorizer.joblib")
+    joblib.dump(cv, model_assets / f"ld_{data_group}_vectorizer.joblib")
     print("Write complete")
 
 
