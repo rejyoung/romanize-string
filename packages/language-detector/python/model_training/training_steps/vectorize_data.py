@@ -1,5 +1,5 @@
 import pandas as pd
-import sys, joblib
+import sys, joblib, regex
 from sklearn.feature_extraction.text import TfidfVectorizer
 from pathlib import Path
 
@@ -13,10 +13,21 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
+def strip_ascii(text: str) -> str:
+    return regex.sub(r"[A-Za-z0-9]+", "", text)
+
+
 def main(data_group: str, model_dir: Path):
     print(f"Reading {data_group} data")
     df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
-    cv = TfidfVectorizer(analyzer="char", ngram_range=(2, 5), max_features=50000)
+    cv = TfidfVectorizer(
+        analyzer="char",
+        ngram_range=(1, 5),
+        max_features=30_000,
+        preprocessor=strip_ascii,
+        min_df=3,
+        max_df=0.9,
+    )
 
     print(f"Vectorizing {data_group} data")
     X = cv.fit_transform(df["text"])
