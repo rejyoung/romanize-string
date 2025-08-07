@@ -24,10 +24,11 @@ def main(data_group: str, model_dir: str):
     )
 
     logreg_classifier = LogisticRegression(
-        max_iter=800,
+        max_iter=1000,
         solver="saga",
         class_weight="balanced",
         penalty="l2",
+        verbose=1,
     )
 
     ensemble_model = VotingClassifier(
@@ -36,7 +37,6 @@ def main(data_group: str, model_dir: str):
             ("logreg", OneVsRestClassifier(logreg_classifier, n_jobs=-1)),
         ],
         voting="soft",
-        n_jobs=-1,
     )
 
     print(f"Fitting {data_group} ensemble model")

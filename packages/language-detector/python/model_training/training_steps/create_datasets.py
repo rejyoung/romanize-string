@@ -88,7 +88,7 @@ def main():
     training_folder = Path("data/raw")
     exclude_pattern = regex.compile(r"^[\p{Latin}\p{Nd}\p{P}\p{S}\p{Z}]+$")
 
-    dataset_names = ["family", "ar", "cy", "in"]
+    dataset_names = ["family", "cy", "in"]
 
     datasets = {
         new_key: new_val
