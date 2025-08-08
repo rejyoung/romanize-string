@@ -1,5 +1,6 @@
 import pandas as pd
-import sys, joblib, regex
+import numpy as np
+import sys, joblib, regex, unicodedata
 from sklearn.feature_extraction.text import TfidfVectorizer
 from pathlib import Path
 
@@ -14,7 +15,8 @@ License: https://creativecommons.org/licenses/by/4.0/
 
 
 def strip_ascii(text: str) -> str:
-    return regex.sub(r"[A-Za-z0-9]+", "", text)
+    normalized = unicodedata.normalize("NFC", text)
+    return regex.sub(r"[A-Za-z0-9]+", "", normalized)
 
 
 def main(data_group: str, model_dir: str):
@@ -22,13 +24,21 @@ def main(data_group: str, model_dir: str):
 
     print(f"Reading {data_group} data")
     df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
+
+    max_feats = 30_000
+
+    if data_group == "ss":
+        max_feats = 100_000
+
     cv = TfidfVectorizer(
-        analyzer="char",
+        analyzer="char_wb",
         ngram_range=(1, 5),
-        max_features=30_000,
+        max_features=max_feats,
         preprocessor=strip_ascii,
-        min_df=3,
-        max_df=0.9,
+        min_df=2,
+        max_df=0.95,
+        sublinear_tf=True,  # dampen very frequent ngrams
+        dtype=np.float32,
     )
 
     print(f"Vectorizing {data_group} data")

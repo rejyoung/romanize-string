@@ -1,5 +1,5 @@
 import joblib, gc, sys
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import ComplementNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import VotingClassifier
 from sklearn.multiclass import OneVsRestClassifier
@@ -33,7 +33,7 @@ def main(data_group: str, model_dir: str):
 
     ensemble_model = VotingClassifier(
         estimators=[
-            ("nb", MultinomialNB()),
+            ("nb", ComplementNB(alpha=0.5)),
             ("logreg", OneVsRestClassifier(logreg_classifier, n_jobs=-1)),
         ],
         voting="soft",

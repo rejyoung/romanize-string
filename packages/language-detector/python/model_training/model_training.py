@@ -9,6 +9,7 @@ def create_data_dirs(base_dir: Path):
         base_dir / "data" / "intermediate",
         base_dir / "data" / "processed" / "split",
         base_dir / "data" / "processed" / "vectorized",
+        base_dir / "data" / "processed" / "augmented",
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
@@ -23,12 +24,22 @@ def create_data_dirs(base_dir: Path):
 
 
 def train_model(model_dir: Path):
-    datasets = ["family", "ar", "cy", "in"]
+    datasets = [
+        "family",
+        "perso_arabic",
+        "cyrillic",
+        "indic",
+        "ja_zh",
+        "eastern_slavic",
+        "southern_slavic",
+        "turkik",
+    ]
 
     for script in [
         "create_datasets.py",
         "prepare_datasets.py",
         "vectorize_data.py",
+        "augment_features.py",
         "split_data.py",
         "train_data.py",
         "run_test_data.py",
@@ -54,6 +65,7 @@ def train_model(model_dir: Path):
                             in [
                                 "train_data.py",
                                 "vectorize_data.py",
+                                "augment_features.py",
                                 "run_test_data.py",
                             ]
                             else []

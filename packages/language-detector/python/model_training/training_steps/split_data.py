@@ -15,12 +15,12 @@ License: https://creativecommons.org/licenses/by/4.0/
 def main(data_group: str):
     print(f"Loading {data_group} data")
     X, y = joblib.load(
-        Path("data/processed/vectorized") / f"ld_vectorized_{data_group}_data.joblib"
+        Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib"
     )
 
-    print(f"Spliting {data_group} data")
+    print(f"Splitting {data_group} data")
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.05, random_state=42
+        X, y, test_size=0.05, random_state=42, stratify=y
     )
 
     print(f"Writing {data_group} split data to disk")

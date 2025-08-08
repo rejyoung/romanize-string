@@ -45,42 +45,45 @@ code_language_map = {
 }
 
 code_script_map = {
-    "ara": "ar",
-    "bel": "cy",
-    "ben": "in",
-    "bul": "cy",
-    "cmn": "zh",
+    "ara": "perso-arabic",
+    "bel": "cyrillic",
+    "ben": "indic",
+    "bul": "cyrillic",
+    "cmn": "ja_zh",
     "ell": "el",
-    "fas": "ar",
-    "guj": "in",
-    "hin": "in",
-    "jpn": "ja",
-    "kan": "in",
-    "kaz": "cy",
-    "kir": "cy",
+    "fas": "perso-arabic",
+    "guj": "indic",
+    "hin": "indic",
+    "jpn": "ja_zh",
+    "kan": "indic",
+    "kaz": "cyrillic",
+    "kir": "cyrillic",
     "kor": "ko",
-    "mar": "in",
-    "mkd": "cy",
-    "mon": "cy",
-    "nep": "in",
-    "pan": "in",
-    "pes": "ar",
-    "rus": "cy",
-    "san": "in",
-    "srp": "cy",
-    "tam": "in",
-    "tel": "in",
-    "tgk": "cy",
+    "mar": "indic",
+    "mkd": "cyrillic",
+    "mon": "cyrillic",
+    "nep": "indic",
+    "pan": "indic",
+    "pes": "perso-arabic",
+    "rus": "cyrillic",
+    "san": "indic",
+    "srp": "cyrillic",
+    "tam": "indic",
+    "tel": "indic",
+    "tgk": "cyrillic",
     "tha": "th",
-    "ukr": "cy",
-    "urd": "ar",
-    "zho": "zh",
+    "ukr": "cyrillic",
+    "urd": "perso-arabic",
+    "zho": "ja_zh",
 }
 
 
 arabic_classes = ["ar", "fa", "ur"]
 cyrillic_classes = ["be", "bg", "kk", "ky", "mk", "mn", "ru", "sr", "tg", "uk"]
 indic_classes = ["bn", "gu", "hi", "kn", "mr", "ne", "pa", "ta", "te"]
+eastern_slavic = ["be", "ru", "uk"]
+southern_slavic = ["bg", "mk", "sr"]
+turkik = ["kk", "ky", "mn", "tg"]
 
 
 def main():
@@ -88,7 +91,16 @@ def main():
     training_folder = Path("data/raw")
     exclude_pattern = regex.compile(r"^[\p{Latin}\p{Nd}\p{P}\p{S}\p{Z}]+$")
 
-    dataset_names = ["family", "cy", "in"]
+    dataset_names = [
+        "family",
+        "perso_arabic",
+        "cyrillic",
+        "indic",
+        "ja_zh",
+        "eastern_slavic",
+        "southern_slavic",
+        "turkik",
+    ]
 
     datasets = {
         new_key: new_val
@@ -123,14 +135,34 @@ def main():
         datasets["family_labels"].extend(file_y_script)
 
         if language_code in arabic_classes:
-            datasets["ar_word_data"].extend(file_x)
-            datasets["ar_labels"].extend(file_y_language)
-        elif language_code in cyrillic_classes:
-            datasets["cy_word_data"].extend(file_x)
-            datasets["cy_labels"].extend(file_y_language)
+            datasets["perso_arabic_word_data"].extend(file_x)
+            datasets["perso_arabic_labels"].extend(file_y_language)
         elif language_code in indic_classes:
-            datasets["in_word_data"].extend(file_x)
-            datasets["in_labels"].extend(file_y_language)
+            datasets["indic_word_data"].extend(file_x)
+            datasets["indic_labels"].extend(file_y_language)
+        elif language_code in cyrillic_classes:
+            datasets["cyrillic_word_data"].extend(file_x)
+
+            if language_code in southern_slavic:
+                datasets["southern_slavic_word_data"].extend(file_x)
+                file_y_subfamily = np.full(file_x.shape, "southern_slavic")
+                datasets["southern_slavic_labels"].extend(file_y_language)
+            elif language_code in eastern_slavic:
+                datasets["eastern_slavic_word_data"].extend(file_x)
+                file_y_subfamily = np.full(file_x.shape, "eastern_slavic")
+                datasets["eastern_slavic_labels"].extend(file_y_language)
+            elif language_code in turkik:
+                datasets["turkik_word_data"].extend(file_x)
+                file_y_subfamily = np.full(file_x.shape, "turkik")
+                datasets["turkik_labels"].extend(file_y_language)
+
+            # Set Cyrillic labels to appropriate subfamily code
+            datasets["cyrillic_labels"].extend(file_y_subfamily)
+
+        if language_code in ["ja", "zh"]:
+            datasets["ja_zh_word_data"].extend(file_x)
+            file_y_subfamily = np.full(file_x.shape, "ja_zh")
+            datasets["ja_zh_labels"].extend(file_y_language)
 
     for datatype in dataset_names:
 
