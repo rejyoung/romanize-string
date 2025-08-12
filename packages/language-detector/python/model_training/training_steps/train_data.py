@@ -26,14 +26,15 @@ def main(data_group: str, model_dir: str):
     logreg_classifier = LogisticRegression(
         max_iter=1000,
         solver="saga",
-        class_weight="balanced",
         penalty="l2",
+        C=2.0,  # ← was default 1.0
+        class_weight="balanced",
         verbose=1,
     )
 
     ensemble_model = VotingClassifier(
         estimators=[
-            ("nb", ComplementNB(alpha=0.5)),
+            ("nb", ComplementNB(alpha=0.3)),
             ("logreg", OneVsRestClassifier(logreg_classifier, n_jobs=-1)),
         ],
         voting="soft",

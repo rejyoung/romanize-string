@@ -27,16 +27,22 @@ def main(data_group: str, model_dir: str):
 
     max_feats = 30_000
 
-    if data_group == "ss":
-        max_feats = 100_000
+    CONFIGURATION = {
+        "southern_slavic": dict(max_features=200_000, max_df=1.0),
+        "indic": dict(max_features=120_000, max_df=1.0),
+        "ja_zh": dict(max_features=120_000, max_df=1.0),
+        "eastern_slavic": dict(max_features=100_000, max_df=1.0),
+        "perso_arabic": dict(max_features=80_000, max_df=0.98),
+    }
 
+    config = CONFIGURATION.get(data_group, {})
     cv = TfidfVectorizer(
         analyzer="char_wb",
         ngram_range=(1, 5),
-        max_features=max_feats,
+        max_features=config.get("max_features", 30_000),
         preprocessor=strip_ascii,
         min_df=2,
-        max_df=0.95,
+        max_df=config.get("max_df", 0.95),
         sublinear_tf=True,  # dampen very frequent ngrams
         dtype=np.float32,
     )

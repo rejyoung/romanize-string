@@ -18,11 +18,15 @@ tell_character_dict = {
     "ja_zh": {
         "ja": list(
             "働込畑辻榊栃峠枠匂駅図経発鉄県斎歳圧緑検関総郷録帰覧剣続涙桜覚広辺対薬軽験"
+            "冴畳匠酎丼塚尻曽冨畠鴨鰹匂圏喩麹渚峯"
         ),
         "zh": list(
             "这那为说谁还没发见观读书车门问间闻风电飞马鸟鱼线网级处张陈员优产币广"
             "國學體經讀圖綠鐵縣亞澤辭總鄉嚴覺櫻營續淚觀變醫臺"
+            "仅从众优务兰关兴决刘况冲冻净减刘务刘刚创务刘务"
+            "齊顏臟廳鬥雞"
         ),
+        "radicals": list("氵扌艹言金"),
     },
     "eastern_slavic": {
         "be": list("ўі"),
@@ -31,13 +35,13 @@ tell_character_dict = {
     },
     "southern_slavic": {
         "bg": list("ъщ"),
-        "mk": list("ѓќѕ"),
-        "sr": list("ђћ"),
+        "mk": list("ѓќѕј"),
+        "sr": list("ђћљњџј"),
     },
     "turkik": {
         "kk": list("әғқңұүһі"),
         "ky": list("ңөү"),
-        "mn": [],  # no unique single-letter tells
+        "mn": list("өүңһ"),  # give MN some help (not perfectly unique, still useful)
         "tg": list("ҷҳӣӯғқ"),
     },
     "indic": {  # tells to distinguish devanagari-based languages
@@ -101,7 +105,22 @@ def main(data_group: str, model_dir: str):
         for ch in present_chars:
             arr[i, char_to_idx[ch]] = 1.0
 
-    X_aug = hstack([X, csr_matrix(arr)], format="csr")
+    # For ja_zh group, add radical count features if "radicals" key exists
+    radical_counts = None
+    if "radicals" in group_tell_chars:
+        radicals = group_tell_chars["radicals"]
+        print(f"Building {len(radicals)} radical count features…")
+        radical_counts = np.zeros((len(texts), len(radicals)), dtype=np.float32)
+        for i, s in enumerate(texts):
+            s = unicodedata.normalize("NFC", s)
+            for j, rad in enumerate(radicals):
+                radical_counts[i, j] = s.count(rad)
+
+    # Stack all features
+    feature_blocks = [X, csr_matrix(arr)]
+    if radical_counts is not None:
+        feature_blocks.append(csr_matrix(radical_counts))
+    X_aug = hstack(feature_blocks, format="csr")
 
     print(f"Augmented features: {X.shape[1]} -> {X_aug.shape[1]} columns.")
     joblib.dump(
