@@ -65,7 +65,7 @@ def main(data_group: str, model_dir: str):
         return
 
     print(f"Loading vectorized data: {vec_path}")
-    X, y, texts = joblib.load(vec_path)
+    X, y = joblib.load(vec_path)
 
     print(f"Loading raw tokens for alignment: {csv_path}")
 
@@ -105,7 +105,7 @@ def main(data_group: str, model_dir: str):
 
     print(f"Augmented features: {X.shape[1]} -> {X_aug.shape[1]} columns.")
     joblib.dump(
-        (X_aug, y, texts),
+        (X_aug, y),
         Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib",
     )
     joblib.dump(tell_characters, model_assets / f"ld_{data_group}_tellchars.joblib")
