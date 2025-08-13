@@ -1,4 +1,5 @@
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
+import { describe, it, expect } from "vitest";
 
 /**
  * Adapted from cyrillic-to-translit-js

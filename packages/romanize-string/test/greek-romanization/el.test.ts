@@ -1,4 +1,5 @@
 import { romanizeGreek } from "../../src/transliterators/greek-romanization.js";
+import { describe, it, expect } from "vitest";
 
 describe("romanizeGreek", () => {
     it("should transliterate basic Greek letters without diacritics", () => {

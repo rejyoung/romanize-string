@@ -1,4 +1,5 @@
 import { romanizeArabic } from "../../src/transliterators/arabic-romanization";
+import { describe, it, expect } from "vitest";
 
 describe("romanizeArabic (Urdu)", () => {
     it("should handle Urdu-specific characters", () => {
