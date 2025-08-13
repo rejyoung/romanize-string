@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import sys, joblib, unicodedata, shutil
+import sys, joblib, unicodedata, shutil, regex
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from scipy.sparse import csr_matrix, hstack
+from typing import Tuple
 
 USAGE = "Usage: python augment_features.py <data_group> <model_dir>"
 
@@ -52,6 +53,94 @@ tell_character_dict = {
     },
 }
 
+endings_dict = {
+    "indic": {
+        "hi": ["पन", "ता", "कार", "वादी", "गर", "इया", "इन", "ई", "याँ", "यों"],
+        "mr": ["णे", "तील", "चा", "ची", "चे", "ला", "ना", "कर", "वाला", "पणा"],
+        "ne": ["हरु", "हरू", "को", "मा", "बाट", "लाई"],
+    },
+    "southern_slavic": {
+        "bg": ["ът", "та", "то", "те", "ия", "ево", "ово"],
+        "mk": ["от", "та", "то", "те", "ев", "ов", "ва"],
+        "sr": ["ије", "ија", "има", "ама", "ска", "ски"],
+    },
+}
+
+
+def build_character_binaries_array(
+    texts: list, tell_characters: list, tell_characters_set: set
+) -> np.typing.NDArray[np.float32]:
+
+    character_binaries = np.zeros((len(texts), len(tell_characters)), dtype=np.float32)
+    char_to_idx = {
+        ch: j for j, ch in enumerate(tell_characters)
+    }  # create a dictionary for looking up the index of each character in the tell_characters list
+
+    for i, s in enumerate(texts):
+        s = unicodedata.normalize("NFC", s)
+
+        present_chars = (
+            set(s) & tell_characters_set
+        )  # a set containing only the tell_characters present in the current word
+
+        for ch in present_chars:
+            character_binaries[i, char_to_idx[ch]] = 1.0
+
+    return character_binaries
+
+
+def build_radical_counts_array(
+    texts: list, group_tell_chars: list
+) -> np.typing.NDArray[np.float32] | None:
+    # For ja_zh group, add radical count features if "radicals" key exists
+    radical_counts = None
+    if "radicals" in group_tell_chars:
+        radicals = group_tell_chars["radicals"]
+        print(f"Building {len(radicals)} radical count features…")
+        radical_counts = np.zeros((len(texts), len(radicals)), dtype=np.float32)
+        for i, s in enumerate(texts):
+            s = unicodedata.normalize("NFC", s)
+            for j, rad in enumerate(radicals):
+                radical_counts[i, j] = s.count(rad)
+
+    return radical_counts
+
+
+def build_ending_features_array(
+    texts: list, endings: list | None
+) -> np.typing.NDArray[np.float32] | None:
+    endings_features = None
+    if endings is not None:
+        end_to_idx = {end: j for j, end in enumerate(endings)}
+
+        endings_features = np.zeros((len(texts), len(endings) * 2), dtype=np.float32)
+
+        for i, s in enumerate(texts):
+            s = unicodedata.normalize("NFC", s)
+            cleaned = regex.sub(r"[\p{P}\p{S}]+", " ", s)
+            cleaned = regex.sub(r"\s+", " ", cleaned).strip()
+            words = cleaned.split()
+
+            for l, end in enumerate(endings):
+                bin_idx = end_to_idx[end]
+                count_idx = end_to_idx[end] + len(endings)
+
+                present = False
+                count = 0.0
+
+                for w in words:
+                    if w.endswith(end):
+                        present = True
+                        count += 1.0
+
+                if present:
+                    endings_features[i, bin_idx] = 1.0
+
+                if count > 0:
+                    endings_features[i, count_idx] = count
+
+    return endings_features
+
 
 def main(data_group: str, model_dir: str):
     model_assets = Path(model_dir)
@@ -84,42 +173,38 @@ def main(data_group: str, model_dir: str):
     # Compile the list of tell characters for the data group from the dictionary above
     group_tell_chars = tell_character_dict[data_group]
     keys = list(group_tell_chars)
-    tell_characters = [c for k in keys for c in group_tell_chars[k]]
-    tell_set = set(tell_characters)
+    tell_characters_set = set([c for k in keys for c in group_tell_chars[k]])
+    tell_characters = sorted(tell_characters_set)
 
-    # Add columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
-    print(f"Building {len(tell_characters)} tell-letter binary features…")
+    # Compile the list of endings for the data group from the dictionary above
+    endings = None
+    if data_group in endings_dict:
+        group_endings = endings_dict[data_group]
+        keys = list(group_endings)
+        endings = sorted(set([e for k in keys for e in group_endings[k]]))
+
     texts = df["text"].astype(str).tolist()
-    arr = np.zeros((len(texts), len(tell_characters)), dtype=np.float32)
 
-    for i, s in enumerate(texts):
-        s = unicodedata.normalize("NFC", s)
-        char_to_idx = {
-            ch: j for j, ch in enumerate(tell_characters)
-        }  # create a dictionary for looking up the index of each character in the tell_characters list
+    # Add binary columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
+    print(f"Building tell-letter binary features…")
+    character_binaries = build_character_binaries_array(
+        texts, tell_characters, tell_characters_set
+    )
 
-        present_chars = (
-            set(s) & tell_set
-        )  # a set containing only the tell_characters present in the current word
+    # Add columns to each word's vector matrix for the number of radicals present (currently ja_zh only)
+    print(f"Building radical count features…")
+    radical_counts = build_radical_counts_array(texts, group_tell_chars)
 
-        for ch in present_chars:
-            arr[i, char_to_idx[ch]] = 1.0
-
-    # For ja_zh group, add radical count features if "radicals" key exists
-    radical_counts = None
-    if "radicals" in group_tell_chars:
-        radicals = group_tell_chars["radicals"]
-        print(f"Building {len(radicals)} radical count features…")
-        radical_counts = np.zeros((len(texts), len(radicals)), dtype=np.float32)
-        for i, s in enumerate(texts):
-            s = unicodedata.normalize("NFC", s)
-            for j, rad in enumerate(radicals):
-                radical_counts[i, j] = s.count(rad)
+    # Add binary and count columns to each word's vector matrix for the presence of special word endings (currently indic and south_slavic only)
+    print(f"Building ending binary and count features…")
+    ending_features = build_ending_features_array(texts, endings)
 
     # Stack all features
-    feature_blocks = [X, csr_matrix(arr)]
+    feature_blocks = [X, csr_matrix(character_binaries)]
     if radical_counts is not None:
         feature_blocks.append(csr_matrix(radical_counts))
+    if ending_features is not None:
+        feature_blocks.append(csr_matrix(ending_features))
     X_aug = hstack(feature_blocks, format="csr")
 
     print(f"Augmented features: {X.shape[1]} -> {X_aug.shape[1]} columns.")
@@ -128,6 +213,8 @@ def main(data_group: str, model_dir: str):
         Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib",
     )
     joblib.dump(tell_characters, model_assets / f"ld_{data_group}_tellchars.joblib")
+    if endings is not None:
+        joblib.dump(endings, model_assets / f"ld_{data_group}_endings.joblib")
     print("[augment] Write complete")
 
 
