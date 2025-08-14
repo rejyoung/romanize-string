@@ -9,4 +9,12 @@ describe("Serbian (sr)", () => {
         expect(romanizeCyrillic("љубав", "sr")).toBe("ljubav");
         expect(romanizeCyrillic("њега", "sr")).toBe("njega");
     });
+
+    it("should transliterate with ASCII approximations when asciiOnly is true", () => {
+        expect(romanizeCyrillic("ђак", "sr", true)).toBe("djak");
+        expect(romanizeCyrillic("ћерка", "sr", true)).toBe("cerka");
+        expect(romanizeCyrillic("џем", "sr", true)).toBe("dzhem");
+        expect(romanizeCyrillic("љубав", "sr", true)).toBe("ljubav");
+        expect(romanizeCyrillic("њега", "sr", true)).toBe("njega");
+    });
 });

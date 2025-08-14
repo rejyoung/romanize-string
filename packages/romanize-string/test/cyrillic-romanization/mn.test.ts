@@ -9,7 +9,7 @@ import { describe, it, expect } from "vitest";
  */
 
 describe("mn", () => {
-    it("test ө ү й", () => {
+    it("should transliterate Mongolian characters ө, ү, and й correctly", () => {
         expect(romanizeCyrillic("хөөрөг", "mn")).toBe("khoorog");
         expect(romanizeCyrillic("гуталын", "mn")).toBe("gutalyn");
         expect(romanizeCyrillic("үйлдвэр", "mn")).toBe("uildver");

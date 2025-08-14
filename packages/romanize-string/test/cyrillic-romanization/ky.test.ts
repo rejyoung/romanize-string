@@ -9,6 +9,6 @@ describe("Kyrgyz (ky)", () => {
     });
 
     it("should handle ң as ñ", () => {
-        expect(romanizeCyrillic("жаңылык", "ky")).toBe("zhañylyk");
+        expect(romanizeCyrillic("жаңылык", "ky")).toBe("zhaŋylyk");
     });
 });
