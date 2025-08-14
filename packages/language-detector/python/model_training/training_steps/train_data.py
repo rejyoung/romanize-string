@@ -30,6 +30,7 @@ def main(data_group: str, model_dir: str):
         C=2.0,  # ← was default 1.0
         class_weight="balanced",
         verbose=1,
+        tol=1e-3,
     )
 
     ensemble_model = VotingClassifier(

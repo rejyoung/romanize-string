@@ -121,7 +121,7 @@ def build_ending_features_array(
             cleaned = regex.sub(r"\s+", " ", cleaned).strip()
             words = cleaned.split()
 
-            for l, end in enumerate(endings):
+            for end in endings:
                 bin_idx = end_to_idx[end]
                 count_idx = end_to_idx[end] + len(endings)
 

@@ -25,8 +25,6 @@ def main(data_group: str, model_dir: str):
     print(f"Reading {data_group} data")
     df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
 
-    max_feats = 30_000
-
     CONFIGURATION = {
         "southern_slavic": dict(max_features=200_000, max_df=1.0),
         "indic": dict(max_features=120_000, max_df=1.0),
