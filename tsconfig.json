@@ -1,4 +1,6 @@
 {
     "files": [],
-    "references": [{ "path": "packages/romanize-string" }]
+    "references": [{ "path": "packages/romanize-string" }],
+    "include": [],
+    "exclude": []
 }
