@@ -11,6 +11,6 @@
             "romanize-string/plugins": ["../romanize-string/src/plugins.ts"]
         }
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "scripts"],
     "references": [{ "path": "../romanize-string" }]
 }
