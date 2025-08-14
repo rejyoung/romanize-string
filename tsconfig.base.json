@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ESNext",
+        "moduleResolution": "node",
+        "lib": ["esnext", "dom"],
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolvePackageJsonExports": false,
+        "declaration": true,
+        "composite": true
+    }
+}
