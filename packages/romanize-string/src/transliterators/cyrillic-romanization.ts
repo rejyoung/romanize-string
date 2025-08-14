@@ -279,6 +279,13 @@ const getAssociationsForLanguage = (
         щ: "shch",
         ю: "yu",
         я: "ya",
+        ј: "j",
+        љ: "lj",
+        њ: "nj",
+        џ: "dž",
+        ѓ: "gj",
+        ќ: "kj",
+        ѕ: "dz",
     };
 
     const firstDigraphs = Object.assign({}, regularDigraphs, initialDigraphs);
