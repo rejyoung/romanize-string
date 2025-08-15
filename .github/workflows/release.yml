@@ -12,6 +12,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -29,6 +32,13 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+
+      - name: Verify pnpm on PATH
+        run: |
+          which pnpm || command -v pnpm
+          pnpm --version
+          echo "PNPM_HOME=${PNPM_HOME:-unset}"
+          echo "PATH=$PATH"
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
