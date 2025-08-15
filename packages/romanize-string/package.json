@@ -37,6 +37,8 @@
         "non-latin",
         "multilingual",
         "chinese",
+        "mandarin",
+        "cantonese",
         "pinyin",
         "arabic",
         "persian",
@@ -79,5 +81,4 @@
     "optionalDependencies": {
         "@romanize-string/thai-romanizer": "^0.1.0"
     }
-    
 }
