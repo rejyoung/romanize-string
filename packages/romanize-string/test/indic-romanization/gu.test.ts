@@ -1,4 +1,5 @@
 import { romanizeIndic } from "../../src/transliterators/inidic-romanization";
+import { describe, it, expect } from "vitest";
 
 describe("Indic language transliteration", () => {
     it("should transliterate input correctly", () => {
