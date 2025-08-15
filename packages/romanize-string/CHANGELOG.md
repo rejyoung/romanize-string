@@ -1,16 +1,5 @@
 # romanize-string
 
-## 1.3.0
-
-### Minor Changes
-
-- **Cyrillic Romanization Overhaul & Testing Updates**
-
-  - Overhauled Cyrillic romanization to support both ASCII-only output and BGN/PCGN romanization, improving overall transliteration accuracy.
-  - Added `omitDiacritics` parameter support for Cyrillic transliteration in both `romanizeCyrillic` and `romanizeString`.
-  - Switched testing framework from Jest to Vitest and revised all relevant tests to reflect the updated Cyrillic romanization behavior.
-  - Updated README to document the new `omitDiacritics` parameter, ASCII-only mode, and BGN/PCGN romanization support.
-
 ## 1.2.6
 
 ### Patch Changes
