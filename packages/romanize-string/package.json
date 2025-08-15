@@ -16,14 +16,14 @@
     },
     "sideEffects": false,
     "scripts": {
-        "build": "run-s clean build:esm build:cjs",
+        "build": "pnpm run clean && run-p build:esm build:cjs",
         "clean": "rm -rf dist",
         "build:esm": "tsc --outDir dist/esm --module ESNext",
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS",
         "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
-        "start": "run-s build start:run ",
+        "start": "pnpm run-s build start:run",
         "start:run": "node dist/esm/index.js",
-        "prepublishOnly": "run-s build"
+        "prepublishOnly": "pnpm run-s build"
     },
     "keywords": [
         "transliteration",
@@ -47,7 +47,8 @@
     "author": "Ryan Young",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/rejyoung/romanize-string.git"
+        "url": "git+https://github.com/rejyoung/romanize-string.git",
+        "directory": "packages/romanize-string"
     },
     "license": "MIT",
     "type": "module",
@@ -66,6 +67,7 @@
         "@types/node": "^22.15.33",
         "jest": "^30.0.3",
         "jest-environment-node": "^30.0.2",
+        "npm-run-all2": "^8.0.4",
         "ts-jest": "^29.4.0",
         "typescript": "^5.8.3"
     }

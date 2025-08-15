@@ -6,9 +6,11 @@
     ],
     "scripts": {
         "build": "tsc -b",
-        "clean": "tsc -b --clean"
+        "clean": "tsc -b --clean",
+        "publish:romanize-string": "pnpm publish --filter romanize-string --access public"
     },
     "devDependencies": {
-        "npm-run-all": "^4.1.5"
+        "@changesets/cli": "^2.29.5",
+        "npm-run-all2": "^8.0.4"
     }
 }
