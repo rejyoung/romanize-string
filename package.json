@@ -1,73 +1,16 @@
 {
-    "name": "romanize-string",
-    "version": "1.2.5",
-    "description": "A fully typed, general-purpose utility for unidirectional string transliteration (non-Latin script => Latin script).",
-    "main": "dist/index.js",
-    "types": "dist/types/index.d.ts",
-    "files": [
-        "dist",
-        "README.md",
-        "CONTRIBUTING.md",
-        "LICENSE"
+    "name": "romanize-string-monorepo",
+    "private": "true",
+    "workspaces": [
+        "packages/*"
     ],
-    "exports": {
-        ".": {
-            "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "types": "./dist/types/index.d.ts"
-        }
-    },
-    "sideEffects": false,
     "scripts": {
-        "build:esm": "tsc --outDir dist/esm --module ESNext",
-        "build:cjs": "tsc --outDir dist/cjs --module CommonJS",
-        "build": "npm run build:esm && npm run build:cjs",
-        "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
-        "start": "npm run build && node dist/esm/index.js",
-        "prepublishOnly": "npm run build"
-    },
-    "keywords": [
-        "transliteration",
-        "romanization",
-        "latin",
-        "non-latin",
-        "multilingual",
-        "chinese",
-        "pinyin",
-        "arabic",
-        "persian",
-        "urdu",
-        "cyrillic",
-        "greek",
-        "indic",
-        "japanese",
-        "korean",
-        "thai",
-        "text-processing"
-    ],
-    "author": "Ryan Young",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/rejyoung/romanize-string.git"
-    },
-    "license": "MIT",
-    "type": "module",
-    "dependencies": {
-        "@indic-transliteration/sanscript": "~1.3.1",
-        "arabic-transliterate": "~1.0.1",
-        "cantonese-romanisation": "~1.0.7",
-        "kuroshiro": "~1.2.0",
-        "kuroshiro-analyzer-kuromoji": "~1.1.0",
-        "oktjs": "~0.1.3",
-        "pinyin-pro": "~3.26.0",
-        "tnthai": "~1.0.4"
+        "build": "tsc -b",
+        "clean": "tsc -b --clean",
+        "publish:romanize-string": "pnpm publish --filter romanize-string --access public"
     },
     "devDependencies": {
-        "@types/jest": "^30.0.0",
-        "@types/node": "^22.15.33",
-        "jest": "^30.0.3",
-        "jest-environment-node": "^30.0.2",
-        "ts-jest": "^29.4.0",
-        "typescript": "^5.8.3"
+        "@changesets/cli": "^2.29.5",
+        "npm-run-all2": "^8.0.4"
     }
 }

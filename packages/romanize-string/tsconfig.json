@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "composite": true,
+        "outDir": "dist",
+        "rootDir": "src",
+        "typeRoots": ["src/shims", "./node_modules/@types"],
+        "declarationDir": "dist/types",
+        "paths": {
+            "romanize-string/plugins": ["./src/plugins.ts"]
+        }
+    },
+    "include": ["src/**/*"]
+}
