@@ -47,11 +47,7 @@ export const romanizeString = async (
     } else if (language === ("th" as ConvertibleLanguage)) {
         transliteratedString = romanizeThai(string);
     } else if (isCyrillicLanguageCode(language)) {
-        transliteratedString = romanizeCyrillic(
-            string,
-            language,
-            omitDiacritics
-        );
+        transliteratedString = romanizeCyrillic(string, language);
 
         // Arabic
     } else if (isArabicLanguageCode(language)) {

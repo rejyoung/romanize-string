@@ -9,9 +9,9 @@
     ],
     "exports": {
         ".": {
-            "types": "./dist/types/index.d.ts",
             "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js"
+            "require": "./dist/cjs/index.js",
+            "types": "./dist/types/index.d.ts"
         }
     },
     "sideEffects": false,
@@ -20,7 +20,7 @@
         "clean": "rm -rf dist",
         "build:esm": "tsc --outDir dist/esm --module ESNext",
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS",
-        "test": "vitest",
+        "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
         "start": "pnpm run-s build start:run",
         "start:run": "node dist/esm/index.js",
         "prepublishOnly": "pnpm run-s build"
@@ -63,9 +63,12 @@
         "tnthai": "~1.0.4"
     },
     "devDependencies": {
-        "@types/node": "^22.16.5",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^22.15.33",
+        "jest": "^30.0.3",
+        "jest-environment-node": "^30.0.2",
         "npm-run-all2": "^8.0.4",
-        "typescript": "^5.8.3",
-        "vitest": "^3.2.4"
+        "ts-jest": "^29.4.0",
+        "typescript": "^5.8.3"
     }
 }

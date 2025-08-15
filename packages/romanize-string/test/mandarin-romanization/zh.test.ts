@@ -1,5 +1,4 @@
 import { romanizeMandarin } from "../../src/transliterators/mandarin-romanization";
-import { describe, it, expect } from "vitest";
 
 describe("romanizeMandarin", () => {
     it("should romanize simplified Chinese text", () => {

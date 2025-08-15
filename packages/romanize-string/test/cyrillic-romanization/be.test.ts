@@ -1,40 +1,21 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
 
 describe("Belarusian (be)", () => {
-    describe("asciiOnly = true", () => {
-        it("should transliterate basic examples", () => {
-            expect(romanizeCyrillic("мова", "be", true)).toBe("mova");
-            expect(romanizeCyrillic("беларусь", "be", true)).toBe("bielarus");
-        });
-
-        it("should handle ў as ŭ", () => {
-            expect(romanizeCyrillic("ўсход", "be", true)).toBe("uskhod");
-        });
-
-        it("should use ye/ie for е depending on position", () => {
-            expect(romanizeCyrillic("елка", "be", true)).toBe("yelka");
-            expect(romanizeCyrillic("шчавелевы", "be", true)).toBe(
-                "shchavielievy"
-            );
-        });
+    it("should transliterate basic examples", () => {
+        expect(romanizeCyrillic("мова", "be")).toBe("mova");
+        expect(romanizeCyrillic("беларусь", "be")).toBe("bielarus");
     });
 
-    describe("asciiOnly = false", () => {
-        it("should transliterate basic examples", () => {
-            expect(romanizeCyrillic("мова", "be", false)).toBe("mova");
-            expect(romanizeCyrillic("беларусь", "be", false)).toBe("bielarus");
-        });
+    it("should handle ў as ŭ", () => {
+        expect(romanizeCyrillic("Беларусь сёння", "be")).toBe(
+            "Bielarus syonnia"
+        );
+        expect(romanizeCyrillic("ўсход", "be")).toBe("uskhod");
+    });
 
-        it("should handle ў as ŭ", () => {
-            expect(romanizeCyrillic("ўсход", "be", false)).toBe("ŭskhod");
-        });
-
-        it("should use ye/ie for е depending on position", () => {
-            expect(romanizeCyrillic("елка", "be", false)).toBe("yelka");
-            expect(romanizeCyrillic("шчавелевы", "be", false)).toBe(
-                "shchavielievy"
-            );
-        });
+    it("should use ye/ie for е depending on position", () => {
+        expect(romanizeCyrillic("елка", "be")).toBe("yelka");
+        expect(romanizeCyrillic("шчавелевы", "be")).toBe("shchavielievy");
     });
 });

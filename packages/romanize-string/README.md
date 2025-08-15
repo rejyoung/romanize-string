@@ -86,7 +86,7 @@ const translit = await romanizeString("নমস্তে, আপনি কে�
 
 A promise resolving to a string in Latin script
 
-> **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, Cyrillic, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
+> **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
 
 ### Language Codes
 
@@ -174,17 +174,16 @@ import {
 
 In addition to the default `romanizeString` function, this library also supports named imports for individual transliteration functions and type guard utilities. These can be imported individually to reduce bundle size or to access specialized functionality.
 
-| Method                      | Description                                                                | Args                                   | Returns          |
-| --------------------------- | -------------------------------------------------------------------------- | -------------------------------------- | ---------------- |
-| `romanizeArabic()`          | Transliterate Arabic script to Latin script                                | `input`                                | string           |
-| `romanizeCantonese()`       | Transliterate Hanzi script to Latin script with Cantonese pronunciation    | `input`                                | string           |
-| `romanizeCyrillic()`        | Transliterate Cyrillic script to Latin script                              | `input`, `language`, `omitDiacritics?` | string           |
-| `romanizeGreek()`           | Transliterate an Greek script to Latin script                              | `input`, `omitDiacritics?`             | string           |
-| `romanizeIndic()`           | Transliterate an Indic script to Latin script                              | `input`, `language`, `omitDiacritics?` | string           |
-| `romanizeJapanese()`        | Transliterate Kanji, Hiragana, or Katakana script to Latin script          | `input`                                | Promise\<String> |
-| `romanizeKorean()`          | Transliterate Hangul script to Latin script                                | `input`                                | string           |
-| `romanizeMandarin()`        | Transliterate Hanzi script to Latin script using Mandarin pronunciation    | `input`, `omitTones?`                  | string           |
-| `romanizeThai()`            | Transliterate Thai script to Latin script                                  | `input`                                | string           |
+| Method                      | Description                                                              | Args                                   | Returns          |
+| --------------------------- | ------------------------------------------------------------------------ | -------------------------------------- | ---------------- |
+| `romanizeArabic()`          | Transliterate Arabic script to Latin script                              | `input`                                | string           |
+| `romanizeCantonese()`       | Transliterate Hanzi script to Latin script with Cantonese pronunciation  | `input`                                | string           |
+| `romanizeCyrillic()`        | Transliterate Cyrillic script to Latin script                            | `input`, `language`                    | string           |
+| `romanizeIndic()`           | Transliterate an Indic script to Latin script                            | `input`, `language`, `omitDiacritics?` | string           |
+| `romanizeJapanese()`        | Transliterate Kanji, Hiragana, or Katakana script to Latin script        | `input`                                | Promise\<String> |
+| `romanizeKorean()`          | Transliterate Hangul script to Latin script                              | `input`                                | string           |
+| `romanizeMandarin()`        | Transliterate Hanzi script to Latin script using Mandarin pronunciation  | `input`, `omitTones?`                  | string           |
+| `romanizeThai()`            | Transliterate Thai script to Latin script                                | `input`                                | string           |
 | `isConvertibleLanguage()`   | Check whether language code is included in the `ConvertibleLanguage` type  | `languageCode`                         | boolean          |
 | `isCyrillicLanguageCode()`  | Check whether language code is included in the `CyrillicLanguageCode` type | `languageCode`                         | boolean          |
 | `isIndicLanguageCode()`     | Check whether language code is included in the `IndicLanguageCode` type    | `languageCode`                         | boolean          |
@@ -197,8 +196,7 @@ These functions handle transliteration for specific script families.
 import {
     romanizeArabic, 
     romanizeCantonese, 
-    romanizeCyrillic,
-    romanizeGreek
+    romanizeCyrillic, 
     romanizeIndic, 
     romanizeJapanese, 
     romanizeKorean, 
@@ -259,13 +257,9 @@ const translit = romanizeCyrillic("Салам, кандайсың?", "ky") // Sa
 
 `language` - A language code of type CyrillicLanguageCode
 
-`omitDiacritics` *(optional)* - A boolean indicating whether to exclude diacritics in the output (defaults to `false`)
-
 **Returns:**
 
 A string in Latin script
-
-> **NOTE:** When `omitDiacritics` is false, `romanizeCyrillic` follows the BGN/PCGN romanization system for the selected language.
 
 ---
 

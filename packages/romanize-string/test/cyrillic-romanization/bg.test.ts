@@ -1,22 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
 
 describe("Bulgarian (bg)", () => {
-    describe("asciiOnly = false", () => {
-        it("should transliterate with proper non-ASCII characters", () => {
-            expect(romanizeCyrillic("българия", "bg", false)).toBe("bălgariia");
-            expect(romanizeCyrillic("говоря", "bg", false)).toBe("govoria");
-            expect(romanizeCyrillic("съюз", "bg", false)).toBe("săiuz");
-            expect(romanizeCyrillic("любовь", "bg", false)).toBe("liubov");
-        });
+    it("should transliterate basic examples", () => {
+        expect(romanizeCyrillic("българия", "bg")).toBe("balgariia");
+        expect(romanizeCyrillic("говоря", "bg")).toBe("govoria");
     });
 
-    describe("asciiOnly = true", () => {
-        it("should transliterate with ASCII approximations", () => {
-            expect(romanizeCyrillic("българия", "bg", true)).toBe("balgariia");
-            expect(romanizeCyrillic("говоря", "bg", true)).toBe("govoria");
-            expect(romanizeCyrillic("съюз", "bg", true)).toBe("saiuz");
-            expect(romanizeCyrillic("любовь", "bg", true)).toBe("liubov");
-        });
+    it("should handle ъ as a and ь as silent", () => {
+        expect(romanizeCyrillic("съюз", "bg")).toBe("saiuz");
+        expect(romanizeCyrillic("любовь", "bg")).toBe("liubov");
     });
 });

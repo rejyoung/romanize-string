@@ -1,5 +1,4 @@
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
-import { describe, it, expect } from "vitest";
 
 /**
  * Adapted from cyrillic-to-translit-js
@@ -9,7 +8,7 @@ import { describe, it, expect } from "vitest";
  */
 
 describe("mn", () => {
-    it("should transliterate Mongolian characters ө, ү, and й correctly", () => {
+    it("test ө ү й", () => {
         expect(romanizeCyrillic("хөөрөг", "mn")).toBe("khoorog");
         expect(romanizeCyrillic("гуталын", "mn")).toBe("gutalyn");
         expect(romanizeCyrillic("үйлдвэр", "mn")).toBe("uildver");

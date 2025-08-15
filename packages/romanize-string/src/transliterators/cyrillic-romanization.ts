@@ -9,15 +9,14 @@ import { CyrillicLanguageCode } from "../public-types/language-types";
 
 export const romanizeCyrillic = (
     input: string,
-    language: CyrillicLanguageCode,
-    asciiOnly: boolean = false
+    language: CyrillicLanguageCode
 ): string => {
     if (!input) {
         return "";
     }
 
-    const { initialCharacterMap, nonInitialCharacterMap } =
-        getCharacterMapsForLanguage(language, asciiOnly);
+    const { firstAssociations, nonFirstAssociations } =
+        getAssociationsForLanguage(language);
 
     // We must normalize string for transform all unicode chars to uniform form
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
@@ -25,8 +24,7 @@ export const romanizeCyrillic = (
 
     let newStr = "";
     let isWordBoundary = false;
-    const belarusianETriggerChars = "аеёіоуыэюя";
-    const russianYaTriggerChars = "аеёиоуыэюяь";
+    const vowels = "аеёиоуыэюяіїґәөүұhєі";
 
     for (let i = 0; i < normalizedInput.length; i++) {
         const isUpperCaseOrWhatever =
@@ -39,10 +37,7 @@ export const romanizeCyrillic = (
             i < normalizedInput.length - 1
                 ? normalizedInput[i + 1].toLowerCase()
                 : "";
-        const nextNextChar =
-            i < normalizedInput.length - 2
-                ? normalizedInput[i + 2].toLowerCase()
-                : "";
+
         if (strLowerCase === " ") {
             newStr += " ";
             isWordBoundary = true;
@@ -54,30 +49,10 @@ export const romanizeCyrillic = (
         if (language === "be" && strLowerCase === "е") {
             if (i === 0 || isWordBoundary) {
                 newLetter = "ye";
-            } else if (!belarusianETriggerChars.includes(prevChar)) {
+            } else if (!vowels.includes(prevChar)) {
                 newLetter = "ie";
             } else {
                 newLetter = "e";
-            }
-        }
-
-        if (language === "ru") {
-            if (strLowerCase === "я") {
-                newLetter = "ya";
-            }
-            if (strLowerCase === "ы") {
-                // final "-ый"
-                const isWordEnd =
-                    nextNextChar === "" ||
-                    nextNextChar.match(/[\s.,!?;:()\[\]'"«»]/);
-                if (nextChar === "й" && isWordEnd) {
-                    if (asciiOnly === true) {
-                        newLetter = "yi";
-                    } else {
-                        newLetter = "yy";
-                    }
-                    i++; // skip the 'й' so it isn't transliterated again
-                }
             }
         }
 
@@ -93,10 +68,10 @@ export const romanizeCyrillic = (
             typeof newLetter === "undefined" &&
             (i === 0 || isWordBoundary)
         ) {
-            newLetter = initialCharacterMap[strLowerCase];
+            newLetter = firstAssociations[strLowerCase];
             isWordBoundary = false;
         } else if (typeof newLetter === "undefined") {
-            newLetter = nonInitialCharacterMap[strLowerCase];
+            newLetter = nonFirstAssociations[strLowerCase];
         }
 
         if ("undefined" === typeof newLetter) {
@@ -119,419 +94,287 @@ export const romanizeCyrillic = (
     return normalizedOutput;
 };
 
-type CharacterMaps = {
-    initialCharacterMap: Record<string, string>;
-    nonInitialCharacterMap: Record<string, string>;
+type Associations = {
+    firstAssociations: Record<string, string>;
+    nonFirstAssociations: Record<string, string>;
 };
 
-const getCharacterMapsForLanguage = (
-    language: CyrillicLanguageCode,
-    asciiOnly: boolean
-): CharacterMaps => {
-    /***********
-     * Note: Global lists include characters common to all supported Cyrillic languages as well as characters unique to particular languages.
-     ***********/
-    const globalCharacterMap: Record<string, string> = {
-        А: "A",
-        а: "a",
-        Ә: "Ä",
-        ә: "ä",
-        Б: "B",
-        б: "b",
-        В: "V",
-        в: "v",
-        Г: "G",
-        г: "g",
-        Ғ: "Gh",
-        ғ: "gh",
-        Ґ: "G",
-        ґ: "g",
-        Д: "D",
-        д: "d",
-        Ђ: "Đ",
-        ђ: "đ",
-        Ћ: "Ć",
-        ћ: "ć",
-        Ѓ: "Ǵ",
-        ѓ: "ǵ",
-        Ё: "Yo",
-        ё: "yo",
-        Ж: "Zh",
-        ж: "zh",
-        З: "Z",
-        з: "z",
-        И: "I",
-        и: "i",
-        І: "I",
-        і: "i",
-        Ј: "J",
-        ј: "j",
-        Љ: "Lj",
-        љ: "lj",
-        К: "K",
-        к: "k",
-        Қ: "Q",
-        қ: "q",
-        Ќ: "Ḱ",
-        ќ: "ḱ",
-        Л: "L",
-        л: "l",
-        Њ: "Nj",
-        њ: "nj",
-        М: "M",
-        м: "m",
-        Н: "N",
-        н: "n",
-        Ң: "Ŋ",
-        ң: "ŋ",
-        О: "O",
-        о: "o",
-        Ө: "Ö",
-        ө: "ö",
-        П: "P",
-        п: "p",
-        Р: "R",
-        р: "r",
-        С: "S",
-        с: "s",
-        Т: "T",
-        т: "t",
-        У: "U",
-        у: "u",
-        Ӯ: "U",
-        ӯ: "u",
-        Ў: "U",
-        ў: "u",
-        Ү: "Ü",
-        ү: "ü",
-        Ӣ: "Y",
-        ӣ: "y",
-        Ф: "F",
-        ф: "f",
-        Х: "Kh",
-        х: "kh",
-        Ҳ: "H",
-        ҳ: "h",
-        Һ: "H",
-        һ: "h",
-        Ц: "Ts",
-        ц: "ts",
-        Ч: "Ch",
-        ч: "ch",
-        Ҷ: "Č",
-        ҷ: "č",
-        Ш: "Sh",
-        ш: "sh",
-        Щ: "Shch",
-        щ: "shch",
-        Ъ: "",
-        ъ: "",
-        Ы: "Y",
-        ы: "y",
-        Ь: "",
-        ь: "",
-        Ѕ: "Dz",
-        ѕ: "dz",
-        Э: "E",
-        э: "e",
-        Џ: "Dž",
-        џ: "dž",
-        Ұ: "U̇",
-        ұ: "u̇",
-    };
-
-    const asciiOnlyOverrides: Record<string, string> = {
-        Ә: "Ae",
-        ә: "ae",
-        Ӣ: "I",
-        ӣ: "i",
-        Ң: "Ng",
-        ң: "ng",
-        Ө: "Oe",
-        ө: "oe",
-        Ү: "Ue",
-        ү: "ue",
-        Ұ: "U",
-        ұ: "u",
-        Ѓ: "Gj",
-        ѓ: "gj",
-        Ќ: "Kj",
-        ќ: "kj",
-        Ҷ: "Ch",
-        ҷ: "ch",
-        Џ: "Dzh",
-        џ: "dzh",
-        Љ: "Lj",
-        љ: "lj",
-        Њ: "Nj",
-        њ: "nj",
-        Ћ: "C",
-        ћ: "c",
-        Ђ: "Dj",
-        ђ: "dj",
-        Ѕ: "Dz",
-        ѕ: "dz",
-    };
-
-    const effectiveGlobalCharacterMap = asciiOnly
-        ? { ...globalCharacterMap, ...asciiOnlyOverrides }
-        : globalCharacterMap;
-
+const getAssociationsForLanguage = (
+    language: CyrillicLanguageCode
+): Associations => {
     /*
-    CHARACTER MAPPINGS FOR INITIAL POSITION
+    ASSOCIATIONS FOR INITIAL POSITION
     */
 
-    // Characters whose transliterations differ if they appear at the beginning of a word
-    const globalInitialCharacterMap: Record<string, string> = {
-        Е: "E",
-        е: "e",
-        є: "ye",
-        Є: "Ye",
-        ї: "yi",
-        Ї: "Yi",
+    // letters shared between languages
+    const firstLetters = {
+        а: "a",
+        б: "b",
+        в: "v",
+        д: "d",
+        з: "z",
         й: "y",
-        Й: "Y",
-        ю: "yu",
-        Ю: "Yu",
-        я: "ya",
-        Я: "Ya",
+        к: "k",
+        л: "l",
+        м: "m",
+        н: "n",
+        о: "o",
+        п: "p",
+        р: "r",
+        с: "s",
+        т: "t",
+        у: "u",
+        ф: "f",
+        ь: "",
     };
 
-    const initialCharacterMap = {
-        ...effectiveGlobalCharacterMap,
-        ...globalInitialCharacterMap,
-    };
+    // digraphs appearing only in initial position
+    let initialDigraphs: Record<string, string> = {};
 
-    // language-specific overrides
+    // language-specific mappings
     switch (language) {
         case "ru":
-            Object.assign(initialCharacterMap, {
-                е: "ye",
-                Е: "Ye",
+            Object.assign(firstLetters, {
+                г: "g",
+                и: "i",
+                ъ: "",
+                ы: "i",
+                э: "e",
             });
+            initialDigraphs = { е: "ye" };
             break;
         case "uk":
-            Object.assign(initialCharacterMap, {
+            Object.assign(firstLetters, {
                 г: "h",
-                Г: "H",
+                ґ: "g",
+                е: "e",
                 и: "y",
-                И: "Y",
+                і: "i",
             });
+            initialDigraphs = { є: "ye", ї: "yi" };
             break;
         case "mn":
-            Object.assign(initialCharacterMap, {
+            Object.assign(firstLetters, {
+                г: "g",
                 ө: "o",
-                Ө: "O",
                 ү: "u",
-                Ү: "U",
+                и: "i",
+                ы: "y",
+                э: "e",
+                ъ: "",
             });
             break;
         case "be":
-            Object.assign(initialCharacterMap, {
-                ў: asciiOnly ? "u" : "ŭ",
-                Ў: asciiOnly ? "U" : "Ŭ",
-                е: "ye",
-                Е: "Ye",
+            Object.assign(firstLetters, {
+                і: "i",
+                ў: "u",
+                э: "e",
+                и: "i",
+                ы: "y",
             });
+            initialDigraphs = { е: "ye" };
             break;
         case "bg":
-            Object.assign(
-                initialCharacterMap,
-                asciiOnly
-                    ? {
-                          ъ: "a",
-                          Ъ: "A",
-                      }
-                    : {
-                          ъ: "ă",
-                          Ъ: "Ă",
-                      }
-            );
+            Object.assign(firstLetters, {
+                ъ: "a",
+                ь: "",
+                и: "i",
+                г: "g",
+            });
             break;
         case "ky":
-            Object.assign(
-                initialCharacterMap,
-                asciiOnly
-                    ? {
-                          ң: "ng",
-                          Ң: "Ng",
-                          ө: "o",
-                          Ө: "O",
-                          ү: "u",
-                          Ү: "U",
-                      }
-                    : {
-                          ң: "ng",
-                          Ң: "Ng",
-                          ө: "ö",
-                          Ө: "Ö",
-                          ү: "ü",
-                          Ү: "Ü",
-                      }
-            );
+            Object.assign(firstLetters, {
+                ң: "ñ",
+                ө: "ö",
+                ү: "ü",
+                и: "i",
+                г: "g",
+                ы: "y",
+                э: "e",
+                ъ: "",
+            });
             break;
         case "kk":
-            Object.assign(
-                initialCharacterMap,
-                asciiOnly
-                    ? {
-                          ә: "a",
-                          Ә: "A",
-                          ң: "ng",
-                          Ң: "Ng",
-                          ө: "o",
-                          Ө: "O",
-                          ү: "u",
-                          Ү: "U",
-                      }
-                    : {
-                          ә: "ä",
-                          Ә: "Ä",
-                          ң: "ŋ",
-                          Ң: "Ŋ",
-                          ө: "ö",
-                          Ө: "Ö",
-                          ү: "ü",
-                          Ү: "Ü",
-                      }
-            );
+            Object.assign(firstLetters, {
+                ә: "a",
+                ғ: "gh",
+                қ: "q",
+                ң: "ng",
+                ө: "o",
+                ұ: "ū",
+                ү: "u",
+                h: "h",
+                і: "i",
+                и: "i",
+                ы: "y",
+            });
+            break;
+        case "mk":
+            Object.assign(firstLetters, {
+                ѓ: "gj",
+                ѕ: "dz",
+                ј: "j",
+                љ: "lj",
+                њ: "nj",
+                ќ: "ḱ",
+                и: "i",
+                г: "g",
+                ы: "y",
+                э: "e",
+                ъ: "",
+            });
+            initialDigraphs = { ѓ: "gj", ќ: "ḱ" };
             break;
         case "sr":
-            Object.assign(
-                initialCharacterMap,
-                asciiOnly
-                    ? {
-                          ђ: "dj",
-                          Ђ: "Dj",
-                          ћ: "c",
-                          Ћ: "C",
-                      }
-                    : {
-                          ђ: "đ",
-                          Ђ: "Đ",
-                          ћ: "ć",
-                          Ћ: "Ć",
-                      }
-            );
+            Object.assign(firstLetters, {
+                ђ: "đ",
+                ј: "j",
+                љ: "lj",
+                њ: "nj",
+                ћ: "ć",
+                џ: "dž",
+                и: "i",
+                г: "g",
+                ы: "y",
+                э: "e",
+                ъ: "",
+            });
+            initialDigraphs = { ђ: "đ", ћ: "ć", џ: "dž" };
             break;
         case "tg":
-            Object.assign(initialCharacterMap, {
-                ҳ: asciiOnly ? "h" : "ḥ",
-                Ҳ: asciiOnly ? "H" : "Ḥ",
-                Ӣ: asciiOnly ? "I" : "Ī",
-                ӣ: asciiOnly ? "i" : "ī",
+            Object.assign(firstLetters, {
+                ъ: "",
+                ҳ: "h",
+                ӣ: "i",
+                ҷ: "j",
+                ӯ: "u",
+                и: "i",
+                г: "g",
+                ы: "y",
+                э: "e",
+                қ: "q",
             });
+            initialDigraphs = { ҷ: "j" };
             break;
         default:
             break;
     }
 
     if (["uk", "be", "kk", "tg"].includes(language)) {
-        Object.assign(initialCharacterMap, {
+        Object.assign(firstLetters, {
             "'": "",
             "’": "",
             ʼ: "",
         });
     }
+
+    // digraphs appearing in all positions
+    const regularDigraphs = {
+        ё: "yo",
+        ж: "zh",
+        х: "kh",
+        ц: "ts",
+        ч: "ch",
+        ш: "sh",
+        щ: "shch",
+        ю: "yu",
+        я: "ya",
+    };
+
+    const firstDigraphs = Object.assign({}, regularDigraphs, initialDigraphs);
+
+    const firstAssociations = Object.assign({}, firstLetters, firstDigraphs);
 
     /*
-    CHARACTER MAPPINGS FOR NON-INITIAL POSITION
+    ASSOCIATIONS FOR NON-INITIAL POSITION
     */
 
-    // Characters whose transliterations differ if they appear after the first character of a word
-    const globalNonInitialCharacterMap: Record<string, string> = {
-        Е: "E",
-        е: "e",
-        Є: "ie",
-        є: "ie",
-        Ї: "i",
-        ї: "i",
-        Й: "i",
-        й: "i",
-        Ю: "iu",
-        ю: "iu",
-        Я: "ia",
-        я: "ia",
-    };
+    const nonFirstLetters = Object.assign({}, firstLetters, { й: "i" });
 
-    const nonInitialCharacterMap = {
-        ...effectiveGlobalCharacterMap,
-        ...globalNonInitialCharacterMap,
-    };
+    // digraphs appearing only in non-initial positions
+    let nonInitialDigraphs: Record<string, string> = {};
 
-    // language-specific overrides
+    // language-specific mappings
     switch (language) {
-        case "bg":
-            Object.assign(
-                nonInitialCharacterMap,
-                asciiOnly
-                    ? {
-                          е: "ie",
-                          Е: "Ie",
-                          ъ: "a",
-                          Ъ: "A",
-                      }
-                    : {
-                          е: "ie",
-                          Е: "Ie",
-                          ъ: "ă",
-                          Ъ: "Ă",
-                      }
-            );
-            break;
-        case "kk":
-            Object.assign(
-                nonInitialCharacterMap,
-                asciiOnly
-                    ? {
-                          ұ: "u",
-                          Ұ: "U",
-                      }
-                    : {
-                          ұ: "ū",
-                          Ұ: "Ū",
-                      }
-            );
-            break;
-        case "tg":
-            Object.assign(nonInitialCharacterMap, {
-                ъ: asciiOnly ? "" : "ʾ",
-                Ъ: asciiOnly ? "" : "ʾ",
-                ҳ: asciiOnly ? "h" : "ḥ",
-                Ҳ: asciiOnly ? "H" : "Ḥ",
-                Ӣ: asciiOnly ? "I" : "Ī",
-                ӣ: asciiOnly ? "i" : "ī",
-            });
+        case "ru":
+            Object.assign(nonFirstLetters, { е: "e" });
             break;
         case "uk":
-            Object.assign(nonInitialCharacterMap, {
-                г: "h",
-                Г: "H",
-                и: "y",
-                И: "Y",
-            });
+            Object.assign(nonFirstLetters, { ї: "i" });
+            nonInitialDigraphs = {
+                є: "ie",
+                ю: "iu",
+                я: "ia",
+            };
             break;
         case "mn":
-            Object.assign(nonInitialCharacterMap, {
+            Object.assign(nonFirstLetters, { е: "e" });
+            break;
+        case "be":
+            Object.assign(nonFirstLetters, { ы: "y", ў: "u" });
+            nonInitialDigraphs = {
+                ю: "iu",
+                я: "ia",
+            };
+            break;
+        case "bg":
+            nonInitialDigraphs = {
+                е: "ie",
+                ю: "iu",
+                я: "ia",
+            };
+            break;
+        case "mk":
+            nonInitialDigraphs = {
+                ѓ: "gj",
+                ќ: "ḱ",
+            };
+            break;
+        case "sr":
+            nonInitialDigraphs = {
+                ђ: "đ",
+                ћ: "ć",
+                џ: "dž",
+            };
+            break;
+        case "tg":
+            nonInitialDigraphs = {
+                ҷ: "j",
+            };
+            Object.assign(nonFirstLetters, {
+                қ: "q",
+                ъ: "",
+                ӣ: "i",
+                ӯ: "u",
+            });
+            break;
+        case "kk":
+            Object.assign(nonFirstLetters, {
+                ғ: "gh",
+                қ: "q",
+                ұ: "ū",
+                ә: "a",
                 ө: "o",
-                Ө: "O",
                 ү: "u",
-                Ү: "U",
             });
             break;
         default:
             break;
     }
 
-    if (["uk", "be", "kk", "tg"].includes(language)) {
-        Object.assign(nonInitialCharacterMap, {
-            "'": "",
-            "’": "",
-            ʼ: "",
-        });
-    }
+    const nonFirstDigraphs = Object.assign(
+        {},
+        regularDigraphs,
+        nonInitialDigraphs
+    );
 
-    return { initialCharacterMap, nonInitialCharacterMap };
+    const nonFirstAssociations = Object.assign(
+        {},
+        nonFirstLetters,
+        nonFirstDigraphs
+    );
+
+    return { firstAssociations, nonFirstAssociations };
 };
 
 const replaceCyrillicHomoglyphs = (input: string): string => {

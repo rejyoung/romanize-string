@@ -1,5 +1,4 @@
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
-import { describe, it, expect } from "vitest";
 
 /**
  * Adapted from cyrillic-to-translit-js
@@ -9,7 +8,7 @@ import { describe, it, expect } from "vitest";
  */
 
 describe("Ukrainian transliteration", () => {
-    it("matches https://pasport.org.ua/vazhlivo/transliteratsiya", () => {
+    test("matches https://pasport.org.ua/vazhlivo/transliteratsiya", () => {
         const t = (s: string) => romanizeCyrillic(s, "uk");
 
         expect(t("алушта")).toBe("alushta");
@@ -88,7 +87,7 @@ describe("Ukrainian transliteration", () => {
         expect(t("розгон")).toBe("rozghon");
     });
 
-    it("handles apostrophes (U+0027)", () => {
+    test("handles apostrophes (U+0027)", () => {
         const t = (s: string) => romanizeCyrillic(s, "uk");
 
         expect(t("короп'є")).toBe("koropie");
@@ -96,7 +95,7 @@ describe("Ukrainian transliteration", () => {
         expect(t("знам'янка")).toBe("znamianka");
     });
 
-    it("handles apostrophes (U+2019)", () => {
+    test("handles apostrophes (U+2019)", () => {
         const t = (s: string) => romanizeCyrillic(s, "uk");
 
         expect(t("короп’є")).toBe("koropie");
@@ -104,7 +103,7 @@ describe("Ukrainian transliteration", () => {
         expect(t("знам’янка")).toBe("znamianka");
     });
 
-    it("handles apostrophes (U+02BC)", () => {
+    test("handles apostrophes (U+02BC)", () => {
         const t = (s: string) => romanizeCyrillic(s, "uk");
 
         expect(t("коропʼє")).toBe("koropie");

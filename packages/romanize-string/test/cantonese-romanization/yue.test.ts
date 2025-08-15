@@ -1,5 +1,4 @@
 import { romanizeCantonese } from "../../src/transliterators/cantonese-romanization";
-import { describe, it, expect } from "vitest";
 
 describe("romanizeCantonese", () => {
     it("should romanize simple Cantonese characters", () => {

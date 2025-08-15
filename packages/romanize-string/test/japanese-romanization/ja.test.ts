@@ -1,6 +1,5 @@
 import { initKuroshiro } from "../../src/utils/kuroshiro.js";
 import { romanizeJapanese } from "../../src/transliterators/japanese-romanization.js";
-import { describe, it, expect, beforeAll } from "vitest";
 
 beforeAll(async () => {
     await initKuroshiro();
