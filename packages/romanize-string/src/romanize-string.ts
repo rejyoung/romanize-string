@@ -8,7 +8,7 @@ import {
     isIndicLanguageCode,
     isMandarinLanguageCode,
 } from "./utils/type-guards.js";
-import { romanizeIndic } from "./transliterators/inidic-romanization.js";
+import { romanizeIndic } from "./transliterators/indic-romanization.js";
 import { romanizeThai } from "./transliterators/thai-romanization.js";
 import { romanizeCantonese } from "./transliterators/cantonese-romanization.js";
 import { romanizeMandarin } from "./transliterators/mandarin-romanization.js";
@@ -65,6 +65,6 @@ export const romanizeString = async (
     return transliteratedString.trim();
 };
 
-romanizeString.register = async (pluginSetup: () => Promise<void>) => {
-    await romanizeThai.register(pluginSetup);
+romanizeString.register = (pluginSetup: () => Promise<void>) => {
+    romanizeThai.register(pluginSetup);
 };

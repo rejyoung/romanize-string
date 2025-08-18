@@ -12,11 +12,6 @@
             "types": "./dist/types/index.d.ts",
             "import": "./dist/esm/index.js",
             "require": "./dist/cjs/index.js"
-        },
-        "./plugins": {
-            "import": "./dist/esm/plugins.js",
-            "require": "./dist/cjs/plugins.js",
-            "types": "./dist/types/plugins.d.ts"
         }
     },
     "sideEffects": false,
@@ -76,9 +71,9 @@
         "vitest": "^3.2.4"
     },
     "peerDependencies": {
-        "@romanize-string/thai-romanizer": "^0.1.0"
+        "@romanize-string/thai-romanizer": "workspace:>=1.0.0 <2.0.0"
     },
     "optionalDependencies": {
-        "@romanize-string/thai-romanizer": "^0.1.0"
+        "@romanize-string/thai-romanizer": ">=1.0.0 <2.0.0"
     }
 }
