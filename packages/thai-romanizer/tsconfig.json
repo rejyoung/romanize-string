@@ -6,11 +6,9 @@
         "outDir": "dist",
         "rootDir": "src",
         "declarationDir": "dist/types",
-        "baseUrl": ".",
-        "paths": {
-            "romanize-string/plugins": ["../romanize-string/src/plugins.ts"]
-        }
+        "baseUrl": "."
     },
     "include": ["src/**/*", "scripts"],
+    "exclude": ["test", "**/*.test.ts"],
     "references": [{ "path": "../romanize-string" }]
 }

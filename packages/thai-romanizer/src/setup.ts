@@ -1,26 +1,50 @@
-import { registerPlugin } from "romanize-string/plugins";
 import { thaiRomanizer } from "./thai-romanizer.js";
 import { fileURLToPath } from "url";
 import os from "os";
 import path from "path";
-import { access } from "fs/promises";
+import { accessSync, constants } from "fs";
 
 export let binPath: string | undefined;
 
-export const setup = async () => {
+export const setup = () => {
     const binaryName = getBinaryName();
 
-    const currentFilename = fileURLToPath(import.meta.url);
-    const dir = path.dirname(currentFilename);
+    // Resolve current file/dir in both ESM and CJS without using the `import.meta` token
+    const currentFilename =
+        // In CJS, __filename exists; in ESM it does not
+        typeof __filename !== "undefined"
+            ? __filename
+            : // Use eval so TypeScript doesn't reject `import.meta` when compiling CJS
+              fileURLToPath((eval("import.meta") as any).url);
+    const dir =
+        typeof __dirname !== "undefined"
+            ? __dirname
+            : path.dirname(currentFilename);
     const parentDir = path.dirname(dir);
 
     const binaryPath = path.join(parentDir, "bin", binaryName);
 
     try {
-        await access(binaryPath);
+        // Ensure that binary exists at that path and is executable
+        accessSync(binaryPath, constants.X_OK);
 
         binPath = binaryPath;
-        registerPlugin("th", thaiRomanizer);
+
+        const REGISTER = Symbol.for("romanize-string.registerPlugin");
+        const registerPlugin = (globalThis as any)[REGISTER] as
+            | ((
+                  code: string,
+                  fn: (s: string) => string | Promise<string>
+              ) => void)
+            | undefined;
+
+        if (registerPlugin) {
+            registerPlugin("th", thaiRomanizer);
+        } else {
+            console.warn(
+                "The romanize-string plugin hook was not found; plugin not registered"
+            );
+        }
     } catch (error) {
         console.warn(
             "Cannot register plugin. The thaiRomanizer binary is missing or was not successfully downloaded."

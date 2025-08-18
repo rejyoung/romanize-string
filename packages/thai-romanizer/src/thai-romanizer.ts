@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import { binPath } from "./setup.js";
 
-export const thaiRomanizer = async (input: string) => {
+export const thaiRomanizer = (input: string) => {
     try {
         if (!binPath) {
             throw new Error(
