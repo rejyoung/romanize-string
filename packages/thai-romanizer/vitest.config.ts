@@ -11,12 +11,4 @@ export default defineConfig({
         globals: true,
         clearMocks: true,
     },
-    resolve: {
-        alias: {
-            "romanize-string/plugins": path.resolve(
-                __dirname,
-                "src/plugins.ts"
-            ),
-        },
-    },
 });

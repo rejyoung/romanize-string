@@ -1,18 +1,22 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-
-// Mocks that are shared across tests
-vi.mock("romanize-string/plugins", () => ({
-    registerPlugin: vi.fn(),
-}));
+import {
+    describe,
+    it,
+    expect,
+    vi,
+    beforeEach,
+    afterEach,
+    type Mock,
+} from "vitest";
 
 // Mock the child_process spawnSync used by thai-romanizer
 vi.mock("child_process", () => ({
     spawnSync: vi.fn(),
 }));
 
-// We'll dynamically mock fs/promises.access per test
-vi.mock("fs/promises", () => ({
-    access: vi.fn(),
+// We'll dynamically mock fs.accessSync per test
+vi.mock("fs", () => ({
+    accessSync: vi.fn(),
+    constants: { X_OK: 1, F_OK: 0, R_OK: 4, W_OK: 2 },
 }));
 
 // Mock the internal import path used by setup.ts ("./thai-romanizer.js")
@@ -23,32 +27,43 @@ vi.mock("../src/thai-romanizer.js", async () => {
     };
 });
 
+vi.mock("os", () => {
+    const platform = vi.fn();
+    return {
+        default: { platform },
+        platform,
+    };
+});
+
 import * as os from "os";
 import { spawnSync } from "child_process";
-import { access } from "fs/promises";
-import { registerPlugin } from "romanize-string/plugins";
+import { accessSync } from "fs";
 
-import * as setupMod from "../src/setup";
-import { thaiRomanizer } from "../src/thai-romanizer";
+// Global registration hook used by romanize-string core
+const REGISTER = Symbol.for("romanize-string.registerPlugin");
+
+let setupMod: typeof import("../src/setup.js");
+let thaiRomanizer: typeof import("../src/thai-romanizer.js")["thaiRomanizer"];
 
 describe("thai-romanizer plugin integration", () => {
     const origArch = process.arch;
-    let platformSpy: vi.SpyInstance;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         vi.restoreAllMocks();
-        // Reset exported binPath between tests
-        (setupMod as any).binPath = undefined;
+        vi.resetModules();
+        setupMod = await import("../src/setup.js");
 
-        // Default: darwin-x64 for deterministic binary name
-        platformSpy = vi
-            .spyOn(os, "platform")
-            .mockReturnValue("darwin" as NodeJS.Platform);
+        ({ thaiRomanizer } = await import("../src/thai-romanizer.js"));
+
+        (os.platform as unknown as Mock).mockReturnValue("darwin");
         // @ts-ignore - defineProperty to override readonly arch for test
         Object.defineProperty(process, "arch", {
             value: "x64",
             configurable: true,
         });
+
+        // Provide a mock global hook for plugin registration
+        (globalThis as any)[REGISTER] = vi.fn();
 
         // Quiet console output in tests, but keep a hook if we want to assert later
         vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -61,33 +76,37 @@ describe("thai-romanizer plugin integration", () => {
             value: origArch,
             configurable: true,
         });
-        platformSpy?.mockRestore();
+        delete (globalThis as any)[REGISTER];
         vi.clearAllMocks();
     });
 
     it("setup registers the plugin when the binary exists", async () => {
         // Arrange
-        (access as unknown as vi.Mock).mockResolvedValue(undefined);
+        (accessSync as unknown as Mock).mockImplementation(() => undefined);
 
         // Act
         await setupMod.setup();
 
         // Assert
         expect((setupMod as any).binPath).toBeTruthy();
-        expect(registerPlugin).toHaveBeenCalledWith("th", expect.any(Function));
+        const register = (globalThis as any)[REGISTER] as Mock;
+        expect(register).toHaveBeenCalledWith("th", expect.any(Function));
         expect(console.warn).not.toHaveBeenCalled();
     });
 
     it("setup warns and does not register when binary is missing", async () => {
         // Arrange
-        (access as unknown as vi.Mock).mockRejectedValue(new Error("nope"));
+        (accessSync as unknown as Mock).mockImplementation(() => {
+            throw new Error("nope");
+        });
 
         // Act
         await setupMod.setup();
 
         // Assert
         expect((setupMod as any).binPath).toBeUndefined();
-        expect(registerPlugin).not.toHaveBeenCalled();
+        const register = (globalThis as any)[REGISTER] as Mock;
+        expect(register).not.toHaveBeenCalled();
         expect(console.warn).toHaveBeenCalledWith(
             "Cannot register plugin. The thaiRomanizer binary is missing or was not successfully downloaded."
         );
@@ -95,7 +114,7 @@ describe("thai-romanizer plugin integration", () => {
 
     it("getBinaryName mapping returns expected filename for darwin-x64", async () => {
         // Arrange
-        (access as unknown as vi.Mock).mockResolvedValue(undefined);
+        (accessSync as unknown as Mock).mockImplementation(() => undefined);
 
         // Act
         await setupMod.setup();
@@ -108,28 +127,28 @@ describe("thai-romanizer plugin integration", () => {
 
     describe("thaiRomanizer behavior", () => {
         it("returns cleaned stdout on success (trims and fixes polite suffix spacing)", async () => {
-            (setupMod as any).binPath = "/fake/path/thai-mac-x64";
-            (spawnSync as unknown as vi.Mock).mockReturnValue({
+            (spawnSync as unknown as Mock).mockReturnValue({
                 status: 0,
                 stdout: "  kha / khrap  \n",
                 stderr: "",
                 error: undefined,
             });
 
+            await setupMod.setup();
             const out = await thaiRomanizer("สวัสดี");
             expect(out).toBe("kha/khrap");
             expect(console.error).not.toHaveBeenCalled();
         });
 
         it("returns input when spawnSync returns a non-zero status", async () => {
-            (setupMod as any).binPath = "/fake/path/thai-mac-x64";
-            (spawnSync as unknown as vi.Mock).mockReturnValue({
+            (spawnSync as unknown as Mock).mockReturnValue({
                 status: 1,
                 stdout: "",
                 stderr: "boom",
                 error: undefined,
             });
 
+            await setupMod.setup();
             const input = "ทดสอบ";
             const out = await thaiRomanizer(input);
             expect(out).toBe(input);
@@ -137,14 +156,14 @@ describe("thai-romanizer plugin integration", () => {
         });
 
         it("returns input when spawnSync returns an error", async () => {
-            (setupMod as any).binPath = "/fake/path/thai-mac-x64";
-            (spawnSync as unknown as vi.Mock).mockReturnValue({
+            (spawnSync as unknown as Mock).mockReturnValue({
                 status: 0,
                 stdout: "",
                 stderr: "",
                 error: new Error("python blew up"),
             });
 
+            await setupMod.setup();
             const input = "แบบทดสอบ";
             const out = await thaiRomanizer(input);
             expect(out).toBe(input);
@@ -152,7 +171,6 @@ describe("thai-romanizer plugin integration", () => {
         });
 
         it("returns input and logs when binPath is not set", async () => {
-            (setupMod as any).binPath = undefined;
             const input = "สวัสดีครับ";
             const out = await thaiRomanizer(input);
             expect(out).toBe(input);
@@ -160,14 +178,14 @@ describe("thai-romanizer plugin integration", () => {
         });
 
         it("trims stdout whitespace", async () => {
-            (setupMod as any).binPath = "/fake/path/thai-mac-x64";
-            (spawnSync as unknown as vi.Mock).mockReturnValue({
+            (spawnSync as unknown as Mock).mockReturnValue({
                 status: 0,
                 stdout: "  sawa dee   \n",
                 stderr: "",
                 error: undefined,
             });
 
+            await setupMod.setup();
             const out = await thaiRomanizer("ทดสอบ");
             expect(out).toBe("sawa dee");
         });

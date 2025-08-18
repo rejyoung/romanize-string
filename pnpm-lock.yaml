@@ -68,7 +68,7 @@ importers:
         specifier: ^8.0.4
         version: 8.0.4
       romanize-string:
-        specifier: workspace:*
+        specifier: workspace:>=1.2.0 <2.0.0
         version: link:../romanize-string
       typescript:
         specifier: ^5.8.3

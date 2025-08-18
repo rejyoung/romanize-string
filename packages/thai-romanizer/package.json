@@ -1,38 +1,42 @@
 {
-    "name": "thai-romanizer",
+    "name": "@romanize-string/thai-romanizer",
     "version": "0.1.0",
     "description": "",
     "files": [
         "dist",
         "README.md",
-        "scripts/postinstall.mjs"
+        "scripts/postinstall.mjs",
+        "scripts/postbuild.mjs"
     ],
     "devDependencies": {
         "@types/node": "^22.16.5",
         "npm-run-all2": "^8.0.4",
-        "romanize-string": "workspace:*",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "romanize-string": "workspace:>=1.3.0 <2.0.0"
     },
     "peerDependencies": {
-        "romanize-string": "^1.3.0"
+        "romanize-string": ">=1.3.0 <2.0.0"
     },
     "exports": {
         ".": {
+            "types": "./dist/types/index.d.ts",
             "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "types": "./dist/types/index.d.ts"
+            "require": "./dist/cjs/index.cjs"
         }
     },
     "scripts": {
-        "build": "pnpm run clean && run-p build:esm build:cjs",
+        "build": "pnpm run clean && run-p build:esm build:cjs && pnpm run postbuild",
         "clean": "rm -rf dist",
         "build:esm": "tsc --outDir dist/esm",
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution node",
-        "test": "vitest",
+        "typecheck:test": "tsc -p tsconfig.vitest.json --noEmit",
+        "vitest": "vitest",
+        "test": "run-p typecheck:test vitest",
         "start": "pnpm run-s build start:run",
         "start:run": "node dist/esm/index.js",
         "prepublishOnly": "pnpm run-s build",
-        "postinstall": "node ./scripts/postinstall.mjs"
+        "postinstall": "node ./scripts/postinstall.mjs",
+        "postbuild": "node ./scripts/postbuild.mjs"
     },
     "keywords": [],
     "author": "Ryan Young",
