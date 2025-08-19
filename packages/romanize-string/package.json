@@ -68,12 +68,18 @@
         "@types/node": "^22.16.5",
         "npm-run-all2": "^8.0.4",
         "typescript": "^5.8.3",
-        "vitest": "^3.2.4"
+        "vitest": "^3.2.4",
+        "@romanize-string/thai-romanizer": "workspace:^"
     },
     "peerDependencies": {
-        "@romanize-string/thai-romanizer": "workspace:>=1.0.0 <2.0.0"
-    },
-    "optionalDependencies": {
         "@romanize-string/thai-romanizer": ">=1.0.0 <2.0.0"
+    },
+    "peerDependenciesMeta": {
+        "@romanize-string/thai-romanizer": {
+            "optional": true
+        }
+    },
+    "engines": {
+        "node": ">=16"
     }
 }
