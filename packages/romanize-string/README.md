@@ -9,7 +9,8 @@
 - [About](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Language Codes](#language-codes)
+  - [Registering Plugins](#registering-plugins)
+  - [Language Codes](#language-codes)
 - [TypeScript Support](#typescript-support)
 - [Modular Imports](#modular-imports)
   - [Script-Based Transliteration Functions](#script-based-transliteration-functions)
@@ -31,7 +32,7 @@ I created this library in the process of working on a closed-source project. I w
 
 ## Installation
 
-```sh
+```bash
 npm install romanize-string
 ```
 
@@ -39,26 +40,51 @@ npm install romanize-string
 
 >Supports both ESM and CommonJS
 
-### Additional Installation for Thai Transliteration
+### Additional Installation for Enabling Thai Transliteration
 
-Because no suitable JavaScript library exists for Thai transliteration, this library relies on an external Python library ( [pythainlp](https://github.com/PyThaiNLP/pythainlp) ) to handle Thai script. As a result, any attempt to romanize Thai—whether via the [`romanizeThai`](#romanizethai) function or by passing `"th"` to `romanizeString`—requires both Python 3 and [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the runtime environment. If either is missing, the function will return an untransliterated string and emit a descriptive console error.
+Because no suitable JavaScript library exists for Thai transliteration, this library relies on the external Python project [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp). You can enable Thai in one of two ways:
 
-1. Make sure Python 3 is installed:
+1. **Install the thai-romanizer plugin (preferred):** [`@romanize-string/thai-romanizer`](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer)
+2. **Install Python libraries directly** in your runtime environment (advanced)
+
+If neither is set up, Thai romanization will fail and the function will return the original (untransliterated) string.
+
+---
+
+#### Installing the thai-romanizer plugin (preferred)
+
+1. Install the plugin:
+
+```bash
+npm install @romanize-string/thai-romanizer
+```
+
+2. Register the plugin once at startup:
+
+    See [Registering Plugins](#registering-plugins)
+
+> **NOTE:** This plugin requires **Node.js 18+** (the core `romanize-string` library supports **Node.js 16+**). The plugin downloads a platform-specific helper binary (~50 MB) during install; no Python is required when using the plugin.
+
+---
+
+#### Installing Python libraries directly (advanced)
+
+1. Ensure Python 3 is installed:
    - [Download Python](https://www.python.org/downloads/) if needed
 
-2. Install the required library:
+2. Install the required libraries:
 
-   ```bash
-   pip install pythainlp
-   ```
+```bash
+pip install pythainlp onnxruntime numpy
+```
 
 If you're unsure which Python installation you're using:
 
 ```bash
-python3 -m pip install pythainlp
+python3 -m pip install pythainlp onnxruntime numpy
 ```
 
-> **NOTE:** This issue **only** affects Thai transliteration. The absence or presence of Python 3 and pythainlp has no effect on the romanization of other scripts.
+---
 
 ## Usage
 
@@ -69,7 +95,15 @@ Because one of the underlying libraries is asynchronous, you must await calls to
 **Example:**
 
 ```ts
+// Using ESM
 import romanizeString from "romanize-string"
+
+const translit = await romanizeString("নমস্তে, আপনি কেমন আছেন?", "bn", false) // namaste, āpani kemana āchena?
+```
+
+```ts
+// Using CommonJS
+const {default: romanizeString} = require("romanize-string")
 
 const translit = await romanizeString("নমস্তে, আপনি কেমন আছেন?", "bn", false) // namaste, āpani kemana āchena?
 ```
@@ -87,6 +121,30 @@ const translit = await romanizeString("নমস্তে, আপনি কে�
 A promise resolving to a string in Latin script
 
 > **NOTE:** The parameter `omitDiacritics` only applies to Mandarin, Greek, Cyrillic, and Indic languages. (For Mandarin, diacritics are used to indicate tones.) When transliterating from a language other than these, passing a value for `omitDiacritics` in your function call has no effect
+
+### Registering Plugins
+
+Plugins are added to romanize-string using the `romanizeString.register()` method. Official plugins export a default object which should be passed directly to this method. Once registered, the plugin’s code becomes available to `romanizeString()` and all submodules.  
+
+```ts
+// Using ESM
+import romanizeString from "romanize-string";
+import thaiRomanizer from "@romanize-string/thai-romanizer";
+
+// Register the plugin once at startup
+romanizeString.register(thaiRomanizer);
+
+```
+
+```ts
+// Using CommonJS
+const {default: romanizeString} = require("romanize-string");
+const thaiRomanizer = require("@romanize-string/thai-romanizer");
+
+// Register the plugin once at startup
+romanizeString.register(thaiRomanizer);
+
+```
 
 ### Language Codes
 
@@ -145,7 +203,7 @@ A promise resolving to a string in Latin script
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-> ¹ Thai transliteration requires Python and the Python library [pythainlp](https://github.com/PyThaiNLP/pythainlp) to be installed in the environment where the code is run. See the [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more details.
+> ¹ Thai transliteration requires either the `@romanize-string/thai-romanizer` plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
 
 ### Examples
 
@@ -389,7 +447,7 @@ Transliterates Thai script.
 Supported Language: th
 
 ```ts
-const translit = romanizeThai("สวัสดีครับ/ค่ะ สบายดีไหม?") // satti khnap/kha spaiti mai?
+const translit = romanizeThai("สวัสดีครับ/ค่ะ สบายดีไหม?") // sawatdi khrap/kha sabaidi haimai?
 ```
 
 **Arguments:**
@@ -400,7 +458,7 @@ const translit = romanizeThai("สวัสดีครับ/ค่ะ สบ�
 
 A string in Latin script
 
-> **NOTE:** To use `romanizeThai`, Python 3 and the pythainlp library must be available in your environment. See [Additional Installation for Thai Transliteration](#additional-installation-for-thai-transliteration) for more information.
+> **NOTE:** Thai transliteration requires either the `@romanize-string/thai-romanizer` plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
 
 ---
 
