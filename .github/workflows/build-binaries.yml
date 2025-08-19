@@ -86,7 +86,7 @@ jobs:
       - name: Build binary
         working-directory: packages/thai-romanizer/python
         run: |
-          pyinstaller --onefile --name "${{matrix.asset_name}}${{ matrix.ext }}" python-thai-romanization.py
+          pyinstaller --name "${{matrix.asset_name}}${{ matrix.ext }}" thai-romanization.spec
           ls -la dist
 
       - name: Upload build artifact
