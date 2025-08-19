@@ -1,5 +1,11 @@
 # romanize-string
 
+## 1.3.1
+
+### Patch Changes
+
+- 2efd1c4: Updates docs to integrate changelog
+
 ## 1.3.0
 
 ### Minor Changes

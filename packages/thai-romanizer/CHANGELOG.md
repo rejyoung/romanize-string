@@ -1,5 +1,13 @@
 # @romanize-string/thai-romanizer
 
+## 1.0.1
+
+### Patch Changes
+
+- 2efd1c4: Updates docs to integrate changelog
+- Updated dependencies [2efd1c4]
+  - romanize-string@1.3.1
+
 ## 1.0.0
 
 ### Initial Release
