@@ -2,29 +2,55 @@ name: Tag & Release (after Changesets version)
 
 on:
   push:
-    branches: 
-      - release
+    branches: [release]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref (branch, tag, or SHA) to run against'
+        required: false
+      base:
+        description: 'Base commit/branch/SHA for diff'
+        required: false
+      head:
+        description: 'Head commit/branch/SHA for diff (defaults to ref/sha)'
+        required: false
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   tag_and_release:
-    # Only run when the merge commit contains "Version Packages"
-    if: contains(github.event.head_commit.message, 'Version Packages')
+    # Run on manual triggers OR on "Version Packages" commits to release
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Version Packages')
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # needed to create tags & releases
+      contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Determine changed packages
         id: pkgs
+        env:
+          BASE: ${{ inputs.base || github.event.before }}
+          HEAD: ${{ inputs.head || github.sha }}
         run: |
-          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+          BASE_SHA="${BASE:-}"
+          HEAD_SHA="${HEAD:-}"
+
+          # Fallbacks for manual runs if base not provided
+          if [ -z "$HEAD_SHA" ]; then
+            HEAD_SHA="$(git rev-parse HEAD)"
+          fi
+          if [ -z "$BASE_SHA" ]; then
+            # Default to previous commit on the checked-out ref
+            BASE_SHA="$(git rev-parse "${HEAD_SHA}^" || true)"
+          fi
+
+          CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
             | grep -E '^packages/[^/]+/package.json$' || true)
 
           pkgs=$(echo "$CHANGED" | while read -r f; do
