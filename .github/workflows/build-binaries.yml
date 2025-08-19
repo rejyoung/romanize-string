@@ -86,8 +86,12 @@ jobs:
       - name: Build binary
         working-directory: packages/thai-romanizer/python
         run: |
-          pyinstaller --name "${{matrix.asset_name}}${{ matrix.ext }}" thai-romanization.spec
+          # Build from spec (cannot pass --name with a .spec file)
+          pyinstaller thai-romanization.spec
           ls -la dist
+          # Rename the produced binary to the matrix-provided asset name
+          BUILT_FILE=$(find dist -maxdepth 1 -type f -print -quit)
+          mv "$BUILT_FILE" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
