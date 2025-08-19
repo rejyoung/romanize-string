@@ -1,4 +1,4 @@
-import { romanizeIndic } from "../../src/transliterators/inidic-romanization";
+import { romanizeIndic } from "../../src/transliterators/indic-romanization";
 import { describe, it, expect } from "vitest";
 
 describe("Indic language transliteration", () => {
