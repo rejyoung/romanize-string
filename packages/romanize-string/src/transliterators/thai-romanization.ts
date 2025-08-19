@@ -7,18 +7,20 @@ const analyzer = new ThaiAnalyzer();
 
 export const romanizeThai = (input: string) => {
     const { solution } = analyzer.segmenting(input);
+
+    const separator = "\u{F0000}\u{F0001}";
     const segmentedString = solution
         .filter((word) => word.trim().length > 0)
-        .join(" ")
-        .replace(/\s+([.,!?;:])/g, "$1");
+        .map((w) => w.replaceAll(separator, "\\" + separator))
+        .join(separator); // Join tokens with a two-codepoint sentinel so the Python code can split it cleanly
 
     const plugin = getPlugin("th");
 
     let transliterated;
     if (plugin) {
-        transliterated = plugin(segmentedString);
+        transliterated = plugin(segmentedString, input);
     } else {
-        transliterated = runLocalPythonRomanizer(segmentedString);
+        transliterated = runLocalPythonRomanizer(segmentedString, input);
     }
 
     const romanizedString = transliterated
@@ -32,13 +34,19 @@ romanizeThai.register = async (pluginSetup: () => Promise<void>) => {
     await pluginSetup();
 };
 
-const runLocalPythonRomanizer = (input: string): string => {
+const runLocalPythonRomanizer = (
+    segmentedString: string,
+    original: string
+): string => {
     try {
         ensurePythonWithThaiLib();
 
         const result = spawnSync(
             "python3",
-            ["src/transliterators/python-thai-romanization.py", input],
+            [
+                "src/transliterators/python-thai-romanization.py",
+                segmentedString,
+            ],
             {
                 encoding: "utf-8",
                 input: "",
@@ -59,6 +67,6 @@ const runLocalPythonRomanizer = (input: string): string => {
     } catch (err) {
         console.error("Thai transliteration failed.");
         console.error(err);
-        return input;
+        return original;
     }
 };

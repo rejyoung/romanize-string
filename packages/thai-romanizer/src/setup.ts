@@ -32,10 +32,7 @@ export const setup = () => {
 
         const REGISTER = Symbol.for("romanize-string.registerPlugin");
         const registerPlugin = (globalThis as any)[REGISTER] as
-            | ((
-                  code: string,
-                  fn: (s: string) => string | Promise<string>
-              ) => void)
+            | ((code: string, fn: (s: string, o: string) => string) => void)
             | undefined;
 
         if (registerPlugin) {

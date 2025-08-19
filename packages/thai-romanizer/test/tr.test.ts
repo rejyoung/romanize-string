@@ -135,7 +135,7 @@ describe("thai-romanizer plugin integration", () => {
             });
 
             await setupMod.setup();
-            const out = await thaiRomanizer("สวัสดี");
+            const out = await thaiRomanizer("สวัสดี", "สวัสดี");
             expect(out).toBe("kha/khrap");
             expect(console.error).not.toHaveBeenCalled();
         });
@@ -150,12 +150,12 @@ describe("thai-romanizer plugin integration", () => {
 
             await setupMod.setup();
             const input = "ทดสอบ";
-            const out = await thaiRomanizer(input);
+            const out = await thaiRomanizer(input, input);
             expect(out).toBe(input);
             expect(console.error).toHaveBeenCalled(); // error path logs
         });
 
-        it("returns input when spawnSync returns an error", async () => {
+        it("returns the provided original when spawnSync returns an error (segmented vs original)", async () => {
             (spawnSync as unknown as Mock).mockReturnValue({
                 status: 0,
                 stdout: "",
@@ -164,15 +164,17 @@ describe("thai-romanizer plugin integration", () => {
             });
 
             await setupMod.setup();
-            const input = "แบบทดสอบ";
-            const out = await thaiRomanizer(input);
-            expect(out).toBe(input);
+            const segmented = "แบบ|SEP|ทดสอบ";
+            const original = "แบบทดสอบ";
+            const out = await thaiRomanizer(segmented, original);
+            expect(out).toBe(original);
+            expect(out).not.toBe(segmented);
             expect(console.error).toHaveBeenCalled();
         });
 
         it("returns input and logs when binPath is not set", async () => {
             const input = "สวัสดีครับ";
-            const out = await thaiRomanizer(input);
+            const out = await thaiRomanizer(input, input);
             expect(out).toBe(input);
             expect(console.error).toHaveBeenCalled();
         });
@@ -186,7 +188,7 @@ describe("thai-romanizer plugin integration", () => {
             });
 
             await setupMod.setup();
-            const out = await thaiRomanizer("ทดสอบ");
+            const out = await thaiRomanizer("ทดสอบ", "ทดสอบ");
             expect(out).toBe("sawa dee");
         });
     });

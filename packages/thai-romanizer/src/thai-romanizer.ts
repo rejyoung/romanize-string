@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import { binPath } from "./setup.js";
 
-export const thaiRomanizer = (input: string) => {
+export const thaiRomanizer = (segmentedString: string, original: string) => {
     try {
         if (!binPath) {
             throw new Error(
@@ -9,7 +9,7 @@ export const thaiRomanizer = (input: string) => {
             );
         }
 
-        const result = spawnSync(binPath, [input], {
+        const result = spawnSync(binPath, [segmentedString], {
             encoding: "utf-8",
             input: "",
         });
@@ -30,6 +30,6 @@ export const thaiRomanizer = (input: string) => {
     } catch (err) {
         console.error("Thai transliteration failed.");
         console.error(err);
-        return input;
+        return original;
     }
 };

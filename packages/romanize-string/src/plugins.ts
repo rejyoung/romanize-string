@@ -1,5 +1,5 @@
 // src/plugins.ts
-export type RomanizerFn = (input: string, opts?: unknown) => string;
+export type RomanizerFn = (input: string, ...args: unknown[]) => string;
 
 const pluginRegistry = new Map<string, RomanizerFn>();
 
