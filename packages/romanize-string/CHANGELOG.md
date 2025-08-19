@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- ff8e336: ## Thai Romanization Plugin & Core Integration
+- ff8e336: Thai Romanization Plugin & Core Integration
 
   - Adds support for plugins
     - Adds plugin registry and registration functions that utilize the global object and global symbol registry
@@ -14,7 +14,7 @@
   - Switches to PyThaiNLP's ONNX runtime transliteration engine for better accuracy
   - README and tests updated. No breaking API changes.
 
-- aa4536a: ## Cyrillic Romanization Overhaul & Testing Updates\*\*
+- aa4536a: Cyrillic Romanization Overhaul & Testing Updates
 
   - Overhauled Cyrillic romanization to support both ASCII-only output and BGN/PCGN romanization, improving overall transliteration accuracy.
   - Added `omitDiacritics` parameter support for Cyrillic transliteration in both `romanizeCyrillic` and `romanizeString`.
