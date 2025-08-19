@@ -1,6 +1,9 @@
 name: Build Cross-Platform Binaries
 
 on:
+  workflow_run:
+    workflows: ["Tag & Release (after Changesets version)"]
+    types: [completed]
   release:
     types: [published]
   workflow_dispatch:
@@ -10,30 +13,51 @@ jobs:
     name: Determine release tag
     runs-on: ubuntu-latest
     outputs:
-      release_tag: ${{ steps.settag.outputs.release_tag }}
+      release_tag: ${{ steps.pick.outputs.release_tag }}
     steps:
-      - name: Resolve tag
-        id: settag
+      - name: Pick latest thai-romanizer release tag
+        id: pick
         uses: actions/github-script@v7
         with:
           script: |
-            const eventName = context.eventName;
-            let tag;
-            if (eventName === 'release') {
-              tag = context.payload.release.tag_name;
-            } else {
-              const { data } = await github.rest.repos.getLatestRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-              });
-              tag = data.tag_name;
+            const { owner, repo } = context.repo;
+            const PREFIX = '@romanize-string/thai-romanizer@';
+
+            if (context.eventName === 'release') {
+              const tag = context.payload?.release?.tag_name || '';
+              core.setOutput('release_tag', tag);
+              return;
             }
-            core.setOutput('release_tag', tag);
+
+            if (context.eventName === 'workflow_run') {
+              const sha = context.payload?.workflow_run?.head_sha;
+              if (!sha) {
+                core.setOutput('release_tag', '');
+                return;
+              }
+              // Find tags that start with our package prefix and point to this SHA
+              const { data: refs } = await github.rest.git.listMatchingRefs({
+                owner,
+                repo,
+                ref: `tags/${PREFIX}`,
+              });
+              const match = refs.find(r => (r.object?.sha === sha));
+              const tag = match ? match.ref.replace('refs/tags/', '') : '';
+              core.setOutput('release_tag', tag);
+              return;
+            }
+
+            // Fallback for manual runs: use the most recent release for the package
+            const { data: releases } = await github.rest.repos.listReleases({ owner, repo, per_page: 50 });
+            const latest = releases.find(r => (r.tag_name || '').startsWith(PREFIX));
+            core.setOutput('release_tag', latest ? latest.tag_name : '');
 
   build:
     needs: prepare
-    # Only build for thai-romanizer releases
-    if: startsWith(needs.prepare.outputs.release_tag, '@romanize-string/thai-romanizer@')
+    # Only build when we have a thai-romanizer release tag AND either:
+    # - manual run, or
+    # - the upstream workflow completed successfully
+    if: needs.prepare.outputs.release_tag != '' && startsWith(needs.prepare.outputs.release_tag, '@romanize-string/thai-romanizer@') && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' || github.event_name == 'release')
     strategy:
       fail-fast: false
       matrix:
@@ -43,7 +67,7 @@ jobs:
             pyver: '3.11'
             asset_name: thai-linux-x64
             ext: ''
-          # Linux arm64 (ARM runners)
+          # Linux arm64 (QEMU)
           - os: ubuntu-latest
             pyver: '3.11'
             asset_name: thai-linux-arm64
@@ -126,13 +150,6 @@ jobs:
             ls -la dist
             f=$(ls -1 dist | head -n 1)
             mv "dist/$f" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.asset_name }}
-          path: packages/thai-romanizer/python/dist/${{ matrix.asset_name }}${{ matrix.ext }}
-          if-no-files-found: error
 
   release:
     name: Attach binaries to Release
