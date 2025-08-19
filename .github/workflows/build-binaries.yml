@@ -44,7 +44,7 @@ jobs:
             asset_name: thai-linux-x64
             ext: ''
           # Linux arm64 (ARM runners)
-          - os: ubuntu-22.04-arm64
+          - os: ubuntu-24.04-arm64
             pyver: '3.11'
             asset_name: thai-linux-arm64
             ext: ''
@@ -84,14 +84,16 @@ jobs:
           pip install pyinstaller pythainlp
 
       - name: Build binary
+        shell: bash
         working-directory: packages/thai-romanizer/python
         run: |
           # Build from spec (cannot pass --name with a .spec file)
           pyinstaller thai-romanization.spec
+          echo "Contents of dist after build:"
           ls -la dist
-          # Rename the produced binary to the matrix-provided asset name
-          BUILT_FILE=$(find dist -maxdepth 1 -type f -print -quit)
-          mv "$BUILT_FILE" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
+          # Rename the produced binary to the matrix-provided asset name (portable)
+          BUILT_FILE=$(ls -1 dist | head -n 1)
+          mv "dist/$BUILT_FILE" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
