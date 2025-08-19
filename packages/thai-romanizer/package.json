@@ -1,7 +1,7 @@
 {
     "name": "@romanize-string/thai-romanizer",
     "version": "0.1.0",
-    "description": "",
+    "description": "Platform-aware binary plugin for Thai transliteration (for use with romanize-string).",
     "files": [
         "dist",
         "README.md",
@@ -38,7 +38,16 @@
         "postinstall": "node ./scripts/postinstall.mjs",
         "postbuild": "node ./scripts/postbuild.mjs"
     },
-    "keywords": [],
+    "keywords": [
+        "romanize-string",
+        "thai",
+        "transliteration",
+        "plugin",
+        "romanization",
+        "thai-romanization",
+        "language-tools",
+        "thai-to-latin"
+    ],
     "author": "Ryan Young",
     "repository": {
         "type": "git",

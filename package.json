@@ -5,9 +5,11 @@
         "packages/*"
     ],
     "scripts": {
-        "build": "tsc -b",
-        "clean": "tsc -b --clean",
-        "publish:romanize-string": "pnpm publish --filter romanize-string --access public"
+        "build": "run-p build:*",
+        "build:romanize-string": "pnpm --filter romanize-string run build",
+        "build:thai-romanizer": "pnpm --filter thai-romanizer run build",
+        "publish:romanize-string": "pnpm publish --filter romanize-string --access public",
+        "publish:thai-romanizer": "pnpm publish --filter thai-romanizer --access public"
     },
     "devDependencies": {
         "@changesets/cli": "^2.29.5",
