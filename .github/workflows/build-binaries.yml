@@ -83,15 +83,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller pythainlp
 
-      - name: Build binary
+      - name: Build binary from spec
+        working-directory: packages/thai-romanizer/python
+        run: |
+          pyinstaller thai-romanization.spec
+
+      - name: Rename artifact (Windows)
+        if: runner.os == 'Windows'
+        working-directory: packages/thai-romanizer/python
+        run: |
+          Write-Host "Contents of dist after build:"; Get-ChildItem dist
+          $file = Get-ChildItem -File dist | Select-Object -First 1
+          Move-Item -Force $file.FullName "dist\${{ matrix.asset_name }}${{ matrix.ext }}"
+
+      - name: Rename artifact (Non-Windows)
+        if: runner.os != 'Windows'
         shell: bash
         working-directory: packages/thai-romanizer/python
         run: |
-          # Build from spec (cannot pass --name with a .spec file)
-          pyinstaller thai-romanization.spec
-          echo "Contents of dist after build:"
-          ls -la dist
-          # Rename the produced binary to the matrix-provided asset name (portable)
+          echo "Contents of dist after build:"; ls -la dist
           BUILT_FILE=$(ls -1 dist | head -n 1)
           mv "dist/$BUILT_FILE" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
 
