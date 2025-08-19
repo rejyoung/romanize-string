@@ -56,10 +56,6 @@ importers:
         version: 3.2.4(@types/node@22.17.2)
 
   packages/thai-romanizer:
-    dependencies:
-      vitest:
-        specifier: ^3.2.4
-        version: 3.2.4(@types/node@22.17.2)
     devDependencies:
       '@types/node':
         specifier: ^22.16.5
@@ -68,11 +64,14 @@ importers:
         specifier: ^8.0.4
         version: 8.0.4
       romanize-string:
-        specifier: workspace:>=1.2.0 <2.0.0
+        specifier: workspace:^
         version: link:../romanize-string
       typescript:
         specifier: ^5.8.3
         version: 5.9.2
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.17.2)
 
 packages:
 
