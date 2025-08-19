@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "outDir": "dist",
+        "rootDir": "src",
+        "declarationDir": "dist/types",
+        "baseUrl": "."
+    },
+    "include": ["src/**/*", "scripts"],
+    "exclude": ["test", "**/*.test.ts"],
+    "references": [{ "path": "../romanize-string" }]
+}

@@ -32,6 +32,8 @@
         "non-latin",
         "multilingual",
         "chinese",
+        "mandarin",
+        "cantonese",
         "pinyin",
         "arabic",
         "persian",
@@ -67,5 +69,11 @@
         "npm-run-all2": "^8.0.4",
         "typescript": "^5.8.3",
         "vitest": "^3.2.4"
+    },
+    "peerDependencies": {
+        "@romanize-string/thai-romanizer": "workspace:>=1.0.0 <2.0.0"
+    },
+    "optionalDependencies": {
+        "@romanize-string/thai-romanizer": ">=1.0.0 <2.0.0"
     }
 }
