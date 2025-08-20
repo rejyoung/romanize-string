@@ -3,7 +3,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/romanize-string.svg?style=flat)](https://www.npmjs.com/package/romanize-string) [![NPM monthly downloads](https://img.shields.io/npm/dm/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string) [![NPM total downloads](https://img.shields.io/npm/dt/romanize-string.svg?style=flat)](https://npmjs.org/package/romanize-string)
 
-> See the [Changelog](./CHANGELOG.md) for details on recent updates.
+> See the [Changelog](https://github.com/rejyoung/romanize-string/blob/main/packages/romanize-string/CHANGELOG.md) for details on recent updates.
 
 ## Table of Contents
 
