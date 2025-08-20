@@ -1,6 +1,6 @@
 {
     "name": "romanize-string",
-    "version": "1.2.6",
+    "version": "1.3.0",
     "description": "A fully typed, general-purpose utility for unidirectional string transliteration (non-Latin script => Latin script).",
     "files": [
         "dist",
@@ -9,9 +9,9 @@
     ],
     "exports": {
         ".": {
+            "types": "./dist/types/index.d.ts",
             "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "types": "./dist/types/index.d.ts"
+            "require": "./dist/cjs/index.js"
         }
     },
     "sideEffects": false,
@@ -20,7 +20,7 @@
         "clean": "rm -rf dist",
         "build:esm": "tsc --outDir dist/esm --module ESNext",
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS",
-        "test": "node --experimental-vm-modules --experimental-specifier-resolution=node ./node_modules/jest/bin/jest.js --config jest.config.js",
+        "test": "vitest",
         "start": "pnpm run-s build start:run",
         "start:run": "node dist/esm/index.js",
         "prepublishOnly": "pnpm run-s build"
@@ -32,6 +32,8 @@
         "non-latin",
         "multilingual",
         "chinese",
+        "mandarin",
+        "cantonese",
         "pinyin",
         "arabic",
         "persian",
@@ -59,16 +61,19 @@
         "kuroshiro": "~1.2.0",
         "kuroshiro-analyzer-kuromoji": "~1.1.0",
         "oktjs": "~0.1.3",
-        "pinyin-pro": "~3.26.0",
+        "pinyin-pro": "~3.27.0",
         "tnthai": "~1.0.4"
     },
     "devDependencies": {
-        "@types/jest": "^30.0.0",
-        "@types/node": "^22.15.33",
-        "jest": "^30.0.3",
-        "jest-environment-node": "^30.0.2",
+        "@types/node": "^22.16.5",
         "npm-run-all2": "^8.0.4",
-        "ts-jest": "^29.4.0",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "vitest": "^3.2.4"
+    },
+    "optionalPeerDependencies": {
+        "@romanize-string/thai-engine": ">=1.0.0 <2.0.0"
+    },
+    "engines": {
+        "node": ">=16"
     }
 }

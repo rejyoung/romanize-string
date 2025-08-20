@@ -1,5 +1,6 @@
 import Sanscript from "@indic-transliteration/sanscript";
 import { IndicLanguageCode } from "../public-types/language-types";
+import { PluginRegistrar } from "romanize-string/plugins";
 
 const languageSchemeMap: Record<IndicLanguageCode, string> = {
     hi: "devanagari",
@@ -56,4 +57,8 @@ export const romanizeIndic = (
     } else {
         return normalizedOutput;
     }
+};
+
+romanizeIndic.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

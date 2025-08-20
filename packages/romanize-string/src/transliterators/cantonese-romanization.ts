@@ -1,4 +1,5 @@
 import { getRoman } from "cantonese-romanisation";
+import { PluginRegistrar } from "romanize-string/plugins";
 const hanziRegex = /[\p{Script=Han}]/u;
 
 export const romanizeCantonese = (input: string) => {
@@ -35,4 +36,8 @@ export const romanizeCantonese = (input: string) => {
     }
 
     return transliteration.replace(/\s+/g, " ").trim();
+};
+
+romanizeCantonese.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };
