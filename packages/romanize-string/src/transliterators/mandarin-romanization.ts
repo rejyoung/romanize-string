@@ -1,4 +1,5 @@
 import { pinyin } from "pinyin-pro";
+import { PluginRegistrar } from "romanize-string/plugins";
 
 export const romanizeMandarin = (input: string, omitTones?: boolean) => {
     // Check if the input contains any Chinese characters and return the original input if not.
@@ -21,4 +22,8 @@ export const romanizeMandarin = (input: string, omitTones?: boolean) => {
         .replace(/[！]/g, "!")
         .trim();
     return transliteration;
+};
+
+romanizeMandarin.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

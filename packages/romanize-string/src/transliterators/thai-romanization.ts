@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import ThaiAnalyzer from "tnthai";
 import { ensurePythonWithThaiLib } from "../utils/ensure-python-with-thai-lib.js";
-import { getPlugin } from "../plugins.js";
+import { getPlugin, PluginRegistrar } from "../plugins.js";
 
 const analyzer = new ThaiAnalyzer();
 
@@ -30,8 +30,8 @@ export const romanizeThai = (input: string) => {
     return romanizedString;
 };
 
-romanizeThai.register = async (pluginSetup: () => Promise<void>) => {
-    await pluginSetup();
+romanizeThai.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };
 
 const runLocalPythonRomanizer = (

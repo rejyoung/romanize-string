@@ -1,7 +1,9 @@
 // src/plugins.ts
-export type RomanizerFn = (input: string, ...args: unknown[]) => string;
+export type PluginFn = (input: string, ...args: unknown[]) => string;
 
-const pluginRegistry = new Map<string, RomanizerFn>();
+export type PluginRegistrar = () => void;
+
+const pluginRegistry = new Map<string, PluginFn>();
 
 export function getPlugin(code: string) {
     return pluginRegistry.get(code);
@@ -9,7 +11,7 @@ export function getPlugin(code: string) {
 
 const REGISTER = Symbol.for("romanize-string.registerPlugin");
 
-(globalThis as any)[REGISTER] = (key: string, fn: RomanizerFn) => {
+(globalThis as any)[REGISTER] = (key: string, fn: PluginFn) => {
     pluginRegistry.set(key, fn);
 };
 

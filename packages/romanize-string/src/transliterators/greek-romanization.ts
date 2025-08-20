@@ -1,3 +1,5 @@
+import { PluginRegistrar } from "romanize-string/plugins";
+
 const greekToLatinBaseMap = {
     Α: "A",
     Β: "V",
@@ -166,4 +168,8 @@ export const romanizeGreek = (
             return char;
         })
         .join("");
+};
+
+romanizeGreek.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

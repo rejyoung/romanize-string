@@ -1,3 +1,4 @@
+import { PluginRegistrar } from "romanize-string/plugins";
 import { CyrillicLanguageCode } from "../public-types/language-types";
 
 /**
@@ -557,4 +558,8 @@ const replaceCyrillicHomoglyphs = (input: string): string => {
     );
 
     return output;
+};
+
+romanizeCyrillic.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

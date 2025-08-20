@@ -46,7 +46,7 @@ npm install romanize-string
 
 Because no suitable JavaScript library exists for Thai transliteration, this library relies on the external Python project [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp). You can enable Thai in one of two ways:
 
-1. **Install the thai-romanizer plugin (preferred):** [`@romanize-string/thai-romanizer`](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer)
+1. **Install the thai-romanizer plugin (preferred):** [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer)
 2. **Install Python libraries directly** in your runtime environment (advanced)
 
 If neither is set up, Thai romanization will fail and the function will return the original (untransliterated) string.
@@ -126,26 +126,29 @@ A promise resolving to a string in Latin script
 
 ### Registering Plugins
 
-Plugins are added to romanize-string using the `romanizeString.register()` method. Official plugins export a default object which should be passed directly to this method. Once registered, the plugin’s code becomes available to `romanizeString()` and all submodules.  
+Plugins can be registered once at app startup using either the global romanizeString.register(...) or the .register(...) method on any exported transliterator (e.g., romanizeThai.register(...), romanizeArabic.register(...)). Simply pass the default export of an official plugin directly to one of these methods. After registration, the plugin is available to romanizeString and to all script-specific transliterator functions. You do not need to register a plugin more than once.
 
 ```ts
-// Using ESM
-import romanizeString from "romanize-string";
+// ESM
+import romanizeString, { romanizeThai } from "romanize-string";
 import thaiRomanizer from "@romanize-string/thai-romanizer";
 
-// Register the plugin once at startup
+// Register once at startup (pick ONE)
 romanizeString.register(thaiRomanizer);
+// or:
+romanizeThai.register(thaiRomanizer);
 
 ```
 
 ```ts
-// Using CommonJS
-const {default: romanizeString} = require("romanize-string");
+// CommonJS
+const { default: romanizeString, romanizeThai } = require("romanize-string");
 const thaiRomanizer = require("@romanize-string/thai-romanizer");
 
-// Register the plugin once at startup
+// Register once at startup (pick ONE)
 romanizeString.register(thaiRomanizer);
-
+// or:
+romanizeThai.register(thaiRomanizer);
 ```
 
 ### Language Codes
@@ -249,23 +252,25 @@ In addition to the default `romanizeString` function, this library also supports
 | `isCyrillicLanguageCode()`  | Check whether language code is included in the `CyrillicLanguageCode` type | `languageCode`                         | boolean          |
 | `isIndicLanguageCode()`     | Check whether language code is included in the `IndicLanguageCode` type    | `languageCode`                         | boolean          |
 
+Import only what you need:
+
+```ts
+// ESM
+
+import {romanizeArabic, isConvertibleLanguage} from "romanize-string"
+
+// CommonJS
+
+const {romanizeArabic, isConvertibleLanguage} = require("romanize-string")
+```
+
 ### Script-Based Transliteration Functions
 
 These functions handle transliteration for specific script families.
 
-```ts
-import {
-    romanizeArabic, 
-    romanizeCantonese, 
-    romanizeCyrillic,
-    romanizeGreek
-    romanizeIndic, 
-    romanizeJapanese, 
-    romanizeKorean, 
-    romanizeMandarin, 
-    romanizeThai
-} from "romanize-string"
-```
+> **Note**  
+> All script-based transliteration functions (e.g. `romanizeThai`) include an optional `.register()` method for adding plugins.  
+> See [Registering Plugins](#registering-plugins) for details.
 
 #### `romanizeArabic()`
 
@@ -460,21 +465,15 @@ const translit = romanizeThai("สวัสดีครับ/ค่ะ สบ�
 
 A string in Latin script
 
-> **NOTE:** Thai transliteration requires either the `@romanize-string/thai-romanizer` plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
+> **NOTE:** Thai transliteration requires either the [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer) plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
+
+> You can enable the [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer) plugin by calling either `romanizeThai.register(thaiRomanizer)` or `romanizeString.register(thaiRomanizer)`. See [Registering Plugins](#registering-plugins)
 
 ---
 
 ### Type Guards
 
 These utilities help with validating language codes at runtime — useful for functions that require language code input.
-
-```ts
-import {
-    isConvertibleLanguage,
-    isCyrillicLanguageCode,
-    isIndicLanguageCode
-} from "romanize-string"
-```
 
 #### `isConvertibleLanguage()`
 

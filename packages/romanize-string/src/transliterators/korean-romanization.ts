@@ -4,6 +4,7 @@ import {
 } from "oktjs";
 
 import { romanize } from "../vendor/romanize/korean/src/index.js";
+import { PluginRegistrar } from "romanize-string/plugins";
 
 export const romanizeKorean = (string: string): string => {
     // Normalize and tokenize string, omitting any extra white spaces
@@ -33,4 +34,8 @@ export const romanizeKorean = (string: string): string => {
         .join(" ")
         .replace(/\s+/g, " ")
         .replace(/\s+([.,!?！？。、])/g, "$1");
+};
+
+romanizeKorean.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

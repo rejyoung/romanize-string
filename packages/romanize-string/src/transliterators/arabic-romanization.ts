@@ -1,6 +1,7 @@
 import arabictransliterate from "arabic-transliterate";
 import { farsiArabicPhoneticMap } from "../phonetic-maps/farsiArabicPhoneticMap.js";
 import { urduArabicPhoneticMap } from "../phonetic-maps/urduArabicPhoneticMap.js";
+import { PluginRegistrar } from "romanize-string/plugins";
 
 export const romanizeArabic = (input: string): string => {
     // Step 1: Standardize Arabic script for Persian/Urdu (phonetic map, fallback chars, naive vowels)
@@ -105,4 +106,8 @@ const naiveVowelize = (word: string): string => {
         }
     }
     return result;
+};
+
+romanizeArabic.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

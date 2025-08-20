@@ -1,3 +1,4 @@
+import { PluginRegistrar } from "romanize-string/plugins";
 import { initKuroshiro, kuroshiro } from "../utils/kuroshiro.js";
 
 export const romanizeJapanese = async (input: string) => {
@@ -15,4 +16,8 @@ export const romanizeJapanese = async (input: string) => {
         .replace(/\s+([.,!?！？。、])/g, "$1");
 
     return standardizedTransliteration;
+};
+
+romanizeJapanese.register = (pluginSetup: PluginRegistrar) => {
+    pluginSetup();
 };

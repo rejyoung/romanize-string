@@ -12,7 +12,7 @@
         "publish:thai-romanizer": "pnpm publish --filter thai-romanizer --access public"
     },
     "devDependencies": {
-        "@changesets/cli": "^2.29.5",
+        "@changesets/cli": "^2.29.6",
         "npm-run-all2": "^8.0.4"
     }
 }
