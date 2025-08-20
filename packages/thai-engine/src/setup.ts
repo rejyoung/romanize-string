@@ -1,4 +1,4 @@
-import { thaiRomanizer } from "./thai-romanizer.js";
+import { thaiEngine } from "./thai-engine.js";
 import { fileURLToPath } from "url";
 import os from "os";
 import path from "path";
@@ -36,7 +36,7 @@ export const setup = () => {
             | undefined;
 
         if (registerPlugin) {
-            registerPlugin("th", thaiRomanizer);
+            registerPlugin("th", thaiEngine);
         } else {
             console.warn(
                 "The romanize-string plugin hook was not found; plugin not registered"
@@ -44,7 +44,7 @@ export const setup = () => {
         }
     } catch (error) {
         console.warn(
-            "Cannot register plugin. The thaiRomanizer binary is missing or was not successfully downloaded."
+            "Cannot register plugin. The thaiEngine binary is missing or was not successfully downloaded."
         );
     }
 };

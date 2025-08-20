@@ -7,9 +7,9 @@
     "scripts": {
         "build": "run-p build:*",
         "build:romanize-string": "pnpm --filter romanize-string run build",
-        "build:thai-romanizer": "pnpm --filter thai-romanizer run build",
+        "build:thai-engine": "pnpm --filter thai-engine run build",
         "publish:romanize-string": "pnpm publish --filter romanize-string --access public",
-        "publish:thai-romanizer": "pnpm publish --filter thai-romanizer --access public"
+        "publish:thai-engine": "pnpm publish --filter thai-engine --access public"
     },
     "devDependencies": {
         "@changesets/cli": "^2.29.6",

@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     # Only build when the tag starts with the correct package prefix or the action is manually triggered
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref_name, '@romanize-string/thai-romanizer@')
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref_name, '@romanize-string/thai-engine@')
     strategy:
       fail-fast: false
       matrix:
@@ -58,20 +58,20 @@ jobs:
 
       - name: Install dependencies (host)
         if: matrix.asset_name != 'thai-linux-arm64'
-        working-directory: packages/thai-romanizer/python
+        working-directory: packages/thai-engine/python
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller pythainlp numpy onnxruntime
 
       - name: Build binary from spec (host)
         if: matrix.asset_name != 'thai-linux-arm64'
-        working-directory: packages/thai-romanizer/python
+        working-directory: packages/thai-engine/python
         run: |
           pyinstaller thai-romanization.spec
 
       - name: Rename artifact (Windows)
         if: runner.os == 'Windows' && matrix.asset_name != 'thai-linux-arm64'
-        working-directory: packages/thai-romanizer/python
+        working-directory: packages/thai-engine/python
         run: |
           Write-Host "Contents of dist after build:"; Get-ChildItem dist
           $file = Get-ChildItem -File dist | Select-Object -First 1
@@ -80,7 +80,7 @@ jobs:
       - name: Rename artifact (Non-Windows)
         if: runner.os != 'Windows' && matrix.asset_name != 'thai-linux-arm64'
         shell: bash
-        working-directory: packages/thai-romanizer/python
+        working-directory: packages/thai-engine/python
         run: |
           echo "Contents of dist after build:"; ls -la dist
           BUILT_FILE=$(ls -1 dist | head -n 1)
@@ -99,7 +99,7 @@ jobs:
             python3 -m pip install --upgrade pip
             pip3 install pyinstaller pythainlp
           run: |
-            cd $GITHUB_WORKSPACE/packages/thai-romanizer/python
+            cd $GITHUB_WORKSPACE/packages/thai-engine/python
             pyinstaller thai-romanization.spec
             ls -la dist
             f=$(ls -1 dist | head -n 1)
@@ -108,7 +108,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
-          path: packages/thai-romanizer/python/dist/${{ matrix.asset_name }}${{ matrix.ext }}
+          path: packages/thai-engine/python/dist/${{ matrix.asset_name }}${{ matrix.ext }}
 
   release:
     name: Attach binaries to Release
@@ -118,8 +118,8 @@ jobs:
       contents: write
     if: >
       (github.event_name == 'workflow_dispatch' &&
-      startsWith(inputs.tag_name, '@romanize-string/thai-romanizer@'))
-      || startsWith(github.ref_name, '@romanize-string/thai-romanizer@')
+      startsWith(inputs.tag_name, '@romanize-string/thai-engine@'))
+      || startsWith(github.ref_name, '@romanize-string/thai-engine@')
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4

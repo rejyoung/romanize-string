@@ -1,5 +1,5 @@
 {
-    "name": "@romanize-string/thai-romanizer",
+    "name": "@romanize-string/thai-engine",
     "version": "1.0.0",
     "description": "Platform-aware binary plugin for Thai transliteration (for use with romanize-string).",
     "files": [
@@ -53,7 +53,7 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/rejyoung/romanize-string.git",
-        "directory": "packages/thai-romanizer"
+        "directory": "packages/thai-engine"
     },
     "license": "MIT",
     "type": "module",

@@ -71,7 +71,7 @@
         "vitest": "^3.2.4"
     },
     "optionalPeerDependencies": {
-        "@romanize-string/thai-romanizer": ">=1.0.0 <2.0.0"
+        "@romanize-string/thai-engine": ">=1.0.0 <2.0.0"
     },
     "engines": {
         "node": ">=16"

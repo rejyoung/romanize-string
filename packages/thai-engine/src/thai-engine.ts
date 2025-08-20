@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import { binPath } from "./setup.js";
 
-export const thaiRomanizer = (segmentedString: string, original: string) => {
+export const thaiEngine = (segmentedString: string, original: string) => {
     try {
         if (!binPath) {
             throw new Error(

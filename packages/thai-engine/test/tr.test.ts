@@ -8,7 +8,7 @@ import {
     type Mock,
 } from "vitest";
 
-// Mock the child_process spawnSync used by thai-romanizer
+// Mock the child_process spawnSync used by thai-engine
 vi.mock("child_process", () => ({
     spawnSync: vi.fn(),
 }));
@@ -19,9 +19,9 @@ vi.mock("fs", () => ({
     constants: { X_OK: 1, F_OK: 0, R_OK: 4, W_OK: 2 },
 }));
 
-// Mock the internal import path used by setup.ts ("./thai-romanizer.js")
-vi.mock("../src/thai-romanizer.js", async () => {
-    const actual = await vi.importActual<object>("../src/thai-romanizer");
+// Mock the internal import path used by setup.ts ("./thai-engine.js")
+vi.mock("../src/thai-engine.js", async () => {
+    const actual = await vi.importActual<object>("../src/thai-engine");
     return {
         ...(actual as any),
     };
@@ -43,9 +43,9 @@ import { accessSync } from "fs";
 const REGISTER = Symbol.for("romanize-string.registerPlugin");
 
 let setupMod: typeof import("../src/setup.js");
-let thaiRomanizer: typeof import("../src/thai-romanizer.js")["thaiRomanizer"];
+let thaiEngine: typeof import("../src/thai-engine.js")["thaiEngine"];
 
-describe("thai-romanizer plugin integration", () => {
+describe("thai-engine plugin integration", () => {
     const origArch = process.arch;
 
     beforeEach(async () => {
@@ -53,7 +53,7 @@ describe("thai-romanizer plugin integration", () => {
         vi.resetModules();
         setupMod = await import("../src/setup.js");
 
-        ({ thaiRomanizer } = await import("../src/thai-romanizer.js"));
+        ({ thaiEngine } = await import("../src/thai-engine.js"));
 
         (os.platform as unknown as Mock).mockReturnValue("darwin");
         // @ts-ignore - defineProperty to override readonly arch for test
@@ -108,7 +108,7 @@ describe("thai-romanizer plugin integration", () => {
         const register = (globalThis as any)[REGISTER] as Mock;
         expect(register).not.toHaveBeenCalled();
         expect(console.warn).toHaveBeenCalledWith(
-            "Cannot register plugin. The thaiRomanizer binary is missing or was not successfully downloaded."
+            "Cannot register plugin. The thaiEngine binary is missing or was not successfully downloaded."
         );
     });
 
@@ -125,7 +125,7 @@ describe("thai-romanizer plugin integration", () => {
         expect(bp && bp.endsWith("thai-mac-x64")).toBe(true);
     });
 
-    describe("thaiRomanizer behavior", () => {
+    describe("thaiEngine behavior", () => {
         it("returns cleaned stdout on success (trims and fixes polite suffix spacing)", async () => {
             (spawnSync as unknown as Mock).mockReturnValue({
                 status: 0,
@@ -135,7 +135,7 @@ describe("thai-romanizer plugin integration", () => {
             });
 
             await setupMod.setup();
-            const out = await thaiRomanizer("สวัสดี", "สวัสดี");
+            const out = await thaiEngine("สวัสดี", "สวัสดี");
             expect(out).toBe("kha/khrap");
             expect(console.error).not.toHaveBeenCalled();
         });
@@ -150,7 +150,7 @@ describe("thai-romanizer plugin integration", () => {
 
             await setupMod.setup();
             const input = "ทดสอบ";
-            const out = await thaiRomanizer(input, input);
+            const out = await thaiEngine(input, input);
             expect(out).toBe(input);
             expect(console.error).toHaveBeenCalled(); // error path logs
         });
@@ -166,7 +166,7 @@ describe("thai-romanizer plugin integration", () => {
             await setupMod.setup();
             const segmented = "แบบ|SEP|ทดสอบ";
             const original = "แบบทดสอบ";
-            const out = await thaiRomanizer(segmented, original);
+            const out = await thaiEngine(segmented, original);
             expect(out).toBe(original);
             expect(out).not.toBe(segmented);
             expect(console.error).toHaveBeenCalled();
@@ -174,7 +174,7 @@ describe("thai-romanizer plugin integration", () => {
 
         it("returns input and logs when binPath is not set", async () => {
             const input = "สวัสดีครับ";
-            const out = await thaiRomanizer(input, input);
+            const out = await thaiEngine(input, input);
             expect(out).toBe(input);
             expect(console.error).toHaveBeenCalled();
         });
@@ -188,7 +188,7 @@ describe("thai-romanizer plugin integration", () => {
             });
 
             await setupMod.setup();
-            const out = await thaiRomanizer("ทดสอบ", "ทดสอบ");
+            const out = await thaiEngine("ทดสอบ", "ทดสอบ");
             expect(out).toBe("sawa dee");
         });
     });

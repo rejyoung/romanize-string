@@ -1,4 +1,4 @@
-# @romanize-string/thai-romanizer
+# @romanize-string/thai-engine
 
 ## 1.0.0
 
