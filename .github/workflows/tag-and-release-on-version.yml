@@ -106,8 +106,8 @@ jobs:
                 createdRelease = true;
               }
 
-              // If and only if we just created the release for thai-romanizer, kick off build-binaries
-              if (createdRelease && p.name === '@romanize-string/thai-romanizer') {
+              // If and only if we just created the release for thai-engine, kick off build-binaries
+              if (createdRelease && p.name === '@romanize-string/thai-engine') {
                 await github.rest.actions.createWorkflowDispatch({
                   owner,
                   repo,

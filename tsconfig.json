@@ -2,7 +2,7 @@
     "files": [],
     "references": [
         { "path": "packages/romanize-string" },
-        { "path": "packages/thai-romanizer" }
+        { "path": "packages/thai-engine" }
     ],
     "include": [],
     "exclude": []

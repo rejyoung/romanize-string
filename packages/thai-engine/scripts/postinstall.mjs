@@ -24,7 +24,7 @@ const resolveTargetFile = () => {
     const file = targetFileMap[key];
 
     if (!file) {
-        console.warn(`No thai-romanizer binary for ${key}; skipping download.`);
+        console.warn(`No thai-engine binary for ${key}; skipping download.`);
         return null;
     }
 
@@ -38,7 +38,7 @@ const getBinaryIfNeeded = async () => {
     const pkg = JSON.parse(
         fs.readFileSync(path.join(pkgRoot, "package.json"), "utf8")
     );
-    const tag = `@romanize-string/thai-romanizer@${pkg.version}`;
+    const tag = `@romanize-string/thai-engine@${pkg.version}`;
     const baseUrl = `https://github.com/rejyoung/romanize-string/releases/download/${tag}`;
 
     const destDir = path.join(pkgRoot, "dist", "bin");
@@ -60,7 +60,7 @@ const getBinaryIfNeeded = async () => {
 
     const url = `${baseUrl}/${filename}`;
 
-    console.log(`[thai-romanizer] Downloading ${filename} …`);
+    console.log(`[thai-engine] Downloading ${filename} …`);
     await new Promise((resolve, reject) => {
         const file = fs.createWriteStream(destPath, { mode: 0o755 });
         https
@@ -125,13 +125,13 @@ const verifyBinary = async (baseUrl, filename, destPath) => {
         if (actualHash !== expectedHash) {
             // Delete the binary
             await fs.promises.rm(destPath, { force: true });
-            const msg = `[thai-romanizer] Checksum mismatch for ${filename}. Expected ${expectedHash}, got ${actualHash}`;
+            const msg = `[thai-engine] Checksum mismatch for ${filename}. Expected ${expectedHash}, got ${actualHash}`;
             console.warn(msg, "Falling back at runtime.");
             return; // leave without a binary; your runtime will use fallback
         }
     } catch (error) {
         console.warn(
-            "[thai-romanizer] Could not verify checksum:",
+            "[thai-engine] Could not verify checksum:",
             e?.message || e
         );
     }
@@ -139,7 +139,7 @@ const verifyBinary = async (baseUrl, filename, destPath) => {
 
 getBinaryIfNeeded().catch((err) =>
     console.warn(
-        "[thai-romanizer] Postinstall error; will use fallback at runtime:",
+        "[thai-engine] Postinstall error; will use fallback at runtime:",
         err?.message || err
     )
 );

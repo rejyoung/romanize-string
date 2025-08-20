@@ -55,7 +55,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.17.2)
 
-  packages/thai-romanizer:
+  packages/thai-engine:
     devDependencies:
       '@types/node':
         specifier: ^22.16.5

@@ -46,19 +46,19 @@ npm install romanize-string
 
 Because no suitable JavaScript library exists for Thai transliteration, this library relies on the external Python project [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp). You can enable Thai in one of two ways:
 
-1. **Install the thai-romanizer plugin (preferred):** [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer)
+1. **Install the thai-engine plugin (preferred):** [@romanize-string/thai-engine](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-engine)
 2. **Install Python libraries directly** in your runtime environment (advanced)
 
 If neither is set up, Thai romanization will fail and the function will return the original (untransliterated) string.
 
 ---
 
-#### Installing the thai-romanizer plugin (preferred)
+#### Installing the thai-engine plugin (preferred)
 
 1. Install the plugin:
 
 ```bash
-npm install @romanize-string/thai-romanizer
+npm install @romanize-string/thai-engine
 ```
 
 2. Register the plugin once at startup:
@@ -131,24 +131,24 @@ Plugins can be registered once at app startup using either the global romanizeSt
 ```ts
 // ESM
 import romanizeString, { romanizeThai } from "romanize-string";
-import thaiRomanizer from "@romanize-string/thai-romanizer";
+import thaiEngine from "@romanize-string/thai-engine";
 
 // Register once at startup (pick ONE)
-romanizeString.register(thaiRomanizer);
+romanizeString.register(thaiEngine);
 // or:
-romanizeThai.register(thaiRomanizer);
+romanizeThai.register(thaiEngine);
 
 ```
 
 ```ts
 // CommonJS
 const { default: romanizeString, romanizeThai } = require("romanize-string");
-const thaiRomanizer = require("@romanize-string/thai-romanizer");
+const thaiEngine = require("@romanize-string/thai-engine");
 
 // Register once at startup (pick ONE)
-romanizeString.register(thaiRomanizer);
+romanizeString.register(thaiEngine);
 // or:
-romanizeThai.register(thaiRomanizer);
+romanizeThai.register(thaiEngine);
 ```
 
 ### Language Codes
@@ -208,7 +208,7 @@ romanizeThai.register(thaiRomanizer);
 | zh-CN   | Chinese (Simplified)  |
 | zh-Hant | Chinese (Traditional) |
 
-> ¹ Thai transliteration requires either the `@romanize-string/thai-romanizer` plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
+> ¹ Thai transliteration requires either the `@romanize-string/thai-engine` plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
 
 ### Examples
 
@@ -465,9 +465,9 @@ const translit = romanizeThai("สวัสดีครับ/ค่ะ สบ�
 
 A string in Latin script
 
-> **NOTE:** Thai transliteration requires either the [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer) plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
+> **NOTE:** Thai transliteration requires either the [@romanize-string/thai-engine](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-engine) plugin (preferred) or Python + [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) + [ONNX Runtime](https://onnxruntime.ai/) + [NumPy](https://numpy.org/) in your runtime. See [Additional Installation for Enabling Thai Transliteration](#additional-installation-for-enabling-thai-transliteration).
 
-> You can enable the [@romanize-string/thai-romanizer](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-romanizer) plugin by calling either `romanizeThai.register(thaiRomanizer)` or `romanizeString.register(thaiRomanizer)`. See [Registering Plugins](#registering-plugins)
+> You can enable the [@romanize-string/thai-engine](https://github.com/rejyoung/romanize-string/tree/main/packages/thai-engine) plugin by calling either `romanizeThai.register(thaiEngine)` or `romanizeString.register(thaiEngine)`. See [Registering Plugins](#registering-plugins)
 
 ---
 
