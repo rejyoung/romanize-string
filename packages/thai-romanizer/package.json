@@ -1,0 +1,66 @@
+{
+    "name": "@romanize-string/thai-romanizer",
+    "version": "0.1.0",
+    "description": "Platform-aware binary plugin for Thai transliteration (for use with romanize-string).",
+    "files": [
+        "dist",
+        "README.md",
+        "scripts/postinstall.mjs",
+        "scripts/postbuild.mjs"
+    ],
+    "devDependencies": {
+        "@types/node": "^22.16.5",
+        "npm-run-all2": "^8.0.4",
+        "typescript": "^5.8.3",
+        "romanize-string": "workspace:^",
+        "vitest": "^3.2.4"
+    },
+    "peerDependencies": {
+        "romanize-string": ">=1.3.0 <2.0.0"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.cjs"
+        }
+    },
+    "scripts": {
+        "build": "pnpm run clean && run-p build:esm build:cjs && pnpm run postbuild",
+        "clean": "rm -rf dist",
+        "build:esm": "tsc --outDir dist/esm",
+        "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution node",
+        "typecheck:test": "tsc -p tsconfig.vitest.json --noEmit",
+        "vitest": "vitest",
+        "test": "run-p typecheck:test vitest",
+        "start": "pnpm run-s build start:run",
+        "start:run": "node dist/esm/index.js",
+        "prepublishOnly": "pnpm run-s build",
+        "postinstall": "node ./scripts/postinstall.mjs",
+        "postbuild": "node ./scripts/postbuild.mjs"
+    },
+    "keywords": [
+        "romanize-string",
+        "thai",
+        "transliteration",
+        "plugin",
+        "romanization",
+        "thai-romanization",
+        "language-tools",
+        "thai-to-latin"
+    ],
+    "author": "Ryan Young",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rejyoung/romanize-string.git",
+        "directory": "packages/thai-romanizer"
+    },
+    "license": "MIT",
+    "type": "module",
+    "engines": {
+        "node": ">=18"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

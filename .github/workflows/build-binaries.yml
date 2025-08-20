@@ -1,0 +1,97 @@
+name: Build Cross-Platform Binaries
+
+on:
+  push:
+    tags:
+      - '@romanize-string/thai-romanizer@*' # only run when you push a version tag like v1.0.0
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x64
+          - os: ubuntu-latest
+            pyver: '3.11'
+            asset_name: thai-linux-x64
+            ext: ''
+          # Linux arm64 (ARM runners)
+          - os: ubuntu-22.04-arm64
+            pyver: '3.11'
+            asset_name: thai-linux-arm64
+            ext: ''
+          # Windows x64
+          - os: windows-latest
+            pyver: '3.11'
+            asset_name: thai-win-x64
+            ext: '.exe'
+          # macOS arm64 (Apple Silicon)
+          - os: macos-14
+            pyver: '3.11'
+            asset_name: thai-mac-arm64
+            ext: ''
+          # macOS x64 (Intel)
+          - os: macos-13
+            pyver: '3.11'
+            asset_name: thai-mac-x64
+            ext: ''
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.pyver }}
+
+      - name: Install dependencies
+        working-directory: packages/thai-romanizer/python
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pythainlp
+
+      - name: Build binary
+        working-directory: packages/thai-romanizer/python
+        run: |
+          pyinstaller --onefile --name "${{matrix.asset_name}}${{ matrix.ext }}" python-thai-romanization.py
+          ls -la dist
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: packages/thai-romanizer/python/dist/${{ matrix.asset_name }}${{ matrix.ext }}
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate per-file checksums
+        run: |
+          cd artifacts
+          # create a .sha256 file next to each artifact
+          find . -type f -maxdepth 2 -print0 | while IFS= read -r -d '' f; do
+            sha256sum "$f" | awk '{print $1"  "fname}' fname="$f" > "$f.sha256"
+          done
+          echo "Generated checksums:" && find . -name '*.sha256' -maxdepth 2 -print
+
+      - name: Create / update release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            artifacts/*/*
+            artifacts/*/*.sha256

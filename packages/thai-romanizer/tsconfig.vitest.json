@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "noEmit": true,
+        "types": ["vitest"],
+        "paths": {
+            "romanize-string/plugins": [
+                "test/types/romanize-string__plugins.d.ts"
+            ]
+        }
+    },
+    "include": ["src", "test", "test/types"]
+}
