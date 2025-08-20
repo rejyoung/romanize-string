@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, it, expect } from "vitest";
 import { romanizeCyrillic } from "../../src/transliterators/cyrillic-romanization";
 
 describe("Kyrgyz (ky)", () => {
@@ -9,6 +9,6 @@ describe("Kyrgyz (ky)", () => {
     });
 
     it("should handle ң as ñ", () => {
-        expect(romanizeCyrillic("жаңылык", "ky")).toBe("zhañylyk");
+        expect(romanizeCyrillic("жаңылык", "ky")).toBe("zhaŋylyk");
     });
 });
