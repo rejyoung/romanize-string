@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write  
 
     steps:
       - name: Checkout
@@ -69,18 +70,19 @@ jobs:
           script: |
             const pkgs = JSON.parse(process.env.PKGS || '[]');
             const owner = context.repo.owner;
-            const repo = context.repo.repo;
+            const repo  = context.repo.repo;
+
+            // Normalize a branch ref for workflow_dispatch
+            const ref = (context.ref || '').replace('refs/heads/', '') || 'release';
 
             for (const p of pkgs) {
               if (!p.name || !p.version) continue;
               const tag = `${p.name}@${p.version}`;
 
-              // Check if tag already exists
+              // Ensure the tag exists (idempotent)
               try {
                 await github.rest.git.getRef({ owner, repo, ref: `tags/${tag}` });
-                // Tag exists; skip creating it
-              } catch (e) {
-                // Create lightweight tag pointing to this commit
+              } catch {
                 await github.rest.git.createRef({
                   owner, repo,
                   ref: `refs/tags/${tag}`,
@@ -88,11 +90,11 @@ jobs:
                 });
               }
 
-              // Try to create a GitHub Release (idempotent: skip if exists)
+              // Create the release if missing
+              let createdRelease = false;
               try {
                 await github.rest.repos.getReleaseByTag({ owner, repo, tag });
-                // Release already exists; skip
-              } catch (e) {
+              } catch {
                 await github.rest.repos.createRelease({
                   owner, repo,
                   tag_name: tag,
@@ -100,6 +102,18 @@ jobs:
                   body: `Automated release created on version bump for \`${p.name}\`.\n\nSee package CHANGELOG for details.`,
                   draft: false,
                   prerelease: false
+                });
+                createdRelease = true;
+              }
+
+              // If and only if we just created the release for thai-romanizer, kick off build-binaries
+              if (createdRelease && p.name === '@romanize-string/thai-romanizer') {
+                await github.rest.actions.createWorkflowDispatch({
+                  owner,
+                  repo,
+                  workflow_id: 'build-binaries.yml',   // file name of the workflow to run
+                  ref,                                  // branch to run it on (e.g. "release")
+                  inputs: { tag_name: tag }             // pass the tag to build against
                 });
               }
             }

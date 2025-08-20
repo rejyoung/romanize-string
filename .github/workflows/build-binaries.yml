@@ -1,13 +1,12 @@
 name: Build Cross-Platform Binaries
 
 on:
-  create:
-      tags:
-          - '@romanize-string/thai-romanizer@*'
-  push:
-    tags:
-        - '@romanize-string/thai-romanizer@*'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag to build for'
+        required: true
+        type: string
 
 jobs:
   build:
