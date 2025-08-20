@@ -3,6 +3,8 @@
 
 Thai-romanizer is a Node-only Thai romanization plugin for [`romanize-string`](https://www.npmjs.com/package/romanize-string). It runs a platform-specific binary (~50 MB) to romanize Thai script using the Python library [PyThaiNLP](https://pypi.org/project/pythainlp/).
 
+> See the [Changelog](https://github.com/rejyoung/romanize-string/blob/main/packages/thai-romanizer/CHANGELOG.md) for details on recent updates.
+
 ## Features
 
 - Works with romanize-string's plugin system.
