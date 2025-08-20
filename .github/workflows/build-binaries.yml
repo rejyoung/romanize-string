@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag_name || github.ref_name }}
 
       - name: Set up Python (host)
         if: matrix.asset_name != 'thai-linux-arm64'
@@ -104,6 +104,11 @@ jobs:
             ls -la dist
             f=$(ls -1 dist | head -n 1)
             mv "dist/$f" "dist/${{ matrix.asset_name }}${{ matrix.ext }}"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: packages/thai-romanizer/python/dist/${{ matrix.asset_name }}${{ matrix.ext }}
 
   release:
     name: Attach binaries to Release
@@ -111,7 +116,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: startsWith(github.ref_name, '@romanize-string/thai-romanizer@')
+    if: >
+      (github.event_name == 'workflow_dispatch' &&
+      startsWith(inputs.tag_name, '@romanize-string/thai-romanizer@'))
+      || startsWith(github.ref_name, '@romanize-string/thai-romanizer@')
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -130,8 +138,7 @@ jobs:
       - name: Upload assets to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag_name || github.ref_name }}
           overwrite: true
           fail_on_unmatched_files: true
-          files: |
-            artifacts/*/*
+          files: artifacts/*/*
