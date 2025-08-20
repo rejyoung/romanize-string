@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "outDir": "dist",
+        "rootDir": "src",
+        "declarationDir": "dist/types",
+        "baseUrl": ".",
+        "paths": {
+            "romanize-string/plugins": ["../romanize-string/src/plugins.ts"]
+        }
+    },
+    "include": ["src/**/*"],
+    "references": [{ "path": "../romanize-string" }]
+}
