@@ -3,14 +3,15 @@ import { IndicLanguageCode } from "../public-types/language-types";
 import { PluginRegistrar } from "romanize-string/plugins";
 
 const languageSchemeMap: Record<IndicLanguageCode, string> = {
-    hi: "devanagari",
     bn: "bengali",
-    te: "telugu",
-    ta: "tamil_extended",
     gu: "gujarati",
-    mr: "devanagari",
-    pa: "gurmukhi",
+    hi: "devanagari",
     kn: "kannada",
+    mr: "devanagari",
+    ne: "devangari",
+    pa: "gurmukhi",
+    ta: "tamil_extended",
+    te: "telugu",
 };
 
 export const romanizeIndic = (
