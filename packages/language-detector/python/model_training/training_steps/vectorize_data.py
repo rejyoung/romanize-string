@@ -3,6 +3,7 @@ import numpy as np
 import sys, joblib, regex, unicodedata
 from sklearn.feature_extraction.text import TfidfVectorizer
 from pathlib import Path
+from utils.text_util import strip_ascii
 
 
 """
@@ -12,11 +13,6 @@ This model was trained using corpora provided by the Wortschatz Project
 Source: https://wortschatz.uni-leipzig.de/en/download
 License: https://creativecommons.org/licenses/by/4.0/
 """
-
-
-def strip_ascii(text: str) -> str:
-    normalized = unicodedata.normalize("NFC", text)
-    return regex.sub(r"[A-Za-z0-9]+", "", normalized)
 
 
 def main(data_group: str, model_dir: str):

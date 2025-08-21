@@ -1,4 +1,4 @@
-import subprocess, sys
+import subprocess, sys, os
 from pathlib import Path
 
 
@@ -35,6 +35,10 @@ def train_model(model_dir: Path):
         "turkik",
     ]
 
+    python_root = Path(__file__).resolve().parent.parent  # .../python
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(python_root)
+
     for script in [
         "create_datasets.py",
         "prepare_datasets.py",
@@ -51,6 +55,8 @@ def train_model(model_dir: Path):
                     str(Path(__file__).parent / "training_steps" / script),
                 ],
                 check=True,
+                cwd=str(python_root),
+                env=env,
             )
         else:
             for d in datasets:
@@ -72,6 +78,8 @@ def train_model(model_dir: Path):
                         ),
                     ],
                     check=True,
+                    cwd=str(python_root),
+                    env=env,
                 )
 
 
