@@ -26,7 +26,7 @@ def main(data_group: str, model_dir: str):
     df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
 
     CONFIGURATION = {
-        "southern_slavic": dict(max_features=200_000, max_df=1.0),
+        "southern_slavic": dict(max_features=200_000, max_df=0.995, ngram_range=(3, 5), analyzer="char"),
         "indic": dict(max_features=120_000, max_df=1.0),
         "ja_zh": dict(max_features=120_000, max_df=1.0),
         "eastern_slavic": dict(max_features=100_000, max_df=1.0),
@@ -35,8 +35,8 @@ def main(data_group: str, model_dir: str):
 
     config = CONFIGURATION.get(data_group, {})
     cv = TfidfVectorizer(
-        analyzer="char_wb",
-        ngram_range=(1, 5),
+        analyzer=config.get("analyzer", "char_wb"),
+        ngram_range=config.get("ngram_range", (1, 5)),
         max_features=config.get("max_features", 30_000),
         preprocessor=strip_ascii,
         min_df=2,
