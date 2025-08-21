@@ -66,6 +66,14 @@ endings_dict = {
     },
 }
 
+bigrams_dict = {
+    "southern_slavic": {
+        "bg": ["ър", "ъл", "ън", "ът", "ят", "ще", "дж"],
+        "mk": ["ќе", "ќи", "ќа", "ќу", "ѓе", "ѓи", "ѓа", "ѓу", "ѕв", "ѕд"],
+        "sr": ["ће", "ћа", "ћу", "ћи", "ђа", "ђе", "ђу", "џв", "џа", "џе"]
+    }
+}
+
 
 def build_character_binaries_array(
     texts: list, tell_characters: list, tell_characters_set: set
@@ -113,33 +121,63 @@ def build_ending_features_array(
     if endings is not None:
         end_to_idx = {end: j for j, end in enumerate(endings)}
 
-        endings_features = np.zeros((len(texts), len(endings) * 2), dtype=np.float32)
+        end_len = len(endings)
+        txt_len = len(texts)
 
-        for i, s in enumerate(texts):
+        endings_features = np.zeros((txt_len, end_len * 2), dtype=np.float32)
+
+        for row, s in enumerate(texts):
             s = unicodedata.normalize("NFC", s)
             cleaned = regex.sub(r"[\p{P}\p{S}]+", " ", s)
             cleaned = regex.sub(r"\s+", " ", cleaned).strip()
             words = cleaned.split()
 
             for end in endings:
-                bin_idx = end_to_idx[end]
-                count_idx = end_to_idx[end] + len(endings)
-
-                present = False
+    
                 count = 0.0
 
                 for w in words:
                     if w.endswith(end):
-                        present = True
                         count += 1.0
 
-                if present:
-                    endings_features[i, bin_idx] = 1.0
-
                 if count > 0:
-                    endings_features[i, count_idx] = count
+                    present_col = end_to_idx[end]
+                    count_col = present_col + end_len
+
+                    endings_features[row, present_col] = 1.0
+                    endings_features[row, count_col] = count
 
     return endings_features
+
+def build_bigram_features_array(texts: list, bigrams: list | None) -> np.typing.NDArray[np.float32] | None:
+    bigram_features = None
+
+    if (bigrams is not None):
+        bigram_to_idx = {bi: i for i, bi in enumerate(bigrams)}
+        bi_len = len(bigrams)
+        txt_len = len(texts)
+
+        bigram_features = np.zeros((txt_len, bi_len * 2), dtype=np.float32)
+
+        for row, s in enumerate(texts):
+            s = unicodedata.normalize("NFC", s)
+            words = s.split()
+
+            for bigram in bigrams:
+                
+                count = 0.0
+
+                for w in words:
+                    count += w.count(bigram)
+
+                if count > 0:
+                    present_col = bigram_to_idx[bigram]
+                    count_col = present_col + bi_len
+
+                    bigram_features[row, present_col] = 1.0
+                    bigram_features[row, count_col] = count
+    
+    return bigram_features
 
 
 def main(data_group: str, model_dir: str):
@@ -183,21 +221,33 @@ def main(data_group: str, model_dir: str):
         keys = list(group_endings)
         endings = sorted(set([e for k in keys for e in group_endings[k]]))
 
+    # Compile the list of bigrams for the data group from the dictionary above
+    bigrams = None
+    if data_group in bigrams_dict:
+        group_bigrams = bigrams_dict[data_group]
+        keys = list(group_bigrams)
+        bigrams = sorted(set([b for k in keys for b in group_bigrams[k]]))
+
     texts = df["text"].astype(str).tolist()
+    lctexts = list(map(lambda s: s.lower(), texts))
 
     # Add binary columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
     print(f"Building tell-letter binary features…")
     character_binaries = build_character_binaries_array(
-        texts, tell_characters, tell_characters_set
+        lctexts, tell_characters, tell_characters_set
     )
 
     # Add columns to each word's vector matrix for the number of radicals present (currently ja_zh only)
     print(f"Building radical count features…")
-    radical_counts = build_radical_counts_array(texts, group_tell_chars)
+    radical_counts = build_radical_counts_array(lctexts, group_tell_chars)
 
     # Add binary and count columns to each word's vector matrix for the presence of special word endings (currently indic and south_slavic only)
     print(f"Building ending binary and count features…")
-    ending_features = build_ending_features_array(texts, endings)
+    ending_features = build_ending_features_array(lctexts, endings)
+
+    # Add binary and count columns to each word's vector matrix for the presence of special bigrams (currently south_slavic only)
+    print(f"Building bigram binary and count features…")
+    bigram_features = build_bigram_features_array(lctexts, bigrams)
 
     # Stack all features
     feature_blocks = [X, csr_matrix(character_binaries)]
@@ -205,6 +255,8 @@ def main(data_group: str, model_dir: str):
         feature_blocks.append(csr_matrix(radical_counts))
     if ending_features is not None:
         feature_blocks.append(csr_matrix(ending_features))
+    if bigram_features is not None:
+        feature_blocks.append(csr_matrix(bigram_features))
     X_aug = hstack(feature_blocks, format="csr")
 
     print(f"Augmented features: {X.shape[1]} -> {X_aug.shape[1]} columns.")
