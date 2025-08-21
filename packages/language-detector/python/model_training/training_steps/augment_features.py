@@ -12,9 +12,9 @@ USAGE = "Usage: python augment_features.py <data_group> <model_dir>"
 
 # Type Definitions
 BuildFeaturesReturn: TypeAlias = tuple[
-    list[str],                    # bigrams
-    NDArray[np.float32],          # feature matrix
-    list[dict[str, float]]        # per-group totals
+    list[str],  # bigrams
+    NDArray[np.float32],  # feature matrix
+    list[dict[str, float]],  # per-group totals
 ]
 
 
@@ -42,26 +42,26 @@ tell_character_dict = {
         "be": list("ў"),
         "ru": list("ъыэё"),
         "uk": list("їєґ"),
-        "overlapping": ["і"]
+        "overlapping": ["і"],
     },
     "southern_slavic": {
         "bg": list("ъщ"),
         "mk": list("ѓќѕ"),
         "sr": list("ђћљњџ"),
-        "overlapping": ["ј"]
+        "overlapping": ["ј"],
     },
     "turkik": {
         "kk": list("әұі"),
         "ky": [],  # no unique single-character tells
         "mn": [],  # no unique single-character tells
         "tg": list("ҷҳӣӯ"),
-        "overlapping": list("ңүөһқғ")
+        "overlapping": list("ңүөһқғ"),
     },
     "indic": {
         "hi": list("क़ख़ग़ज़ड़ढ़फ़य़"),
         "mr": list("ळऱऑॲॅॉ"),
         "ne": [],  # no unique single-character tells
-        "overlapping": ["़"], # nukta
+        "overlapping": ["़"],  # nukta
     },
 }
 
@@ -75,7 +75,7 @@ endings_dict = {
         "bg": ["ът", "ия", "ево", "ово"],
         "mk": ["от", "ев", "ов", "ва"],
         "sr": ["ије", "ија", "има", "ама", "ска", "ски"],
-        "overlapping": ["та", "то", "те"]
+        "overlapping": ["та", "то", "те"],
     },
 }
 
@@ -83,16 +83,17 @@ bigrams_dict = {
     "southern_slavic": {
         "bg": ["ър", "ъл", "ън", "ът", "ят", "ще", "дж"],
         "mk": ["ќе", "ќи", "ќа", "ќу", "ѓе", "ѓи", "ѓа", "ѓу", "ѕв", "ѕд"],
-        "sr": ["ће", "ћа", "ћу", "ћи", "ђа", "ђе", "ђу", "џв", "џа", "џе"]
+        "sr": ["ће", "ћа", "ћу", "ћи", "ђа", "ђе", "ђу", "џв", "џа", "џе"],
     }
 }
 
 non_unique_keys = ["overlapping", "radicals"]
 
+
 def build_character_binaries_array(
     texts: list, group_tell_chars: dict[str, list[str]]
 ) -> BuildFeaturesReturn:
-    
+
     # Compile the list of tell characters for the data group from the dictionary above
     all_keys = list(group_tell_chars)
     tell_characters_set = set([c for k in all_keys for c in group_tell_chars[k]])
@@ -127,7 +128,6 @@ def build_character_binaries_array(
 
             row_group_totals[group] = float(total)
         per_group_totals.append(row_group_totals)
-        
 
     return tell_characters, character_binaries, per_group_totals
 
@@ -158,7 +158,7 @@ def build_ending_features_array(
     # Compile the list of endings for the data group from the dictionary above
     all_keys = list(group_endings)
     endings = sorted(set([e for k in all_keys for e in group_endings[k]]))
-    
+
     end_to_idx = {end: j for j, end in enumerate(endings)}
 
     end_len = len(endings)
@@ -187,12 +187,12 @@ def build_ending_features_array(
 
                 endings_features[row, present_col] = 1.0
                 endings_features[row, count_col] = float(count)
-        
+
         row_group_totals = {gr: 0.0 for gr in all_keys if gr not in non_unique_keys}
         for group in all_keys:
             if group in non_unique_keys:
                 continue
-             
+
             total = 0.0
             for e in group_endings[group]:
 
@@ -202,20 +202,18 @@ def build_ending_features_array(
             row_group_totals[group] = float(total)
         per_group_totals.append(row_group_totals)
 
-                
-
     return endings, endings_features, per_group_totals
 
+
 def build_bigram_features_array(
-        texts: list, group_bigrams: dict[str, list[str]] | None
-    ) -> BuildFeaturesReturn | tuple[None, None, None]:
-    if (group_bigrams is None):
+    texts: list, group_bigrams: dict[str, list[str]] | None
+) -> BuildFeaturesReturn | tuple[None, None, None]:
+    if group_bigrams is None:
         return None, None, None
 
-     # Compile the list of bigrams for the data group from the dictionary above
+    # Compile the list of bigrams for the data group from the dictionary above
     all_keys = list(group_bigrams)
     bigrams = sorted(set([b for k in all_keys for b in group_bigrams[k]]))
-
 
     bigram_to_idx = {bi: i for i, bi in enumerate(bigrams)}
     bi_len = len(bigrams)
@@ -228,7 +226,7 @@ def build_bigram_features_array(
         s = unicodedata.normalize("NFC", s)
 
         for bigram in bigrams:
-            
+
             count = s.count(bigram)
 
             if count > 0:
@@ -237,7 +235,7 @@ def build_bigram_features_array(
 
                 bigram_features[row, present_col] = 1.0
                 bigram_features[row, count_col] = float(count)
-        
+
         row_group_totals = {gr: 0.0 for gr in all_keys if gr not in non_unique_keys}
         for group in all_keys:
             if group in non_unique_keys:
@@ -248,38 +246,36 @@ def build_bigram_features_array(
 
         per_group_totals.append(row_group_totals)
 
-    
     return bigrams, bigram_features, per_group_totals
 
 
 def build_tell_scores_array(
-        texts: list[str],
-        char_group_totals: list[dict[str, float]], 
-        ending_group_totals: list[dict[str, float]] | None, 
-        bigram_group_totals: list[dict[str, float]] | None
-    ) -> np.typing.NDArray[np.float32]:
+    texts: list[str],
+    char_group_totals: list[dict[str, float]],
+    ending_group_totals: list[dict[str, float]] | None,
+    bigram_group_totals: list[dict[str, float]] | None,
+) -> np.typing.NDArray[np.float32]:
 
     texts_len = len(texts)
 
     groups = sorted(char_group_totals[0].keys())
     tell_scores = np.zeros((texts_len, len(groups)), dtype=np.float32)
 
-    if (char_group_totals is not None and texts_len != len(char_group_totals)):
+    if char_group_totals is not None and texts_len != len(char_group_totals):
         raise RuntimeError(
             f"Row count mismatch between texts ({texts_len}) and char_group_totals ({len(char_group_totals)}). "
         )
 
-    if (ending_group_totals is not None and texts_len != len(ending_group_totals)):
+    if ending_group_totals is not None and texts_len != len(ending_group_totals):
         raise RuntimeError(
             f"Row count mismatch between texts ({texts_len}) and ending_group_totals ({len(ending_group_totals)}). "
         )
 
-    if (bigram_group_totals is not None and texts_len != len(bigram_group_totals)):
+    if bigram_group_totals is not None and texts_len != len(bigram_group_totals):
         raise RuntimeError(
             f"Row count mismatch between texts ({texts_len}) and bigram_group_totals ({len(bigram_group_totals)}). "
         )
-    
-    
+
     for row, s in enumerate(texts):
         str_len = max(1, len(s))
 
@@ -288,17 +284,17 @@ def build_tell_scores_array(
         bi_row = bigram_group_totals[row] if bigram_group_totals is not None else None
 
         for j, g in enumerate(groups):
-        
+
             total = char_row.get(g, 0.0)
 
-            if (end_row is not None):
+            if end_row is not None:
                 total += end_row.get(g, 0.0)
-            
-            if (bi_row is not None):
+
+            if bi_row is not None:
                 total += bi_row.get(g, 0.0)
 
             tell_scores[row, j] = float(total / str_len)
-    
+
     # Clip extreme counts to reduce outlier impact
     np.clip(tell_scores, 0, 4, out=tell_scores)
 
@@ -336,13 +332,12 @@ def main(data_group: str, model_dir: str):
             "Make sure this runs right after vectorize_data.py, before split_data.py."
         )
 
-    
     group_tell_chars = tell_character_dict[data_group]
-    
+
     group_endings = None
     if data_group in endings_dict:
         group_endings = endings_dict[data_group]
-        
+
     group_bigrams = None
     if data_group in bigrams_dict:
         group_bigrams = bigrams_dict[data_group]
@@ -352,8 +347,8 @@ def main(data_group: str, model_dir: str):
 
     # Add binary columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
     print(f"Building tell-letter binary features…")
-    tell_characters, character_binaries, char_group_totals = build_character_binaries_array(
-        lctexts, group_tell_chars
+    tell_characters, character_binaries, char_group_totals = (
+        build_character_binaries_array(lctexts, group_tell_chars)
     )
 
     # Add columns to each word's vector matrix for the number of radicals present (currently ja_zh only)
@@ -362,15 +357,21 @@ def main(data_group: str, model_dir: str):
 
     # Add binary and count columns to each word's vector matrix for the presence of special word endings (currently indic and south_slavic only)
     print(f"Building ending binary and count features…")
-    endings, ending_features, ending_group_totals = build_ending_features_array(lctexts, group_endings)
+    endings, ending_features, ending_group_totals = build_ending_features_array(
+        lctexts, group_endings
+    )
 
     # Add binary and count columns to each word's vector matrix for the presence of special bigrams (currently south_slavic only)
     print(f"Building bigram binary and count features…")
-    bigrams, bigram_features, bigram_group_totals = build_bigram_features_array(lctexts, group_bigrams)
+    bigrams, bigram_features, bigram_group_totals = build_bigram_features_array(
+        lctexts, group_bigrams
+    )
 
     # Add tells score to each word's vector matrix for the total number of tells present
     print(f"Building per-group tells scores")
-    tells_scores = build_tell_scores_array(lctexts, char_group_totals, ending_group_totals, bigram_group_totals)
+    tells_scores = build_tell_scores_array(
+        lctexts, char_group_totals, ending_group_totals, bigram_group_totals
+    )
 
     # Stack all features
     feature_blocks = [X, csr_matrix(character_binaries) * 1.5]
@@ -388,9 +389,10 @@ def main(data_group: str, model_dir: str):
         (X_aug, y),
         Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib",
     )
-    joblib.dump(tell_characters, model_assets / f"ld_{data_group}_tellchars.joblib")
-    if endings is not None:
-        joblib.dump(endings, model_assets / f"ld_{data_group}_endings.joblib")
+    joblib.dump(
+        {"tell_characters": tell_characters, "endings": endings, "bigrams": bigrams},
+        model_assets / f"ld_{data_group}_tell_lists.joblib",
+    )
     print("[augment] Write complete")
 
 
