@@ -88,7 +88,8 @@ turkik = ["kk", "ky", "mn", "tg"]
 
 def main():
 
-    training_folder = Path("data/raw")
+    base = Path(__file__).resolve().parents[1]
+    training_folder = base / Path("data/raw")
     exclude_pattern = regex.compile(r"^[\p{Latin}\p{Nd}\p{P}\p{S}\p{Z}]+$")
 
     dataset_names = [
@@ -172,7 +173,9 @@ def main():
                 "text": datasets[f"{datatype}_word_data"],
                 "label": datasets[f"{datatype}_labels"],
             }
-        ).to_csv(Path("data/intermediate") / f"ld_{datatype}_data.csv", index=False)
+        ).to_csv(
+            base / Path("data/intermediate") / f"ld_{datatype}_data.csv", index=False
+        )
         print("Write complete")
 
         del datasets[f"{datatype}_word_data"]

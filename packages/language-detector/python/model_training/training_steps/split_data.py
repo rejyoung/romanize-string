@@ -13,9 +13,13 @@ License: https://creativecommons.org/licenses/by/4.0/
 
 
 def main(data_group: str):
+    base = Path(__file__).resolve().parents[1]
+
     print(f"Loading {data_group} data")
     X, y = joblib.load(
-        Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib"
+        base
+        / Path("data/processed/augmented")
+        / f"ld_augmented_{data_group}_data.joblib"
     )
 
     print(f"Splitting {data_group} data")
@@ -26,11 +30,11 @@ def main(data_group: str):
     print(f"Writing {data_group} split data to disk")
     joblib.dump(
         (X_train, y_train),
-        Path("data/processed/split") / f"ld_{data_group}_train_data.joblib",
+        base / Path("data/processed/split") / f"ld_{data_group}_train_data.joblib",
     )
     joblib.dump(
         (X_test, y_test),
-        Path("data/processed/split") / f"ld_{data_group}_test_data.joblib",
+        base / Path("data/processed/split") / f"ld_{data_group}_test_data.joblib",
     )
     print("Write complete")
 

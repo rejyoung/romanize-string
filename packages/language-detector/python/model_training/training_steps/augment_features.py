@@ -306,16 +306,21 @@ def build_tell_scores_array(
 
 def main(data_group: str, model_dir: str):
     model_assets = Path(model_dir)
+    base = Path(__file__).resolve().parents[1]
     vec_path = (
-        Path("data/processed/vectorized") / f"ld_vectorized_{data_group}_data.joblib"
+        base
+        / Path("data/processed/vectorized")
+        / f"ld_vectorized_{data_group}_data.joblib"
     )
-    csv_path = Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv"
+    csv_path = base / Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv"
 
     if data_group in ["family", "cyrillic"]:
         print(f"No augmentation necessary for {data_group}")
         shutil.copy2(
             vec_path,
-            Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib",
+            base
+            / Path("data/processed/augmented")
+            / f"ld_augmented_{data_group}_data.joblib",
         )
         return
 
@@ -387,7 +392,9 @@ def main(data_group: str, model_dir: str):
     print(f"Augmented features: {X.shape[1]} -> {X_aug.shape[1]} columns.")
     joblib.dump(
         (X_aug, y),
-        Path("data/processed/augmented") / f"ld_augmented_{data_group}_data.joblib",
+        base
+        / Path("data/processed/augmented")
+        / f"ld_augmented_{data_group}_data.joblib",
     )
     joblib.dump(
         {"tell_characters": tell_characters, "endings": endings, "bigrams": bigrams},

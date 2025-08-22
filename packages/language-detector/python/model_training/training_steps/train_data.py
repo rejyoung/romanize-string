@@ -17,10 +17,11 @@ License: https://creativecommons.org/licenses/by/4.0/
 
 def main(data_group: str, model_dir: str):
     model_assets = Path(model_dir)
+    base = Path(__file__).resolve().parents[1]
 
     print(f"Reading prepared {data_group} training data")
     X_train, y_train = joblib.load(
-        Path("data/processed/split") / f"ld_{data_group}_train_data.joblib"
+        base / Path("data/processed/split") / f"ld_{data_group}_train_data.joblib"
     )
 
     logreg_classifier = LogisticRegression(

@@ -16,13 +16,20 @@ License: https://creativecommons.org/licenses/by/4.0/
 
 
 def main(data_group: str, model_dir: str):
+
     model_assets = Path(model_dir)
 
     print(f"Reading {data_group} data")
-    df = pd.read_csv(Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv")
+
+    base = Path(__file__).resolve().parents[1]
+    df = pd.read_csv(
+        base / "data" / "intermediate" / f"ld_balanced_{data_group}_data.csv"
+    )
 
     CONFIGURATION = {
-        "southern_slavic": dict(max_features=200_000, max_df=0.995, ngram_range=(3, 5), analyzer="char"),
+        "southern_slavic": dict(
+            max_features=200_000, max_df=0.995, ngram_range=(3, 5), analyzer="char"
+        ),
         "indic": dict(max_features=120_000, max_df=1.0),
         "ja_zh": dict(max_features=120_000, max_df=1.0),
         "eastern_slavic": dict(max_features=100_000, max_df=1.0),
@@ -48,7 +55,9 @@ def main(data_group: str, model_dir: str):
     print(f"Writing vectorized {data_group} data to disk")
     joblib.dump(
         (X, y),
-        Path("data/processed/vectorized") / f"ld_vectorized_{data_group}_data.joblib",
+        base
+        / Path("data/processed/vectorized")
+        / f"ld_vectorized_{data_group}_data.joblib",
     )
 
     print(f"Writing {data_group} vectorizer to disk")

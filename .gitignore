@@ -5,3 +5,4 @@ build/
 raw/
 ld_*
 .venv
+__pycache__/

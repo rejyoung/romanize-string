@@ -20,8 +20,9 @@ def main(data_group: str):
 
     MIN_SIZE, MAX_SIZE = THRESHOLDS[data_group]
 
+    base = Path(__file__).resolve().parents[1]
     print(f"Reading {data_group} data")
-    df = pd.read_csv(Path("data/intermediate") / f"ld_{data_group}_data.csv")
+    df = pd.read_csv(base / Path("data/intermediate") / f"ld_{data_group}_data.csv")
 
     grouped = df.groupby("label")
     del df
@@ -54,7 +55,7 @@ def main(data_group: str):
 
     print(f"Writing {data_group} data to csv")
     balanced_df.to_csv(
-        Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv",
+        base / Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv",
         index=False,
     )
     print("Write complete")
