@@ -18,7 +18,6 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-
 def main(data_group: str, model_dir: str):
     model_assets = Path(model_dir)
 
@@ -39,10 +38,12 @@ def main(data_group: str, model_dir: str):
 
     # Save confusion matrix
     print(f"Performing {data_group} data confusion estimation")
-    disp = ConfusionMatrixDisplay.from_estimator(ensemble_model, X_test, y_test, cmap="Blues", colorbar=True)
-    
+    disp = ConfusionMatrixDisplay.from_estimator(
+        ensemble_model, X_test, y_test, cmap="Blues", colorbar=True
+    )
+
     output_path = results_dir / f"{data_group}_confusion_matrix.png"
-    plt.safefig(output_path, bbox_inches="tight", dpi=300)
+    plt.savefig(output_path, bbox_inches="tight", dpi=300)
     plt.close()
 
     # Saving reports
@@ -62,8 +63,7 @@ def main(data_group: str, model_dir: str):
     # print_most_influential_features(ensemble_model, model_assets)
 
 
-
-def print_most_influential_features (ensemble_model, model_assets):
+def print_most_influential_features(ensemble_model, model_assets):
 
     vectorizer = joblib.load(model_assets / f"ld_{data_group}_vectorizer.joblib")
 
@@ -108,6 +108,7 @@ def print_most_influential_features (ensemble_model, model_assets):
         print(f"\nClass {cls_idx} top {top_k}:")
         for i in idx:
             print(f"  {all_names[i]}  {coefs[cls_idx, i]:.6f}")
+
 
 def _unwrap(est):
     return est.steps[-1][1] if isinstance(est, Pipeline) else est

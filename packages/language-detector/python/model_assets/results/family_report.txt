@@ -1,0 +1,18 @@
+Classifcation report for family
+
+              precision    recall  f1-score   support
+
+    cyrillic       1.00      1.00      1.00    150000
+          el       1.00      1.00      1.00     94386
+       indic       1.00      1.00      1.00    150000
+       ja_zh       0.98      1.00      0.99    150000
+          ko       0.99      0.99      0.99    150000
+perso-arabic       1.00      0.99      0.99    150000
+          th       1.00      1.00      1.00     25000
+
+    accuracy                           0.99    869386
+   macro avg       0.99      1.00      0.99    869386
+weighted avg       0.99      0.99      0.99    869386
+
+
+Test accuracy: 0.9941

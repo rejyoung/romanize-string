@@ -1,0 +1,14 @@
+Classifcation report for perso_arabic
+
+              precision    recall  f1-score   support
+
+          ar       0.89      0.97      0.93    176167
+          fa       0.85      0.80      0.82    113751
+          ur       0.90      0.83      0.87    106000
+
+    accuracy                           0.88    395918
+   macro avg       0.88      0.87      0.87    395918
+weighted avg       0.88      0.88      0.88    395918
+
+
+Test accuracy: 0.8831
