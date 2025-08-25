@@ -1,0 +1,20 @@
+Classifcation report for indic
+
+              precision    recall  f1-score   support
+
+          bn       1.00      1.00      1.00    118012
+          gu       1.00      1.00      1.00     58262
+          hi       0.72      0.53      0.61     60153
+          kn       1.00      1.00      1.00    101372
+          mr       0.74      0.91      0.82    104361
+          ne       0.83      0.75      0.79     64158
+          pa       0.98      1.00      0.99     26500
+          ta       1.00      1.00      1.00    136513
+          te       1.00      1.00      1.00     95100
+
+    accuracy                           0.93    764431
+   macro avg       0.92      0.91      0.91    764431
+weighted avg       0.93      0.93      0.93    764431
+
+
+Test accuracy: 0.9284

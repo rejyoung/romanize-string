@@ -1,0 +1,14 @@
+Classifcation report for southern_slavic
+
+              precision    recall  f1-score   support
+
+          bg       0.79      0.73      0.76     50000
+          mk       0.70      0.69      0.69     50000
+          sr       0.73      0.79      0.76     50000
+
+    accuracy                           0.74    150000
+   macro avg       0.74      0.74      0.74    150000
+weighted avg       0.74      0.74      0.74    150000
+
+
+Test accuracy: 0.7372

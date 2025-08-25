@@ -1,0 +1,14 @@
+Classifcation report for eastern_slavic
+
+              precision    recall  f1-score   support
+
+          be       0.91      0.89      0.90     50000
+          ru       0.80      0.89      0.84     50000
+          uk       0.89      0.80      0.85     50000
+
+    accuracy                           0.86    150000
+   macro avg       0.87      0.86      0.86    150000
+weighted avg       0.87      0.86      0.86    150000
+
+
+Test accuracy: 0.8634
