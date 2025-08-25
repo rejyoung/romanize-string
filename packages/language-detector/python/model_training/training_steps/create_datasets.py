@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import regex, csv
 from pathlib import Path
+from python.language_codes import code_language_map
 
 """
 This model was trained using corpora provided by the Wortschatz Project
@@ -11,38 +12,7 @@ Source: https://wortschatz.uni-leipzig.de/en/download
 License: https://creativecommons.org/licenses/by/4.0/
 """
 
-code_language_map = {
-    "ara": "ar",
-    "bel": "be",
-    "ben": "bn",
-    "bul": "bg",
-    "cmn": "zh",
-    "ell": "el",
-    "fas": "fa",
-    "guj": "gu",
-    "hin": "hi",
-    "jpn": "ja",
-    "kan": "kn",
-    "kaz": "kk",
-    "kir": "ky",
-    "kor": "ko",
-    "mar": "mr",
-    "mkd": "mk",
-    "mon": "mn",
-    "nep": "ne",
-    "pan": "pa",
-    "pes": "fa",
-    "rus": "ru",
-    "san": "sa",
-    "srp": "sr",
-    "tam": "ta",
-    "tel": "te",
-    "tgk": "tg",
-    "tha": "th",
-    "ukr": "uk",
-    "urd": "ur",
-    "zho": "zh",
-}
+
 
 code_script_map = {
     "ara": "perso-arabic",
@@ -83,7 +53,7 @@ cyrillic_classes = ["be", "bg", "kk", "ky", "mk", "mn", "ru", "sr", "tg", "uk"]
 indic_classes = ["bn", "gu", "hi", "kn", "mr", "ne", "pa", "ta", "te"]
 eastern_slavic = ["be", "ru", "uk"]
 southern_slavic = ["bg", "mk", "sr"]
-turkik = ["kk", "ky", "mn", "tg"]
+turkic = ["kk", "ky", "mn", "tg"]
 
 
 def main():
@@ -100,7 +70,7 @@ def main():
         "ja_zh",
         "eastern_slavic",
         "southern_slavic",
-        "turkik",
+        "turkic",
     ]
 
     datasets = {
@@ -152,10 +122,10 @@ def main():
                 datasets["eastern_slavic_word_data"].extend(file_x)
                 file_y_subfamily = np.full(file_x.shape, "eastern_slavic")
                 datasets["eastern_slavic_labels"].extend(file_y_language)
-            elif language_code in turkik:
-                datasets["turkik_word_data"].extend(file_x)
-                file_y_subfamily = np.full(file_x.shape, "turkik")
-                datasets["turkik_labels"].extend(file_y_language)
+            elif language_code in turkic:
+                datasets["turkic_word_data"].extend(file_x)
+                file_y_subfamily = np.full(file_x.shape, "turkic")
+                datasets["turkic_labels"].extend(file_y_language)
 
             # Set Cyrillic labels to appropriate subfamily code
             datasets["cyrillic_labels"].extend(file_y_subfamily)

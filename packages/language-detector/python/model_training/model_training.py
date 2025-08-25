@@ -10,6 +10,9 @@ def create_data_dirs(base_dir: Path):
         base_dir / "data" / "processed" / "split",
         base_dir / "data" / "processed" / "vectorized",
         base_dir / "data" / "processed" / "augmented",
+        base_dir / "model_assets" / "models",
+        base_dir / "model_assets" / "vectorizers",
+        base_dir / "model_assets" / "tell_lists"
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
@@ -32,7 +35,7 @@ def train_model(model_dir: Path):
         "ja_zh",
         "eastern_slavic",
         "southern_slavic",
-        "turkik",
+        "turkic",
     ]
 
     python_root = Path(__file__).resolve().parent.parent  # .../python
@@ -42,10 +45,9 @@ def train_model(model_dir: Path):
     for script in [
         "create_datasets.py",
         "prepare_datasets.py",
-        "vectorize_data.py",
-        "augment_features.py",
+        "vectorize_training_data.py",
         "split_data.py",
-        "train_data.py",
+        "train_model.py",
         "run_test_data.py",
     ]:
         if script == "create_datasets.py":
@@ -70,8 +72,7 @@ def train_model(model_dir: Path):
                             if script
                             in [
                                 "train_data.py",
-                                "vectorize_data.py",
-                                "augment_features.py",
+                                "vectorize_training_data.py",
                                 "run_test_data.py",
                             ]
                             else []

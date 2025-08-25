@@ -1,0 +1,36 @@
+from typings import Literal
+
+code_language_map = {
+    "ara": "ar",
+    "bel": "be",
+    "ben": "bn",
+    "bul": "bg",
+    "cmn": "zh",
+    "ell": "el",
+    "fas": "fa",
+    "guj": "gu",
+    "hin": "hi",
+    "jpn": "ja",
+    "kan": "kn",
+    "kaz": "kk",
+    "kir": "ky",
+    "kor": "ko",
+    "mar": "mr",
+    "mkd": "mk",
+    "mon": "mn",
+    "nep": "ne",
+    "pan": "pa",
+    "pes": "fa",
+    "rus": "ru",
+    "san": "sa",
+    "srp": "sr",
+    "tam": "ta",
+    "tel": "te",
+    "tgk": "tg",
+    "tha": "th",
+    "ukr": "uk",
+    "urd": "ur",
+    "zho": "zh",
+}
+
+Code_Language = Literal[tuple(set(code_language_map.values()))]

@@ -1,4 +1,4 @@
-Classifcation report for turkik
+Classifcation report for turkic
 
               precision    recall  f1-score   support
 
