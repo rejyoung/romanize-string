@@ -26,6 +26,15 @@ class TellLists(TypedDict):
 
 
 def generate_or_retrieve_tell_lists(model_type: str) -> TellLists:
+    """
+    Generate or retrieve tell lists for a given model type.
+
+    Args:
+        model_type: Type of model to generate tell lists for
+
+    Returns:
+        TellLists: A dictionary containing the tell lists for the given model type  
+    """
 
     ## Load tell lists or generate new tell lists if file is not found
     filepath = TELL_LISTS_DIR / f"ld_{model_type}_tell_lists.joblib"
@@ -56,6 +65,15 @@ def generate_or_retrieve_tell_lists(model_type: str) -> TellLists:
 def generate_tell_char_lists(
     group_tell_chars: dict[str, tuple[str, ...]] | None,
 ) -> Generate_List_Return:
+    """
+    Generate tell character lists for a given model type.
+
+    Args:
+        group_tell_chars: A dictionary containing the tell characters for the given model type
+
+    Returns:
+        Generate_List_Return: A tuple containing the tell character lists for the given model type
+    """
     if not group_tell_chars:
         raise ValueError("Input group_tell_chars cannot be None.")
     # Compile the list of tell characters for the data group from the dictionary above
@@ -69,6 +87,15 @@ def generate_tell_char_lists(
 def generate_radical_lists(
     group_tell_chars: dict[str, tuple[str, ...]] | None,
 ) -> Radical_List_Return:
+    """
+    Generate radical lists for a given model type.
+
+    Args:
+        group_tell_chars: A dictionary containing the tell characters for the given model type
+
+    Returns:
+        Radical_List_Return: A tuple containing the radical lists for the given model type
+    """
     if not group_tell_chars:
         raise ValueError("Input group_tell_chars cannot be None.")
     if "radicals" not in group_tell_chars:
@@ -82,6 +109,15 @@ def generate_radical_lists(
 def generate_endings_lists(
     group_endings: dict[str, tuple[str, ...]] | None,
 ) -> Generate_List_Return:
+    """
+    Generate endings lists for a given model type.
+
+    Args:
+        group_endings: A dictionary containing the endings for the given model type
+
+    Returns:
+        Generate_List_Return: A tuple containing the endings lists for the given model type
+    """
     if not group_endings:
         return None, None, None
 
@@ -95,6 +131,16 @@ def generate_endings_lists(
 def generate_bigram_lists(
     group_bigrams: dict[str, tuple[str, ...]] | None,
 ) -> Generate_List_Return:
+    """
+    Generate bigram lists for a given model type.
+
+    Args:
+        group_bigrams: A dictionary containing the bigrams for the given model type
+
+    Returns:
+        Generate_List_Return: A tuple containing the bigram lists for the given model type
+    """
+    
     if not group_bigrams:
         return None, None, None
 

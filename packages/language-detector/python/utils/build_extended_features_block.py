@@ -1,14 +1,28 @@
-from typing import TypeAlias
-import unicodedata, regex
+import logging
+import os
+import regex
+import unicodedata
+
+import numpy as np
 from numpy.typing import NDArray
+from scipy.sparse import csr_matrix, hstack
+from typing import TypeAlias
+
 from utils.generate_or_retrieve_tell_lists import (
     generate_or_retrieve_tell_lists,
     Generate_List_Return,
     Radical_List_Return,
     TellLists,
 )
-import numpy as np
-from scipy.sparse import csr_matrix, hstack
+
+# Configure logging based on environment variable
+if not os.environ.get('DISABLE_LOGGING'):
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
+else:
+    # Create a no-op logger when logging is disabled
+    logger = logging.getLogger(__name__)
+    logger.disabled = True
 
 # Type Definitions
 FeatureArrayReturn: TypeAlias = (
@@ -19,12 +33,24 @@ FeatureArrayReturn: TypeAlias = (
     | tuple[None, None]
 )
 
-non_unique_keys = ["overlapping", "radicals"]
+# Constants
+NON_UNIQUE_KEYS = ["overlapping", "radicals"]
 PUNCT_OR_SYMBOL = regex.compile(r"[\p{P}\p{S}]+")
 MULTISPACE = regex.compile(r"\s+")
 
 
 def build_extended_features_block(texts: list[str], model_type: str) -> csr_matrix:
+    """
+    Build an extended features block for a given model type.
+
+    Args:
+        texts: A list of texts to build the extended features block for
+        model_type: The type of model to build the extended features block for
+
+    Returns:
+        A csr_matrix containing the extended features block
+    """
+
     (
         character_binaries,
         radical_counts,
@@ -55,7 +81,19 @@ def build_extended_features_block(texts: list[str], model_type: str) -> csr_matr
 
 
 # --- Helper to scale & safely convert arrays ---
-def prepare_feature_block(feature_array, scale: float, num_samples: int) -> csr_matrix:
+def prepare_feature_block(feature_array: NDArray[np.float32] | None, scale: float, num_samples: int) -> csr_matrix:
+    """
+    Prepare a feature block for a given model type.
+
+    Args:
+        feature_array: The feature array to prepare
+        scale: The scale to apply to the feature array
+        num_samples: The number of samples in the feature array
+
+    Returns:
+        A csr_matrix containing the prepared feature block
+    """
+
     if feature_array is None:
         return csr_matrix((num_samples, 0), dtype=np.float32)
     block = csr_matrix(feature_array, dtype=np.float32)
@@ -63,7 +101,23 @@ def prepare_feature_block(feature_array, scale: float, num_samples: int) -> csr_
 
 
 ##### Generate all feature arrays #####
-def build_extended_features_arrays(texts: list[str], model_type: str):
+def build_extended_features_arrays(texts: list[str], model_type: str) -> tuple[
+    NDArray[np.float32],
+    NDArray[np.float32] | None,
+    NDArray[np.float32] | None,
+    NDArray[np.float32] | None,
+    NDArray[np.float32],
+]:
+    """
+    Build all feature arrays for a given model type.
+
+    Args:
+        texts: A list of texts to build the extended features block for
+        model_type: The type of model to build the extended features block for
+
+    Returns:
+        A tuple containing the feature arrays for the given model type
+    """
     tell_lists: TellLists = generate_or_retrieve_tell_lists(model_type)
 
     tell_character_lists = tell_lists["tell_character_list"]
@@ -73,29 +127,29 @@ def build_extended_features_arrays(texts: list[str], model_type: str):
     lctexts = list(map(lambda s: s.casefold(), texts))
 
     # Add binary columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
-    print(f"Building tell-letter binary features…")
+    logger.info("Building tell-letter binary features…")
     character_binaries, char_group_totals = build_character_binaries_array(
         lctexts, tell_character_lists
     )
 
     # Add columns to each word's vector matrix for the number of radicals present (currently ja_zh only)
-    print(f"Building radical count features…")
+    logger.info("Building radical count features…")
     radical_counts = build_radical_counts_array(lctexts, radical_lists)
 
     # Add binary and count columns to each word's vector matrix for the presence of special word endings (currently indic and south_slavic only)
-    print(f"Building ending binary and count features…")
+    logger.info("Building ending binary and count features…")
     ending_features, ending_group_totals = build_ending_features_array(
         lctexts, ending_lists
     )
 
     # Add binary and count columns to each word's vector matrix for the presence of special bigrams (currently south_slavic only)
-    print(f"Building bigram binary and count features…")
+    logger.info("Building bigram binary and count features…")
     bigram_features, bigram_group_totals = build_bigram_features_array(
         lctexts, bigram_lists
     )
 
     # Add tells score to each word's vector matrix for the total number of tells present
-    print(f"Building per-group tells scores")
+    logger.info("Building per-group tells scores")
     tells_scores = build_tell_scores_array(
         lctexts, char_group_totals, ending_group_totals, bigram_group_totals
     )
@@ -115,6 +169,17 @@ def build_extended_features_arrays(texts: list[str], model_type: str):
 def build_character_binaries_array(
     texts: list[str], tell_character_list: Generate_List_Return
 ) -> FeatureArrayReturn:
+    """
+    Build a character binary array for a given model type.
+
+    Args:
+        texts: A list of texts to build the character binary array for
+        tell_character_list: A tuple containing the tell character lists for the given model type
+
+    Returns:
+        A tuple containing the character binary array and the per-group totals
+    """
+
     group_tell_chars, tell_characters, groups = tell_character_list
     tell_chars_set = set(tell_characters)
 
@@ -135,9 +200,9 @@ def build_character_binaries_array(
         for ch in present_chars:
             character_binaries[i, char_to_idx[ch]] = 1.0
 
-        row_group_totals = {gr: 0.0 for gr in groups if gr not in non_unique_keys}
+        row_group_totals = {gr: 0.0 for gr in groups if gr not in NON_UNIQUE_KEYS}
         for group in groups:
-            if group in non_unique_keys:
+            if group in NON_UNIQUE_KEYS:
                 continue
 
             total = 0
@@ -154,11 +219,21 @@ def build_character_binaries_array(
 def build_radical_counts_array(
     texts: list[str], radical_lists: Radical_List_Return
 ) -> NDArray[np.float32] | None:
+    """
+    Build a radical count array for a given model type.
+
+    Args:
+        texts: A list of texts to build the radical count array for
+        radical_lists: A tuple containing the radical lists for the given model type
+
+    Returns:
+        A numpy array containing the radical count features
+    """
     group_tell_chars, radicals = radical_lists
     # For ja_zh group, add radical count features if "radicals" key exists
     radical_counts = None
     if radicals is not None:
-        print(f"Building {len(radicals)} radical count features…")
+        logger.info(f"Building {len(radicals)} radical count features…")
         radical_counts = np.zeros((len(texts), len(radicals)), dtype=np.float32)
         for i, s in enumerate(texts):
             s = unicodedata.normalize("NFC", s)
@@ -171,6 +246,17 @@ def build_radical_counts_array(
 def build_ending_features_array(
     texts: list[str], ending_lists: Generate_List_Return
 ) -> FeatureArrayReturn:
+    """
+    Build an ending features array for a given model type.
+
+    Args:
+        texts: A list of texts to build the ending features array for
+        ending_lists: A tuple containing the ending lists for the given model type
+
+    Returns:
+        A tuple containing the ending features array and the per-group totals
+    """
+
     group_endings, endings, ending_groups = ending_lists
 
     if group_endings is None:
@@ -205,10 +291,10 @@ def build_ending_features_array(
                 endings_features[row, count_col] = float(count)
 
         row_group_totals = {
-            gr: 0.0 for gr in ending_groups if gr not in non_unique_keys
+            gr: 0.0 for gr in ending_groups if gr not in NON_UNIQUE_KEYS
         }
         for group in ending_groups:
-            if group in non_unique_keys:
+            if group in NON_UNIQUE_KEYS:
                 continue
 
             total = 0.0
@@ -226,6 +312,17 @@ def build_ending_features_array(
 def build_bigram_features_array(
     texts: list[str], bigram_lists: Generate_List_Return
 ) -> FeatureArrayReturn:
+    """
+    Build a bigram features array for a given model type.
+
+    Args:
+        texts: A list of texts to build the bigram features array for
+        bigram_lists: A tuple containing the bigram lists for the given model type
+
+    Returns:
+        A tuple containing the bigram features array and the per-group totals
+    """
+
     group_bigrams, bigrams, bigram_groups = bigram_lists
 
     if group_bigrams is None:
@@ -253,10 +350,10 @@ def build_bigram_features_array(
                 bigram_features[row, count_col] = float(count)
 
         row_group_totals = {
-            gr: 0.0 for gr in bigram_groups if gr not in non_unique_keys
+            gr: 0.0 for gr in bigram_groups if gr not in NON_UNIQUE_KEYS
         }
         for group in bigram_groups:
-            if group in non_unique_keys:
+            if group in NON_UNIQUE_KEYS:
                 continue
 
             for bi in group_bigrams[group]:
@@ -273,6 +370,18 @@ def build_tell_scores_array(
     ending_group_totals: list[dict[str, float]] | None,
     bigram_group_totals: list[dict[str, float]] | None,
 ) -> NDArray[np.float32]:
+    """
+    Build a tell scores array for a given model type.
+
+    Args:
+        texts: A list of texts to build the tell scores array for
+        char_group_totals: A list of dictionaries containing the character group totals
+        ending_group_totals: A list of dictionaries containing the ending group totals
+        bigram_group_totals: A list of dictionaries containing the bigram group totals
+
+    Returns:
+        A numpy array containing the tell scores features
+    """
 
     texts_len = len(texts)
 
