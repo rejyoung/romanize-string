@@ -1,23 +1,37 @@
 from typing import TypeAlias
 import unicodedata, regex
 from numpy.typing import NDArray
-from utils.generate_or_retrieve_tell_lists import generate_or_retrieve_tell_lists, Generate_List_Return, Radical_List_Return
+from utils.generate_or_retrieve_tell_lists import (
+    generate_or_retrieve_tell_lists,
+    Generate_List_Return,
+    Radical_List_Return,
+    TellLists,
+)
 import numpy as np
 from scipy.sparse import csr_matrix, hstack
 
 # Type Definitions
-FeatureArrayReturn: TypeAlias = tuple[
-    NDArray[np.float32],  # feature array
-    list[dict[str, float]],  # per-group totals
-] | tuple[None, None]
+FeatureArrayReturn: TypeAlias = (
+    tuple[
+        NDArray[np.float32],  # feature array
+        list[dict[str, float]],  # per-group totals
+    ]
+    | tuple[None, None]
+)
 
 non_unique_keys = ["overlapping", "radicals"]
 PUNCT_OR_SYMBOL = regex.compile(r"[\p{P}\p{S}]+")
 MULTISPACE = regex.compile(r"\s+")
 
 
-def build_extended_features_block(texts: list[str], data_group: str) -> csr_matrix:
-    character_binaries, radical_counts, ending_features, bigram_features, tells_scores = build_extended_features_arrays(texts, data_group)
+def build_extended_features_block(texts: list[str], model_type: str) -> csr_matrix:
+    (
+        character_binaries,
+        radical_counts,
+        ending_features,
+        bigram_features,
+        tells_scores,
+    ) = build_extended_features_arrays(texts, model_type)
 
     weights = {
         "characters": 1.5,
@@ -41,27 +55,27 @@ def build_extended_features_block(texts: list[str], data_group: str) -> csr_matr
 
 
 # --- Helper to scale & safely convert arrays ---
-def prepare_feature_block(
-    feature_array, scale: float, num_samples: int
-) -> csr_matrix:
+def prepare_feature_block(feature_array, scale: float, num_samples: int) -> csr_matrix:
     if feature_array is None:
         return csr_matrix((num_samples, 0), dtype=np.float32)
     block = csr_matrix(feature_array, dtype=np.float32)
     return block * scale if scale != 1.0 else block
 
 
-
 ##### Generate all feature arrays #####
-def build_extended_features_arrays(texts: list[str], data_group: str):
-    tell_lists = generate_or_retrieve_tell_lists(data_group)
+def build_extended_features_arrays(texts: list[str], model_type: str):
+    tell_lists: TellLists = generate_or_retrieve_tell_lists(model_type)
 
-    tell_character_lists, radical_lists, ending_lists, bigram_lists = tell_lists
+    tell_character_lists = tell_lists["tell_character_list"]
+    radical_lists = tell_lists["radical_lists"]
+    ending_lists = tell_lists["ending_lists"]
+    bigram_lists = tell_lists["bigram_lists"]
     lctexts = list(map(lambda s: s.casefold(), texts))
 
     # Add binary columns to each word's vector matrix for each of the unique characters that can help distinguish between languages
     print(f"Building tell-letter binary features…")
-    character_binaries, char_group_totals = (
-        build_character_binaries_array(lctexts, tell_character_lists)
+    character_binaries, char_group_totals = build_character_binaries_array(
+        lctexts, tell_character_lists
     )
 
     # Add columns to each word's vector matrix for the number of radicals present (currently ja_zh only)
@@ -86,18 +100,24 @@ def build_extended_features_arrays(texts: list[str], data_group: str):
         lctexts, char_group_totals, ending_group_totals, bigram_group_totals
     )
 
-    return character_binaries, radical_counts, ending_features, bigram_features, tells_scores
-
+    return (
+        character_binaries,
+        radical_counts,
+        ending_features,
+        bigram_features,
+        tells_scores,
+    )
 
 
 ##### Individual Array Generators #####
 
+
 def build_character_binaries_array(
-    texts: list[str], tell_character_lists: Generate_List_Return
+    texts: list[str], tell_character_list: Generate_List_Return
 ) -> FeatureArrayReturn:
-    group_tell_chars, tell_characters, groups = tell_character_lists
+    group_tell_chars, tell_characters, groups = tell_character_list
     tell_chars_set = set(tell_characters)
-  
+
     character_binaries = np.zeros((len(texts), len(tell_characters)), dtype=np.float32)
     per_group_totals = []
 
@@ -184,7 +204,9 @@ def build_ending_features_array(
                 endings_features[row, present_col] = 1.0
                 endings_features[row, count_col] = float(count)
 
-        row_group_totals = {gr: 0.0 for gr in ending_groups if gr not in non_unique_keys}
+        row_group_totals = {
+            gr: 0.0 for gr in ending_groups if gr not in non_unique_keys
+        }
         for group in ending_groups:
             if group in non_unique_keys:
                 continue
@@ -230,7 +252,9 @@ def build_bigram_features_array(
                 bigram_features[row, present_col] = 1.0
                 bigram_features[row, count_col] = float(count)
 
-        row_group_totals = {gr: 0.0 for gr in bigram_groups if gr not in non_unique_keys}
+        row_group_totals = {
+            gr: 0.0 for gr in bigram_groups if gr not in non_unique_keys
+        }
         for group in bigram_groups:
             if group in non_unique_keys:
                 continue

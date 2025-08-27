@@ -16,13 +16,13 @@ THRESHOLDS = {
 }
 
 
-def main(data_group: str):
+def main(model_type: str):
 
-    MIN_SIZE, MAX_SIZE = THRESHOLDS[data_group]
+    MIN_SIZE, MAX_SIZE = THRESHOLDS[model_type]
 
     base = Path(__file__).resolve().parents[1]
-    print(f"Reading {data_group} data")
-    df = pd.read_csv(base / Path("data/intermediate") / f"ld_{data_group}_data.csv")
+    print(f"Reading {model_type} data")
+    df = pd.read_csv(base / Path("data/intermediate") / f"ld_{model_type}_data.csv")
 
     grouped = df.groupby("label")
     del df
@@ -53,9 +53,9 @@ def main(data_group: str):
 
     balanced_df = pd.concat(balanced_groups).sample(frac=1, random_state=42)
 
-    print(f"Writing {data_group} data to csv")
+    print(f"Writing {model_type} data to csv")
     balanced_df.to_csv(
-        base / Path("data/intermediate") / f"ld_balanced_{data_group}_data.csv",
+        base / Path("data/intermediate") / f"ld_balanced_{model_type}_data.csv",
         index=False,
     )
     print("Write complete")
@@ -64,9 +64,9 @@ def main(data_group: str):
 if __name__ == "__main__":
     # Get arg
     if len(sys.argv) != 2:
-        print("Usage: python prepare_datasets.py <data_group>")
+        print("Usage: python prepare_datasets.py <model_type>")
         sys.exit(1)
 
-    data_group = sys.argv[1]
+    model_type = sys.argv[1]
 
-    main(data_group)
+    main(model_type)

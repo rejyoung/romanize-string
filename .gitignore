@@ -6,3 +6,4 @@ raw/
 ld_*
 .venv
 __pycache__/
+results_*/

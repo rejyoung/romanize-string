@@ -15,13 +15,13 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str, model_dir: str):
+def main(model_type: str, model_dir: str):
     model_assets = Path(model_dir)
     base = Path(__file__).resolve().parents[1]
 
-    print(f"Reading prepared {data_group} training data")
+    print(f"Reading prepared {model_type} training data")
     X_train, y_train = joblib.load(
-        base / Path("data/processed/split") / f"ld_{data_group}_train_data.joblib"
+        base / Path("data/processed/split") / f"ld_{model_type}_train_data.joblib"
     )
 
     logreg_classifier = LogisticRegression(
@@ -42,24 +42,27 @@ def main(data_group: str, model_dir: str):
         voting="soft",
     )
 
-    print(f"Fitting {data_group} ensemble model")
+    print(f"Fitting {model_type} ensemble model")
     ensemble_model.fit(X_train, y_train)
 
-    print(f"Writing {data_group} ensemble model to disk")
-    joblib.dump(ensemble_model, model_assets / "models" / f"ld_{data_group}_ensemble_model.joblib")
+    print(f"Writing {model_type} ensemble model to disk")
+    joblib.dump(
+        ensemble_model,
+        model_assets / "models" / f"ld_{model_type}_ensemble_model.joblib",
+    )
     print("Write complete")
 
-    print(f"Testing {data_group} accuracy with train data")
+    print(f"Testing {model_type} accuracy with train data")
     print("Train accuracy:", ensemble_model.score(X_train, y_train))
 
 
 if __name__ == "__main__":
     # Expect exactly 2 user‐supplied arguments
     if len(sys.argv) != 3:
-        print("Usage: python train_data.py <data_group> <model_dir>")
+        print("Usage: python train_data.py <model_type> <model_dir>")
         sys.exit(1)
 
-    data_group = sys.argv[1]
+    model_type = sys.argv[1]
     model_dir = sys.argv[2]
 
-    main(data_group, model_dir)
+    main(model_type, model_dir)

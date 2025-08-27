@@ -17,49 +17,62 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str, model_dir: str):
+def main(model_type: str, model_dir: str):
     model_assets = Path(model_dir)
 
-    print(f"Reading {data_group} data")
+    print(f"Reading {model_type} data")
 
-    base = Path(__file__).resolve().parents[2]
+    base = Path(__file__).resolve().parents[1]
     df = pd.read_csv(
-        base / "data" / "intermediate" / f"ld_balanced_{data_group}_data.csv", usecols=["text", "label"]
+        base / "data" / "intermediate" / f"ld_balanced_{model_type}_data.csv",
+        usecols=["text", "label"],
     )
 
-    vectorizer = create_vectorizer(data_group)
+    vectorizer = create_vectorizer(model_type)
 
-    print(f"Vectorizing {data_group} data")
+    print(f"Vectorizing {model_type} data")
     X_base = vectorizer.fit_transform(df["text"])
     y = df["label"].values
 
-    print(f"Augmenting vectorized {data_group} data with extra features")
-    extended_feature_block = build_extended_features_block(df["text"], data_group)
+    if model_type not in ["family", "cyrillic"]:
+        print(f"Augmenting vectorized {model_type} data with extra features")
+        extended_feature_block = build_extended_features_block(df["text"], model_type)
 
-    if extended_feature_block.dtype != X_base.dtype:
-       extended_feature_block = extended_feature_block.astype(X_base.dtype, copy=False)
+        if extended_feature_block.dtype != X_base.dtype:
+            extended_feature_block = extended_feature_block.astype(
+                X_base.dtype, copy=False
+            )
 
-    # Combine base + extended features
-    X_aug = hstack([X_base, extended_feature_block], format="csr")
+        # Combine base + extended features
+        X_aug = hstack([X_base, extended_feature_block], format="csr")
 
-    print("X_base:", X_base.shape, "X_ext:", extended_feature_block.shape, "X_aug:", X_aug.shape)
+        print(
+            "X_base:",
+            X_base.shape,
+            "X_ext:",
+            extended_feature_block.shape,
+            "X_aug:",
+            X_aug.shape,
+        )
+    else:
+        X_aug = X_base
 
-    print(f"Writing {data_group} vectorizer to disk")
-    joblib.dump(vectorizer, model_assets / "vectorizers" / f"ld_{data_group}_vectorizer.joblib")
+    print(f"Writing {model_type} vectorizer to disk")
+    joblib.dump(
+        vectorizer, model_assets / "vectorizers" / f"ld_{model_type}_vectorizer.joblib"
+    )
     print("Write complete")
 
-    print(f"Writing vectorized {data_group} data to disk")
+    print(f"Writing vectorized {model_type} data to disk")
     joblib.dump(
         (X_aug, y),
         base
         / Path("data/processed/vectorized")
-        / f"ld_vectorized_{data_group}_data.joblib",
+        / f"ld_vectorized_{model_type}_data.joblib",
     )
 
-    
 
-
-def create_vectorizer(data_group: str):
+def create_vectorizer(model_type: str):
 
     CONFIGURATION = {
         "southern_slavic": dict(
@@ -71,9 +84,9 @@ def create_vectorizer(data_group: str):
         "perso_arabic": dict(max_features=80_000, max_df=0.98),
     }
 
-    config = CONFIGURATION.get(data_group, {})
+    config = CONFIGURATION.get(model_type, {})
 
-    print(f"Configuring {data_group} vectorizer.")
+    print(f"Configuring {model_type} vectorizer.")
     vectorizer = TfidfVectorizer(
         analyzer=config.get("analyzer", "char_wb"),
         ngram_range=config.get("ngram_range", (1, 5)),
@@ -87,13 +100,14 @@ def create_vectorizer(data_group: str):
 
     return vectorizer
 
+
 if __name__ == "__main__":
     # Expect exactly 2 user‐supplied arguments
     if len(sys.argv) != 3:
-        print("Usage: python vectorize_data.py <data_group> <model_dir>")
+        print("Usage: python vectorize_data.py <model_type> <model_dir>")
         sys.exit(1)
 
-    data_group = sys.argv[1]
+    model_type = sys.argv[1]
     model_dir = sys.argv[2]
 
-    main(data_group, model_dir)
+    main(model_type, model_dir)

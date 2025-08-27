@@ -18,44 +18,44 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str, model_dir: str):
+def main(model_type: str, model_dir: str):
     model_assets = Path(model_dir)
 
     base = Path(__file__).resolve().parents[1]
 
-    print(f"Loading {data_group} test data")
+    print(f"Loading {model_type} test data")
     X_test, y_test = joblib.load(
-        base / Path("data/processed/split") / f"ld_{data_group}_test_data.joblib"
+        base / Path("data/processed/split") / f"ld_{model_type}_test_data.joblib"
     )
 
-    print(f"Loading {data_group} ensemble model")
+    print(f"Loading {model_type} ensemble model")
     ensemble_model = joblib.load(
-        model_assets / f"ld_{data_group}_ensemble_model.joblib"
+        model_assets / "models" / f"ld_{model_type}_ensemble_model.joblib"
     )
 
     results_dir = model_assets / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
 
     # Save confusion matrix
-    print(f"Performing {data_group} data confusion estimation")
+    print(f"Performing {model_type} data confusion estimation")
     disp = ConfusionMatrixDisplay.from_estimator(
         ensemble_model, X_test, y_test, cmap="Blues", colorbar=True
     )
 
-    output_path = results_dir / f"{data_group}_confusion_matrix.png"
+    output_path = results_dir / f"{model_type}_confusion_matrix.png"
     plt.savefig(output_path, bbox_inches="tight", dpi=300)
     plt.close()
 
     # Saving reports
 
-    print(f"Making {data_group} data classification report")
+    print(f"Making {model_type} data classification report")
     report = classification_report(y_test, ensemble_model.predict(X_test))
 
-    print(f"Testing accuracy with unseen {data_group} test data")
+    print(f"Testing accuracy with unseen {model_type} test data")
     accuracy = ensemble_model.score(X_test, y_test)
 
-    with open(results_dir / f"{data_group}_report.txt", "w", encoding="utf-8") as f:
-        f.write(f"Classifcation report for {data_group}\n\n")
+    with open(results_dir / f"{model_type}_report.txt", "w", encoding="utf-8") as f:
+        f.write(f"Classifcation report for {model_type}\n\n")
         f.write(report)
         f.write("\n\n")
         f.write(f"Test accuracy: {accuracy:.4f}\n")
@@ -65,13 +65,13 @@ def main(data_group: str, model_dir: str):
 
 def print_most_influential_features(ensemble_model, model_assets):
 
-    vectorizer = joblib.load(model_assets / f"ld_{data_group}_vectorizer.joblib")
+    vectorizer = joblib.load(model_assets / f"ld_{model_type}_vectorizer.joblib")
 
     coefs, source = extract_linear_coefs(ensemble_model)
     print(f"Extracted linear coefs from: {source}")
     feat_names = vectorizer.get_feature_names_out()
 
-    assets = joblib.load(model_assets / f"ld_{data_group}_tell_lists.joblib")
+    assets = joblib.load(model_assets / f"ld_{model_type}_tell_lists.joblib")
     tell_characters = assets.get("tell_characters", [])
     endings = assets.get("endings", [])
     bigrams = assets.get("bigrams", [])
@@ -162,10 +162,10 @@ def extract_linear_coefs(clf):
 if __name__ == "__main__":
     # Expect exactly 2 user‐supplied arguments
     if len(sys.argv) != 3:
-        print("Usage: python run_test_data.py <data_group> <model_dir>")
+        print("Usage: python run_test_data.py <model_type> <model_dir>")
         sys.exit(1)
 
-    data_group = sys.argv[1]
+    model_type = sys.argv[1]
     model_dir = sys.argv[2]
 
-    main(data_group, model_dir)
+    main(model_type, model_dir)

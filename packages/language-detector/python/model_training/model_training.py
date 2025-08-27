@@ -9,10 +9,6 @@ def create_data_dirs(base_dir: Path):
         base_dir / "data" / "intermediate",
         base_dir / "data" / "processed" / "split",
         base_dir / "data" / "processed" / "vectorized",
-        base_dir / "data" / "processed" / "augmented",
-        base_dir / "model_assets" / "models",
-        base_dir / "model_assets" / "vectorizers",
-        base_dir / "model_assets" / "tell_lists"
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
@@ -23,19 +19,29 @@ def create_data_dirs(base_dir: Path):
     model_assets.mkdir(exist_ok=True)
     print(f"Ensured folder exists: {model_assets}")
 
+    ma_dirs = [
+        model_assets / "models",
+        model_assets / "vectorizers",
+        model_assets / "tell_lists",
+    ]
+
+    for m in ma_dirs:
+        m.mkdir(parents=True, exist_ok=True)
+        print(f"Ensured folder exists: {m}")
+
     return model_assets
 
 
 def train_model(model_dir: Path):
-    datasets = [
-        "family",
-        "perso_arabic",
-        "cyrillic",
-        "indic",
+    model_type = [
+        # "family",
+        # "perso_arabic",
+        # "cyrillic",
+        # "indic",
         "ja_zh",
-        "eastern_slavic",
-        "southern_slavic",
-        "turkic",
+        # "eastern_slavic",
+        # "southern_slavic",
+        # "turkic",
     ]
 
     python_root = Path(__file__).resolve().parent.parent  # .../python
@@ -43,10 +49,10 @@ def train_model(model_dir: Path):
     env["PYTHONPATH"] = str(python_root)
 
     for script in [
-        "create_datasets.py",
-        "prepare_datasets.py",
-        "vectorize_training_data.py",
-        "split_data.py",
+        # "create_datasets.py",
+        # "prepare_datasets.py",
+        # "vectorize_training_data.py",
+        # "split_data.py",
         "train_model.py",
         "run_test_data.py",
     ]:
@@ -61,17 +67,17 @@ def train_model(model_dir: Path):
                 env=env,
             )
         else:
-            for d in datasets:
+            for t in model_type:
                 subprocess.run(
                     [
                         sys.executable,
                         str(Path(__file__).parent / "training_steps" / script),
-                        d,
+                        t,
                         *(
                             [model_dir]
                             if script
                             in [
-                                "train_data.py",
+                                "train_model.py",
                                 "vectorize_training_data.py",
                                 "run_test_data.py",
                             ]

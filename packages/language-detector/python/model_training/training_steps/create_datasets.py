@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import regex, csv
 from pathlib import Path
-from python.language_codes import code_language_map
 
 """
 This model was trained using corpora provided by the Wortschatz Project
@@ -12,7 +11,38 @@ Source: https://wortschatz.uni-leipzig.de/en/download
 License: https://creativecommons.org/licenses/by/4.0/
 """
 
-
+code_language_map = {
+    "ara": "ar",
+    "bel": "be",
+    "ben": "bn",
+    "bul": "bg",
+    "cmn": "zh",
+    "ell": "el",
+    "fas": "fa",
+    "guj": "gu",
+    "hin": "hi",
+    "jpn": "ja",
+    "kan": "kn",
+    "kaz": "kk",
+    "kir": "ky",
+    "kor": "ko",
+    "mar": "mr",
+    "mkd": "mk",
+    "mon": "mn",
+    "nep": "ne",
+    "pan": "pa",
+    "pes": "fa",
+    "rus": "ru",
+    "san": "sa",
+    "srp": "sr",
+    "tam": "ta",
+    "tel": "te",
+    "tgk": "tg",
+    "tha": "th",
+    "ukr": "uk",
+    "urd": "ur",
+    "zho": "zh",
+}
 
 code_script_map = {
     "ara": "perso-arabic",
@@ -89,16 +119,25 @@ def main():
         print("Processing", file_path.name)
         family_language_code = code_script_map[file_path.name[:3]]
         language_code = code_language_map[file_path.name[:3]]
+        kana_or_japanese_marks = regex.compile(
+            r"[\p{Script=Hiragana}\p{Script=Katakana}\u30FC\uFF70\u30FB\u3005]"
+        )
 
         df_raw = pd.read_csv(file_path, sep="\t", header=None, quoting=csv.QUOTE_NONE)
 
         # Make an np array out of the data in column 1 of the training data,
         # excluding any strings not containing untransliterated script
+
         file_x = np.array(
             df_raw[1][
                 ~df_raw[1].astype(str).apply(lambda s: bool(exclude_pattern.match(s)))
             ]
         )
+        if language_code == "ja":
+            file_x = np.array(
+                [s for s in file_x if not kana_or_japanese_marks.search(str(s))]
+            )
+
         file_y_script = np.full(file_x.shape, family_language_code)
         file_y_language = np.full(file_x.shape, language_code)
 
@@ -129,8 +168,7 @@ def main():
 
             # Set Cyrillic labels to appropriate subfamily code
             datasets["cyrillic_labels"].extend(file_y_subfamily)
-
-        if language_code in ["ja", "zh"]:
+        elif language_code in ["ja", "zh"]:
             datasets["ja_zh_word_data"].extend(file_x)
             file_y_subfamily = np.full(file_x.shape, "ja_zh")
             datasets["ja_zh_labels"].extend(file_y_language)

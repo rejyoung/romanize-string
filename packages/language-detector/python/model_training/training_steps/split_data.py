@@ -12,29 +12,29 @@ License: https://creativecommons.org/licenses/by/4.0/
 """
 
 
-def main(data_group: str):
+def main(model_type: str):
     base = Path(__file__).resolve().parents[1]
 
-    print(f"Loading {data_group} data")
+    print(f"Loading {model_type} data")
     X, y = joblib.load(
         base
-        / Path("data/processed/augmented")
-        / f"ld_augmented_{data_group}_data.joblib"
+        / Path("data/processed/vectorized")
+        / f"ld_vectorized_{model_type}_data.joblib"
     )
 
-    print(f"Splitting {data_group} data")
+    print(f"Splitting {model_type} data")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.05, random_state=42, stratify=y
     )
 
-    print(f"Writing {data_group} split data to disk")
+    print(f"Writing {model_type} split data to disk")
     joblib.dump(
         (X_train, y_train),
-        base / Path("data/processed/split") / f"ld_{data_group}_train_data.joblib",
+        base / Path("data/processed/split") / f"ld_{model_type}_train_data.joblib",
     )
     joblib.dump(
         (X_test, y_test),
-        base / Path("data/processed/split") / f"ld_{data_group}_test_data.joblib",
+        base / Path("data/processed/split") / f"ld_{model_type}_test_data.joblib",
     )
     print("Write complete")
 
@@ -42,9 +42,9 @@ def main(data_group: str):
 if __name__ == "__main__":
     # Get arg
     if len(sys.argv) != 2:
-        print("Usage: python split_data.py <data_group>")
+        print("Usage: python split_data.py <model_type>")
         sys.exit(1)
 
-    data_group = sys.argv[1]
+    model_type = sys.argv[1]
 
-    main(data_group)
+    main(model_type)
