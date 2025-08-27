@@ -36,9 +36,9 @@ def train_model(model_dir: Path):
     model_type = [
         # "family",
         # "perso_arabic",
-        # "cyrillic",
-        # "indic",
-        "ja_zh",
+        "cyrillic",
+        "indic",
+        # "ja_zh",
         # "eastern_slavic",
         # "southern_slavic",
         # "turkic",
