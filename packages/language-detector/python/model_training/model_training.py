@@ -34,14 +34,14 @@ def create_data_dirs(base_dir: Path):
 
 def train_model(model_dir: Path):
     model_type = [
-        # "family",
-        # "perso_arabic",
+        "family",
+        "perso_arabic",
         "cyrillic",
         "indic",
-        # "ja_zh",
-        # "eastern_slavic",
-        # "southern_slavic",
-        # "turkic",
+        "ja_zh",
+        "eastern_slavic",
+        "southern_slavic",
+        "turkic",
     ]
 
     python_root = Path(__file__).resolve().parent.parent  # .../python
@@ -49,10 +49,10 @@ def train_model(model_dir: Path):
     env["PYTHONPATH"] = str(python_root)
 
     for script in [
-        # "create_datasets.py",
-        # "prepare_datasets.py",
-        # "vectorize_training_data.py",
-        # "split_data.py",
+        "create_datasets.py",
+        "prepare_datasets.py",
+        "vectorize_training_data.py",
+        "split_data.py",
         "train_model.py",
         "run_test_data.py",
     ]:

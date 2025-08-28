@@ -1,0 +1,14 @@
+Classifcation report for cyrillic
+
+                 precision    recall  f1-score   support
+
+ eastern_slavic       0.88      0.80      0.84    150000
+southern_slavic       0.80      0.90      0.85    150000
+         turkic       0.89      0.86      0.87    150000
+
+       accuracy                           0.85    450000
+      macro avg       0.86      0.85      0.85    450000
+   weighted avg       0.86      0.85      0.85    450000
+
+
+Test accuracy: 0.8541
