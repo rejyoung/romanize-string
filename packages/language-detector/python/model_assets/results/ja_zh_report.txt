@@ -1,4 +1,4 @@
-Classifcation report for ja_zh
+Classification report for ja_zh
 
               precision    recall  f1-score   support
 
@@ -10,4 +10,4 @@ Classifcation report for ja_zh
 weighted avg       0.92      0.91      0.91    150000
 
 
-Test accuracy: 0.9095
+Test accuracy: 0.9094 (90.94%)

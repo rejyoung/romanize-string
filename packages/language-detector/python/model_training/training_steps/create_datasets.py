@@ -16,39 +16,88 @@ import pandas as pd
 import regex
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Configuration constants
 LANGUAGE_CODE_LENGTH = 3
+TEXT_COLUMN = 1
 EXCLUDE_PATTERN = regex.compile(r"^[\p{Latin}\p{Nd}\p{P}\p{S}\p{Z}]+$")
 KANA_OR_JAPANESE_MARKS = regex.compile(
     r"[\p{Script=Hiragana}\p{Script=Katakana}\u30FC\uFF70\u30FB\u3005]"
 )
 
 CODE_LANGUAGE_MAP = {
-    "ara": "ar", "bel": "be", "ben": "bn", "bul": "bg", "cmn": "zh",
-    "ell": "el", "fas": "fa", "guj": "gu", "hin": "hi", "jpn": "ja",
-    "kan": "kn", "kaz": "kk", "kir": "ky", "kor": "ko", "mar": "mr",
-    "mkd": "mk", "mon": "mn", "nep": "ne", "pan": "pa", "pes": "fa",
-    "rus": "ru", "san": "sa", "srp": "sr", "tam": "ta", "tel": "te",
-    "tgk": "tg", "tha": "th", "ukr": "uk", "urd": "ur", "zho": "zh",
+    "ara": "ar",
+    "bel": "be",
+    "ben": "bn",
+    "bul": "bg",
+    "cmn": "zh",
+    "ell": "el",
+    "fas": "fa",
+    "guj": "gu",
+    "hin": "hi",
+    "jpn": "ja",
+    "kan": "kn",
+    "kaz": "kk",
+    "kir": "ky",
+    "kor": "ko",
+    "mar": "mr",
+    "mkd": "mk",
+    "mon": "mn",
+    "nep": "ne",
+    "pan": "pa",
+    "pes": "fa",
+    "rus": "ru",
+    "san": "sa",
+    "srp": "sr",
+    "tam": "ta",
+    "tel": "te",
+    "tgk": "tg",
+    "tha": "th",
+    "ukr": "uk",
+    "urd": "ur",
+    "zho": "zh",
 }
 
 CODE_SCRIPT_MAP = {
-    "ara": "perso-arabic", "bel": "cyrillic", "ben": "indic", "bul": "cyrillic",
-    "cmn": "ja_zh", "ell": "el", "fas": "perso-arabic", "guj": "indic",
-    "hin": "indic", "jpn": "ja_zh", "kan": "indic", "kaz": "cyrillic",
-    "kir": "cyrillic", "kor": "ko", "mar": "indic", "mkd": "cyrillic",
-    "mon": "cyrillic", "nep": "indic", "pan": "indic", "pes": "perso-arabic",
-    "rus": "cyrillic", "san": "indic", "srp": "cyrillic", "tam": "indic",
-    "tel": "indic", "tgk": "cyrillic", "tha": "th", "ukr": "cyrillic",
-    "urd": "perso-arabic", "zho": "ja_zh",
+    "ara": "perso-arabic",
+    "bel": "cyrillic",
+    "ben": "indic",
+    "bul": "cyrillic",
+    "cmn": "ja_zh",
+    "ell": "el",
+    "fas": "perso-arabic",
+    "guj": "indic",
+    "hin": "indic",
+    "jpn": "ja_zh",
+    "kan": "indic",
+    "kaz": "cyrillic",
+    "kir": "cyrillic",
+    "kor": "ko",
+    "mar": "indic",
+    "mkd": "cyrillic",
+    "mon": "cyrillic",
+    "nep": "indic",
+    "pan": "indic",
+    "pes": "perso-arabic",
+    "rus": "cyrillic",
+    "san": "indic",
+    "srp": "cyrillic",
+    "tam": "indic",
+    "tel": "indic",
+    "tgk": "cyrillic",
+    "tha": "th",
+    "ukr": "cyrillic",
+    "urd": "perso-arabic",
+    "zho": "ja_zh",
 }
 
 
 LANGUAGE_CLASSIFICATIONS = {
-    "arabic": ["ar", "fa", "ur"],
+    "perso_arabic": ["ar", "fa", "ur"],
     "cyrillic": ["be", "bg", "kk", "ky", "mk", "mn", "ru", "sr", "tg", "uk"],
     "indic": ["bn", "gu", "hi", "kn", "mr", "ne", "pa", "ta", "te"],
     "eastern_slavic": ["be", "ru", "uk"],
@@ -58,8 +107,14 @@ LANGUAGE_CLASSIFICATIONS = {
 }
 
 DATASET_NAMES = [
-    "family", "perso_arabic", "cyrillic", "indic", "ja_zh",
-    "eastern_slavic", "southern_slavic", "turkic",
+    "family",
+    "perso_arabic",
+    "cyrillic",
+    "indic",
+    "ja_zh",
+    "eastern_slavic",
+    "southern_slavic",
+    "turkic",
 ]
 
 
@@ -75,24 +130,25 @@ def initialize_datasets() -> Dict[str, List]:
 def load_training_data(file_path: Path) -> pd.DataFrame:
     """
     Load training data from CSV file.
-    
+
     Args:
         file_path: Path to the training data file
-        
+
     Returns:
         DataFrame containing the training data
-        
+
     Raises:
         FileNotFoundError: If file doesn't exist
         pd.errors.EmptyDataError: If file is empty
     """
     try:
         return pd.read_csv(
-            file_path, 
-            sep="\t", 
-            header=None, 
-            quoting=csv.QUOTE_NONE, 
-            usecols=["rank", "text", "occurrences"]
+            file_path,
+            sep="\t",
+            header=None,
+            quoting=csv.QUOTE_NONE,
+            usecols=[TEXT_COLUMN],
+            names=["text"],
         )
     except FileNotFoundError:
         logger.error(f"File not found: {file_path}")
@@ -101,13 +157,14 @@ def load_training_data(file_path: Path) -> pd.DataFrame:
         logger.error(f"Empty file: {file_path}")
         raise
 
+
 def filter_non_script_text(df: pd.DataFrame) -> np.ndarray:
     """
     Filter out text that does not contain untransliterated script.
-    
+
     Args:
         df: DataFrame containing the training data
-    
+
     Returns:
         np.ndarray containing the filtered text
     """
@@ -117,28 +174,27 @@ def filter_non_script_text(df: pd.DataFrame) -> np.ndarray:
         ]
     )
 
+
 def filter_japanese_marks(text: np.ndarray) -> np.ndarray:
     """
-   Filters out text that contains Japanese marks.
-    
-    Args:
-        text: np.ndarray containing the text from the training data filtered to remove non-script text
-        
-    Returns:
-        np.ndarray containing the filtered text
+    Filters out text that contains Japanese marks.
+
+     Args:
+         text: np.ndarray containing the text from the training data filtered to remove non-script text
+
+     Returns:
+         np.ndarray containing the filtered text
     """
-    return np.array(
-        [s for s in text if not KANA_OR_JAPANESE_MARKS.search(str(s))]
-    )
+    return np.array([s for s in text if not KANA_OR_JAPANESE_MARKS.search(str(s))])
 
 
 def classify_language(language_code: str) -> list[str]:
     """
     Classify language into appropriate categories.
-    
+
     Args:
         language_code: ISO language code
-        
+
     Returns:
         Dictionary mapping category names to classification values
     """
@@ -148,10 +204,11 @@ def classify_language(language_code: str) -> list[str]:
         if language_code in codes
     ]
 
+
 def process_file(file_path: Path, datasets: Dict[str, List]) -> None:
     """
     Process a single file and update the datasets.
-    
+
     Args:
         file_path: Path to the file to process
         datasets: Dictionary containing datasets to update
@@ -161,7 +218,7 @@ def process_file(file_path: Path, datasets: Dict[str, List]) -> None:
     file_prefix = file_path.name[:LANGUAGE_CODE_LENGTH]
     family_language_code = CODE_SCRIPT_MAP[file_prefix]
     language_code = CODE_LANGUAGE_MAP[file_prefix]
-    
+
     file_text = filter_non_script_text(df_raw)
 
     if language_code == "ja":
@@ -175,13 +232,15 @@ def process_file(file_path: Path, datasets: Dict[str, List]) -> None:
 
     for category in classify_language(language_code):
         datasets[f"{category}_word_data"].extend(file_text)
-        datasets[f"{category}_labels"].extend(file_script_label if category == "cyrillic" else file_language_label)
+        datasets[f"{category}_labels"].extend(
+            file_script_label if category == "cyrillic" else file_language_label
+        )
 
 
 def write_datasets(datasets: Dict[str, List], base: Path) -> None:
     """
     Write datasets to CSV files.
-    
+
     Args:
         datasets: Dictionary containing datasets to write
         base: Base directory for output files
@@ -209,14 +268,13 @@ def main():
 
     datasets = initialize_datasets()
 
-
     for file_path in training_folder.iterdir():
         if file_path.suffix != ".txt":
             continue  # Skip unexpected files like .DS_Store
 
         logger.info("Processing %s", file_path.name)
         process_file(file_path, datasets)
-    
+
     write_datasets(datasets, base)
 
 

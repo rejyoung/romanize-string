@@ -15,7 +15,9 @@ import joblib
 from sklearn.model_selection import train_test_split
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Constants
@@ -25,6 +27,7 @@ RANDOM_STATE = 42
 
 class DataSplitError(Exception):
     """Custom exception for data splitting errors."""
+
     pass
 
 
@@ -47,10 +50,10 @@ def split_data(model_type: str) -> None:
             / "data/processed/vectorized"
             / f"ld_vectorized_{model_type}_data.joblib"
         )
-        
-        if len(X) == 0 or len(y) == 0:
+
+        if X.shape[0] == 0 or len(y) == 0:
             raise DataSplitError(f"Vectorized data file is empty for {model_type}")
-            
+
     except FileNotFoundError:
         raise DataSplitError(f"Vectorized data file not found for {model_type}")
     except Exception as e:
@@ -60,15 +63,17 @@ def split_data(model_type: str) -> None:
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
     )
-    
-    logger.info(f"Split complete: {len(X_train)} training, {len(X_test)} test samples")
+
+    logger.info(
+        f"Split complete: {X_train.shape[0]} training, {X_test.shape[0]} test samples"
+    )
 
     logger.info(f"Writing {model_type} split data to disk")
-    
+
     # Ensure output directory exists
     output_dir = base_path / "data/processed/split"
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     joblib.dump(
         (X_train, y_train),
         output_dir / f"ld_{model_type}_train_data.joblib",
@@ -77,7 +82,7 @@ def split_data(model_type: str) -> None:
         (X_test, y_test),
         output_dir / f"ld_{model_type}_test_data.joblib",
     )
-    
+
     logger.info("Data split and save complete")
 
 
@@ -86,9 +91,9 @@ def main() -> None:
     if len(sys.argv) != 2:
         logger.error("Usage: python split_data.py <model_type>")
         sys.exit(1)
-    
+
     model_type = sys.argv[1]
-    
+
     try:
         split_data(model_type)
         logger.info("Data splitting completed successfully")
