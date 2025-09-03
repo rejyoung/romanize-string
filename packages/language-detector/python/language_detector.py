@@ -51,6 +51,7 @@ def detect_language(string: str) -> Code_Language:
     if KANA_OR_JAPANESE_MARKS.search(string):
         return "ja"
 
+
     # First, determine the language family
     family = evaluate_input(string, "family")
 
@@ -61,7 +62,7 @@ def detect_language(string: str) -> Code_Language:
         return evaluate_input(string, "indic")
     elif family == "ja_zh":
         return evaluate_input(string, "ja_zh")
-    elif family == "perso_arabic":
+    elif family == "perso-arabic":
         return evaluate_input(string, "perso_arabic")
     elif family == "cyrillic":
         cyrillic_family = evaluate_input(string, "cyrillic")

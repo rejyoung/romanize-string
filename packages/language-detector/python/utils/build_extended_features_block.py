@@ -118,6 +118,19 @@ def build_extended_features_arrays(texts: list[str], model_type: str) -> tuple[
     Returns:
         A tuple containing the feature arrays for the given model type
     """
+    
+    # Return empty feature arrays for model types that don't have specific tell list data
+    if model_type in ["cyrillic", "family"]:
+        num_samples = len(texts)
+        empty_array = np.zeros((num_samples, 0), dtype=np.float32)
+        return (
+            empty_array,  # character_binaries
+            None,         # radical_counts
+            None,         # ending_features
+            None,         # bigram_features
+            empty_array,  # tells_scores
+        )
+    
     tell_lists: TellLists = generate_or_retrieve_tell_lists(model_type)
 
     tell_character_lists = tell_lists["tell_character_list"]

@@ -1,3 +1,1 @@
-import { detectLanguage } from "./detect-language.js";
-
-detectLanguage("สวัสดี");
+export { detectLanguage as default } from "./detect-language.js";
