@@ -1,7 +1,9 @@
 {
     "name": "@romanize-string/language-detector",
     "version": "0.1.0",
-    "description": "",
+    "description": "Language detection plugin for romanize-string.",
+    "deprecated": "This package has been abandoned and is not production-ready.",
+    "private": true,
     "files": [
         "dist",
         "README.md"
@@ -28,11 +30,10 @@
         "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution node",
         "start": "run-s build start:run ",
         "start:run": "node dist/esm/index.js",
-        "prepublishOnly": "run-s build",
         "postbuild": "node ./scripts/postbuild.mjs"
     },
     "keywords": [],
-    "author": "",
+    "author": "Ryan Young",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -40,8 +41,5 @@
         "url": "git+https://github.com/rejyoung/romanize-string.git",
         "directory": "packages/language-detector"
     },
-    "homepage": "https://github.com/rejyoung/romanize-string/tree/main/packages/language-detector",
-    "bugs": {
-        "url": "https://gihub.com/rejyoung/romanize-string/issues"
-    }
+    "homepage": "https://github.com/rejyoung/romanize-string/tree/main/packages/language-detector"
 }

@@ -2,7 +2,8 @@
     "name": "romanize-string-monorepo",
     "private": "true",
     "workspaces": [
-        "packages/*"
+        "packages/romanize-string",
+        "packages/thai-engine"
     ],
     "scripts": {
         "build": "run-p build:*",
