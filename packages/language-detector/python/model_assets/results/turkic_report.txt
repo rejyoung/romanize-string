@@ -1,0 +1,15 @@
+Classifcation report for turkic
+
+              precision    recall  f1-score   support
+
+          kk       0.92      0.81      0.86     50000
+          ky       0.84      0.85      0.85     50000
+          mn       0.83      0.88      0.85     25000
+          tg       0.76      0.88      0.82     26004
+
+    accuracy                           0.85    151004
+   macro avg       0.84      0.86      0.85    151004
+weighted avg       0.85      0.85      0.85    151004
+
+
+Test accuracy: 0.8477

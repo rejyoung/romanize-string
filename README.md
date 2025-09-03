@@ -4,8 +4,10 @@ Multi-language string romanization and language detection tools.
 
 ## Packages
 
-- **`romanize-string`** - Core romanization library supporting 20+ languages
+- **`romanize-string`** - Core romanization library supporting 30 languages
 - **`thai-engine`** - Specialized Thai language processing engine
+- **`language-detector`** - Abandoned language-detection plugin
+
 
 ## Quick Start
 

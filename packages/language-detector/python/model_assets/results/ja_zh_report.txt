@@ -1,0 +1,13 @@
+Classification report for ja_zh
+
+              precision    recall  f1-score   support
+
+          ja       0.82      0.93      0.87     50000
+          zh       0.96      0.90      0.93    100000
+
+    accuracy                           0.91    150000
+   macro avg       0.89      0.92      0.90    150000
+weighted avg       0.92      0.91      0.91    150000
+
+
+Test accuracy: 0.9094 (90.94%)

@@ -548,7 +548,7 @@ As of the time of this writing, the [cyrillic-to-translit-js](https://github.com
 
 Persian and Urdu posed a particular challenge, as the omission of short vowels in their written scripts makes straightforward character-mapping approaches insufficient for producing usable transliterations. This likely explains why no transliteration libraries currently support these languages. The imperfect approach taken in this library involves standardizing the Arabic script and then running it through the [**arabic-transliterate**](https://www.npmjs.com/package/arabic-transliterate) library. This standardization is done in three steps:
 
-1. Common Persian and Urdu words are replaced with approximate LLM-generated phonetic forms (still in Arabic script), using lookup maps built from the Center for Language Engineering’s word frequency data for Persian and Urdu.
+1. Common Persian and Urdu words are replaced with approximate LLM-generated phonetic forms (still in Arabic script), using lookup maps built from word frequency data for Persian and Urdu provided by [Projekt Deutscher Wortschatz](https://wortschatz.uni-leipzig.de/). The data is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). Source: Wortschatz Corpora (<https://wortschatz.uni-leipzig.de/en/download>)
 
 2. Remaining Persian- or Urdu-specific characters are replaced with their Arabic equivalents.
 
